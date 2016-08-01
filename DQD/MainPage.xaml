@@ -1,0 +1,65 @@
+﻿<Page
+    x:Class="DQD.Net.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DQD.Net"
+    xmlns:TC="using:DQD.Core.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <TextBlock Text="懂球帝" 
+                               Height=" 50" 
+                               FontSize="30" 
+                               VerticalAlignment="Top"/>
+            <Pivot Name="RootPivot" 
+                           Margin="0,50,0,0" 
+                           Background="Aquamarine"
+                           SelectionChanged="RootPivot_SelectionChanged"
+                           Width="{Binding ActualWidth, ElementName=grid, Mode=OneWay}">
+                <PivotItem Name="HomePItem" 
+                                   Background="White" >
+                    <PivotItem.Header>
+                        <TC:TabHeader Label="首页" Glyph="&#xE719;"/>
+                    </PivotItem.Header>
+                    <Frame Name="HomePFrame"/>
+                </PivotItem>
+                <PivotItem Name="MatchPItem" 
+                                   Background="SteelBlue">
+                    <PivotItem.Header >
+                        <TC:TabHeader Label="比赛" Glyph="&#xE719;"/>
+                    </PivotItem.Header>
+                    <Frame Name="MatchPFrame"/>
+                </PivotItem>
+                <PivotItem Name="VideoPItem" 
+                                   Background="Black">
+                    <PivotItem.Header>
+                        <TC:TabHeader Label="视频" Glyph="&#xE719;"/>
+                    </PivotItem.Header>
+                    <Frame Name="VideoPFrame"/>
+                </PivotItem>
+                <PivotItem Name="DataPItem" 
+                                   Background="Pink">
+                    <PivotItem.Header>
+                        <TC:TabHeader Label="数据" Glyph="&#xE719;"/>
+                    </PivotItem.Header>
+                    <Frame Name="DataPFrame"/>
+                </PivotItem>
+            </Pivot>
+        </Grid>
+
+        <Frame Name="ContentFrame" 
+               Width="500"
+               Grid.Column="1"/>
+    </Grid>
+</Page>

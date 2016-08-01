@@ -1,0 +1,27 @@
+﻿<UserControl
+    x:Class="DQD.Core.Controls.TabHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Width="80" Height="40" IsTabStop="False">
+
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=" auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <FontIcon      Grid.Column="0"
+                            HorizontalAlignment="Center"
+                            Glyph="{Binding Glyph}"
+                            FontSize="16" />
+        <TextBlock    Grid.Column="1"
+                            FontFamily="Segoe UI"
+                            Text="{Binding Label}"
+                            LineStackingStrategy="BlockLineHeight"
+                            IsTextScaleFactorEnabled="False"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"/>
+    </Grid>
+</UserControl>
