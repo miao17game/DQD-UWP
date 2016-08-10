@@ -6,6 +6,6 @@
     public static class CacheConstants {
         // Data key
         public const string CacheId = "cacheid";
-
+        public const string HomeList = "HOME_LIST";
     }
 }

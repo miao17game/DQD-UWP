@@ -81,5 +81,8 @@ namespace DQD.Net {
         }
         #endregion
 
+        private void Grid_SizeChanged(object sender,SizeChangedEventArgs e) {
+            RootPivot.HeaderWidth=(sender as Grid).ActualWidth/4;
+        }
     }
 }

@@ -114,6 +114,9 @@
     <Compile Include="Controls\ToastSmooth.xaml.cs">
       <DependentUpon>ToastSmooth.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataVirtualization\IncrementalLoading.cs" />
+    <Compile Include="DataVirtualization\IncrementalLoadingBase.cs" />
+    <Compile Include="Models\DataHandler.cs" />
     <Compile Include="Helpers\CacheConstants.cs" />
     <Compile Include="Helpers\CacheHelpers.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
@@ -121,6 +124,7 @@
     <Compile Include="Helpers\SettingsConstants.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\StaticResources.cs" />
+    <Compile Include="Models\HomeListModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\DataProcess.cs" />
     <Compile Include="Tools\DelegateCommand.cs" />

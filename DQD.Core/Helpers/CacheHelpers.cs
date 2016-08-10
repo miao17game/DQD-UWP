@@ -14,6 +14,7 @@ namespace DQD.Core. Helpers {
     /// </summary>
     public static class CacheHelpers {
         private const string example = "EXAMPLE";
+        public const string HomeList = "HOME_LIST";
 
         /// <summary>
         /// 读取缓存文件 ///
@@ -26,6 +27,9 @@ namespace DQD.Core. Helpers {
                 switch ( key ) {
                     case example:
                         file = await localFolder . GetFileAsync ( "example.txt" );
+                        break;
+                    case HomeList:
+                        file=await localFolder.GetFileAsync("homeList.txt");
                         break;
                     default:
                         Debug . WriteLine ( "----->【 没有匹配的读取指令】" );
@@ -47,6 +51,9 @@ namespace DQD.Core. Helpers {
             switch ( key ) {
                 case example:
                     file = await localFolder . CreateFileAsync ( "example.txt" , CreationCollisionOption . ReplaceExisting );
+                    break;
+                case HomeList:
+                    file=await localFolder.CreateFileAsync("homeList.txt",CreationCollisionOption.ReplaceExisting);
                     break;
                 default:
                     Debug . WriteLine ( "Error -----> 【 缓存文件写入失败 】" );

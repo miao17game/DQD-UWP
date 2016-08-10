@@ -14,14 +14,16 @@
         </Grid.ColumnDefinitions>
         <FontIcon      Grid.Column="0"
                             HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
                             Glyph="{Binding Glyph}"
-                            FontSize="16" />
+                            FontSize="20" />
         <TextBlock    Grid.Column="1"
                             FontFamily="Segoe UI"
                             Text="{Binding Label}"
                             LineStackingStrategy="BlockLineHeight"
                             IsTextScaleFactorEnabled="False"
                             TextAlignment="Center"
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
     </Grid>
 </UserControl>

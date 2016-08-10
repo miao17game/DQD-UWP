@@ -53,7 +53,9 @@
             <!--BorderTicknessColor01-->
             <SolidColorBrush x:Key="BorderTicknessColor01" Color="#33FFFFFF"/>
             <!--ListViewItemBackground-->
-            <SolidColorBrush x:Key="ListViewItemBackground" Color="#151515"/>
+            <SolidColorBrush x:Key="ListViewItemBackground" Color="#454545"/>
+            <!--DQDBackground-->
+            <SolidColorBrush x:Key="DQDBackground" Color="#33BB33"/>
 
             <Style x:Key="ImageSourceStyle" TargetType="Image">
                 <Setter Property="Stretch" Value="UniformToFill"/>
@@ -64,7 +66,7 @@
 
         <ResourceDictionary x:Key="Light">
             <!--MainPage主背景色-->
-            <SolidColorBrush x:Key="AppPersonalBackground" Color="#FFEEEEEE"/>
+            <SolidColorBrush x:Key="AppPersonalBackground" Color="#FFCCCCCC"/>
             <!--其他子页面主背景色-->
             <SolidColorBrush x:Key="AppPersonalExtraBackground" Color="#FFF6F6F6"/>
             <!--其他子页面主背景色02-->
@@ -112,7 +114,9 @@
             <!--BorderTicknessColor01-->
             <SolidColorBrush x:Key="BorderTicknessColor01" Color="#33000000"/>
             <!--ListViewItemBackground-->
-            <SolidColorBrush x:Key="ListViewItemBackground" Color="#FCFCFC"/>
+            <SolidColorBrush x:Key="ListViewItemBackground" Color="#ECECEC"/>
+            <!--DQDBackground-->
+            <SolidColorBrush x:Key="DQDBackground" Color="#33BB55"/>
 
             <Style x:Key="ImageSourceStyle" TargetType="Image">
                 <Setter Property="Stretch" Value="UniformToFill"/>
