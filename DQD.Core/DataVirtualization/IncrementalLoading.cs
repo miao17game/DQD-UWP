@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DQD.Core.Models;
+using System.Threading;
 
 namespace DQD.Core.DataVirtualization {
     // This class implements IncrementalLoadingBase. 
@@ -25,8 +26,10 @@ namespace DQD.Core.DataVirtualization {
         private const string HomeHost = "http://www.dongqiudi.com/";
         private const string HomeHostInsert = "http://www.dongqiudi.com";
 
-        public  IncrementalLoading(FetchDataEventHandler back) {
+        public  IncrementalLoading(FetchDataCallbackHandler back,int num,string targetHost) {
             FetchCallback=back;
+            number = num;
+            this.targetHost = targetHost;
         }
 
         public IncrementalLoading() { 
@@ -39,11 +42,13 @@ namespace DQD.Core.DataVirtualization {
             await Task.Delay(10);
 
             // This code simply generates
-            var coll = new ObservableCollection<HomeListModel>();
+            //var coll = new ObservableCollection<T>();
+            var coll = new ObservableCollection<ContentListModel>();
 
-            var targetHost = "http://www.dongqiudi.com?tab=1&page={0}";
-            targetHost=string.Format(targetHost,_count/15+1);
-            coll=await DataHandler.SetHomeListResources(targetHost);
+            var targetHost = "http://www.dongqiudi.com?tab={1}&page={0}";
+            targetHost=string.Format(targetHost,_count/15+1, number);
+            //coll = await FetchCallback(targetHost);
+            coll = await DataHandler.SetHomeListResources(targetHost);
 
             //if(_count/15+1>1) {
             //    var targetHost = "http://www.dongqiudi.com?tab=1&page={0}";
@@ -51,9 +56,9 @@ namespace DQD.Core.DataVirtualization {
             //    coll = await DataHandler.SetHomeListResources(targetHost);
             //} else { coll=await DataHandler.SetHomeListResources(HomeHost); }
 
-            _count+=(uint)coll.Count;
+            _count +=(uint)coll.Count;
 
-            return coll.ToArray();
+            return (coll).ToArray();
         }
 
         protected override bool HasMoreItemsOverride() {
@@ -63,8 +68,10 @@ namespace DQD.Core.DataVirtualization {
         #region State
 
         uint _count = 0;
-        public delegate EventHandler<T> FetchDataEventHandler(string targetHost);
-        public FetchDataEventHandler FetchCallback;
+        public delegate Task<ObservableCollection<T>> FetchDataCallbackHandler(string targetHost);
+        public FetchDataCallbackHandler FetchCallback;
+        private int number;
+        private string targetHost;
 
         #endregion
     }

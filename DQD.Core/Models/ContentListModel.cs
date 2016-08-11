@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace DQD.Core.Models {
     [DataContract]
-    public class HomeListModel {
+    public class ContentListModel {
         [DataMember]
         public string Title { get; set; }
         [DataMember]
@@ -16,11 +16,13 @@ namespace DQD.Core.Models {
         [DataMember]
         public string Date { get; set; }
         [DataMember]
+        public Uri Path { get; set; }
+        [DataMember]
         public Uri Share { get; set; }
         [DataMember]
         public int ShareNum { get; set; }
 
-        public HomeListModel() { }
+        public ContentListModel() { }
 
     }
 }

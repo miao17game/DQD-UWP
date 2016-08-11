@@ -22,12 +22,16 @@ namespace DQD.Net {
     /// </summary>
     public sealed partial class MainPage:Page {
         public static MainPage Current;
+        public Frame contentFrame;
         public delegate void NavigateEventHandler(object sender,Type type,Frame frame);
+        public delegate void ClickEventHandler(object sender, Type type, Frame frame,Uri uri);
         private NavigateEventHandler SelectionChanged = (sender,type,frame) => { frame.Navigate(type); };
+        public ClickEventHandler ItemClick = (sender, type, frame, uri) => { frame.Navigate(type,uri); };
 
         public MainPage() {
             Current=this;
             this.InitializeComponent();
+            contentFrame = this.ContentFrame;
         }
 
         /// <summary>
@@ -83,6 +87,17 @@ namespace DQD.Net {
 
         private void Grid_SizeChanged(object sender,SizeChangedEventArgs e) {
             RootPivot.HeaderWidth=(sender as Grid).ActualWidth/4;
+        }
+
+        private void ThemeModeBtn_Click(object sender, RoutedEventArgs e) {
+            if (RequestedTheme == ElementTheme.Dark) {
+                (sender as Button).Content = char.ConvertFromUtf32(0xEC46);
+                RequestedTheme = ElementTheme.Light;
+            }
+            else {
+                (sender as Button).Content = char.ConvertFromUtf32(0xEC8A);
+                RequestedTheme = ElementTheme.Dark;
+            }
         }
     }
 }

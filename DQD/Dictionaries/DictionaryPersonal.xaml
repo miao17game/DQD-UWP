@@ -2488,7 +2488,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="PivotItem">
-                    <Grid Background="{TemplateBinding Background}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                    <Grid Background="{TemplateBinding Background}" 
+                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}" 
+                          VerticalAlignment="{TemplateBinding VerticalAlignment}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="Pivot">
                                 <VisualState x:Name="Right" />
@@ -2496,7 +2498,11 @@
                                 <VisualState x:Name="Center" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}" />
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                          Content="{TemplateBinding Content}" 
+                                          Margin="{TemplateBinding Padding}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

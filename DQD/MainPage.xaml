@@ -12,24 +12,36 @@
 
     </Page.Resources>
 
-    <Grid Background="{StaticResource DQDBackground}">
+    <Grid Background="{ThemeResource DQDBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid Width="500" SizeChanged="Grid_SizeChanged">
             <TextBlock Text="懂球帝" 
-                       Height=" 50" 
+                       Height=" 60" 
                        FontSize="24" 
                        Margin=" 15,10,0,5"
                        VerticalAlignment="Top"
-                       Foreground="{StaticResource AppPersonalTextColorPure}"/>
+                       Foreground="{ThemeResource AppPersonalTextColorPure}"/>
+            <Button Name="ThemeModeBtn" 
+                    FontFamily="Segoe MDL2 Assets"
+                    Foreground="White"
+                    Background="Transparent"
+                    Content="&#xEC46;"
+                    FontSize="24"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Margin=" 420,5,0,0"
+                    Height=" 50"
+                    Width=" 50"
+                    Click="ThemeModeBtn_Click"/>
             <MPV:PersonalPivot Name="RootPivot" 
-                               Margin="0,50,0,0" 
+                               Margin="0,60,0,0" 
                                Background="{ThemeResource AppPersonalExtraBackground}"
                                SelectionChanged="RootPivot_SelectionChanged"
-                               IndicatorLineStroke="{StaticResource DQDBackground}" 
-                               BackgroundLineStoke="{StaticResource AppPersonalExtraBackground02}"
+                               IndicatorLineStroke="{ThemeResource DQDBackground}" 
+                               BackgroundLineStoke="{ThemeResource AppPersonalExtraBackground02}"
                                IndicatorLineStokeThickness="5"
                                Style="{ThemeResource BottemPV}"
                                Width="{Binding ActualWidth, ElementName=grid, Mode=OneWay}">
@@ -40,7 +52,7 @@
                                    Margin="0,0,0,5" 
                                    TextAlignment="Center" 
                                    Width="{Binding ElementName=RootPivot, Path=HeaderWidth}" 
-                                   Foreground="{StaticResource AppPersonalTextColorPure02}"
+                                   Foreground="{ThemeResource AppPersonalTextColorPure02}"
                                    FontSize="20"/>
                     </DataTemplate>
                 </Pivot.HeaderTemplate>
@@ -68,7 +80,8 @@
         </Grid>
 
         <Frame Name="ContentFrame" 
-               Width="500"
+               Margin="5,-10,0,0"
+               Background="{ThemeResource AppPersonalExtraBackground}"
                Grid.Column="1"/>
     </Grid>
 </Page>

@@ -18,18 +18,50 @@ using HtmlAgilityPack;
 
 namespace DQD.Core.Models {
     /// <summary>
-    /// 代表文件及其属性
+    /// Handle Data and resources
     /// </summary>
     public static class DataHandler {
         private const string HomeHost = "http://www.dongqiudi.com/";
         /// <summary>
+        /// Handle the html resources from DQD Header Group.
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<ObservableCollection<HeaderModel>> SetHeaderGroupResources() {
+            const string HomeHostInsert = "http://www.dongqiudi.com/";
+            ObservableCollection<HeaderModel> HeaderGroup = new ObservableCollection<HeaderModel>();
+            try {
+                StringBuilder urlString = new StringBuilder();
+                urlString = await WebProcess.GetHtmlResources(HomeHostInsert);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(urlString.ToString());
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//div[@id='tab']";
+                HtmlNodeCollection hrefsDiv = rootnode.SelectNodes(XPathString);
+                var hrefs = hrefsDiv.ElementAt(0).SelectNodes("a");
+                foreach (var item in hrefs) {
+                    HeaderModel model = new HeaderModel();
+                    model.pathHref = HomeHostInsert + item.Attributes["href"].Value;
+                    model.Title = item.InnerText;
+                    model.Number = Convert.ToInt32(item.Attributes["rel"].Value);
+                    HeaderGroup.Add(model);
+                }
+            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
+            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
+            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            }
+            return HeaderGroup;
+        }
+
+        /// <summary>
         /// Handle the html resources from DQD HomePage.
         /// </summary>
         /// <returns></returns>
-        public static async Task<ObservableCollection<HomeListModel>> SetHomeListResources(string homeHost) {
+        public static async Task<ObservableCollection<ContentListModel>> SetHomeListResources(string homeHost) {
             const string HomeHostInsert = "http://www.dongqiudi.com";
             string hone = homeHost;
-            ObservableCollection<HomeListModel> HomeList = new ObservableCollection<HomeListModel>();
+            ObservableCollection<ContentListModel> HomeList = new ObservableCollection<ContentListModel>();
             try {
                 StringBuilder urlString = new StringBuilder();
                 urlString=await WebProcess.GetHtmlResources(homeHost);
@@ -40,10 +72,11 @@ namespace DQD.Core.Models {
                 HtmlNodeCollection aa = rootnode.SelectNodes(XPathString);
                 var li = aa.ElementAt(0).SelectNodes("ol").ElementAt(0).SelectNodes("li");
                 foreach(var item in li) {
-                    HomeListModel model = new HomeListModel();
+                    ContentListModel model = new ContentListModel();
                     model.Date=item.SelectSingleNode("div[@class='info']").SelectSingleNode("span[@class='time']").InnerText;
                     model.ShareNum=Convert.ToInt32(item.SelectSingleNode("div[@class='info']").SelectSingleNode("a[@class='comment']").InnerText);
                     model.Share=new Uri(HomeHostInsert+item.SelectSingleNode("div[@class='info']").SelectSingleNode("a[@class='comment']").Attributes["href"].Value);
+                    model.Path = new Uri(HomeHostInsert + item.SelectSingleNode("a").Attributes["href"].Value);
                     model.Title=item.SelectSingleNode("h2").SelectNodes("a").FirstOrDefault().InnerText.ToString();
                     var coll = item.SelectNodes("a").ElementAt(0).InnerText;
                     string imgSource = !string.IsNullOrEmpty(coll) ? item.SelectNodes("a").ElementAt(0).SelectSingleNode("img").Attributes.FirstOrDefault().Value : null;

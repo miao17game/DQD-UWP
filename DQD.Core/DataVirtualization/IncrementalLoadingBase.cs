@@ -101,7 +101,9 @@ namespace DQD.Core.DataVirtualization {
 
         public Windows.Foundation.IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count) {
             if(_busy) {
-                throw new InvalidOperationException("Only one operation in flight at a time");
+                /// don not load too much!
+                //throw new InvalidOperationException("Only one operation in flight at a time");
+                count = 0;
             }
 
             _busy=true;

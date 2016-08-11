@@ -55,7 +55,7 @@
             <!--ListViewItemBackground-->
             <SolidColorBrush x:Key="ListViewItemBackground" Color="#454545"/>
             <!--DQDBackground-->
-            <SolidColorBrush x:Key="DQDBackground" Color="#33BB33"/>
+            <SolidColorBrush x:Key="DQDBackground" Color="#33BB73"/>
 
             <Style x:Key="ImageSourceStyle" TargetType="Image">
                 <Setter Property="Stretch" Value="UniformToFill"/>
