@@ -12,22 +12,65 @@
 
     </Page.Resources>
 
-    <Grid Background="{ThemeResource DQDBackground}"
+    <Grid x:Name="grid" 
+          Background="{ThemeResource DQDBackground}"
           SizeChanged="grid_SizeChanged">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="Mobile360">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BaseGrid.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="BaseGrid.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0</Thickness>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="sideGrid.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="sideGrid.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Mobile480">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="361"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BaseGrid.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0</Thickness>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="BaseGrid.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="sideGrid.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="sideGrid.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Desktop">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowHeight="500" MinWindowWidth="800"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BaseGrid.(FrameworkElement.Width)" Value="500"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid Width="500" 
-              Name="BaseGrid"
+        <Grid Name="BaseGrid"
               Margin="0,0,2,0"
               SizeChanged="BaseGrid_SizeChanged">
-            <TextBlock Text="懂球帝" 
-                       Height=" 60" 
-                       FontSize="24" 
-                       Margin=" 15,10,0,5"
-                       VerticalAlignment="Top"
-                       Foreground="{ThemeResource AppPersonalTextColorPure}"/>
+            <Image Source="/Assets/title.png"
+                   Height=" 40" 
+                   Margin=" 15,10,0,5"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"/>
             <Button Name="ThemeModeBtn" 
                     FontFamily="Segoe MDL2 Assets"
                     Foreground="White"
@@ -35,20 +78,20 @@
                     Content="&#xEC46;"
                     FontSize="24"
                     VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Margin=" 420,5,0,0"
+                    HorizontalAlignment="Right"
+                    Margin="5"
                     Height=" 50"
                     Width=" 50"
                     Click="ThemeModeBtn_Click"/>
             <MPV:PersonalPivot Name="RootPivot" 
                                Margin="0,60,0,0" 
-                               Background="{ThemeResource AppPersonalExtraBackground}"
+                               Width="{Binding Width, ElementName=BaseGrid, Mode=TwoWay}"
+                               Background="{ThemeResource AppScrollViewerBackground}"
                                SelectionChanged="RootPivot_SelectionChanged"
                                IndicatorLineStroke="{ThemeResource DQDBackground}" 
                                BackgroundLineStoke="{ThemeResource AppPersonalExtraBackground02}"
                                IndicatorLineStokeThickness="5"
-                               Style="{ThemeResource BottemPV}"
-                               Width="{Binding ActualWidth, ElementName=grid, Mode=OneWay}">
+                               Style="{ThemeResource BottemPV}">
                 <Pivot.HeaderTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" 
@@ -83,24 +126,25 @@
             </MPV:PersonalPivot>
         </Grid>
 
-        <Image Source="/Assets/38565-105.jpg"
-               Grid.Column="1"
+        <Grid Name="sideGrid" Grid.Column="1">
+            <Image Source="/Assets/38565-105.jpg"
+               
                Stretch="UniformToFill"/>
-        <StackPanel Orientation="Vertical" 
-                    Grid.Column="1"
+            <StackPanel Orientation="Vertical" 
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     FlowDirection="RightToLeft"
                     Margin="15">
-            <TextBlock Text="懂球帝"
+                <TextBlock Text="懂球帝"
                        FontSize="28"
                        Foreground="#C0C0C0"/>
-            <TextBlock Text="为足球而生"
+                <TextBlock Text="为足球而生"
                        FontSize="14"
                        Foreground="#C0C0C0"/>
-        </StackPanel>
+            </StackPanel>
 
-        <Frame Name="ContentFrame" 
-               Grid.Column="1"/>
+            <Frame Name="ContentFrame" />
+        </Grid>
+        
     </Grid>
 </Page>

@@ -28,15 +28,7 @@ namespace DQD.Net.Pages {
     /// HomePage Code Page
     /// </summary>
     public sealed partial class HomePage:Page {
-        public static HomePage Current;
-        //private ListView thisList;
-        private string NowItem;
-        private Dictionary<string,DQDLoadContext<ContentListModel>> cacheDic;
-        private Dictionary<string, double> ListViewOffset;
-        private DQDLoadContext<ContentListModel>HomeLlistResources;
-        private const string HomeHost = "http://www.dongqiudi.com/";
-        private const string HomeHostInsert = "http://www.dongqiudi.com";
-
+        
         public HomePage() {
             Current = this;
             cacheDic = new Dictionary<string, DQDLoadContext<ContentListModel>>();
@@ -45,6 +37,8 @@ namespace DQD.Net.Pages {
             this.InitializeComponent();
             InitView();
         }
+
+        #region Founctions
 
         /// <summary>
         /// Init the Page Initual databundle resources.
@@ -56,43 +50,30 @@ namespace DQD.Net.Pages {
             HeaderResources.Source = headerList;
         }
 
-        private void ContainerContentChanging(ListViewBase sender,ContainerContentChangingEventArgs args) {
-            if(!args.InRecycleQueue) {
-                FrameworkElement ctr = (FrameworkElement)args.ItemContainer.ContentTemplateRoot;
-                if(ctr!=null) {
-                    TextBlock t = (TextBlock)ctr.FindName("idx");
-                    t.Text=args.ItemIndex.ToString();
-                }
-            }
-        }
+        #endregion
+
+        #region Events
 
         private void ListView_ItemClick(object sender,ItemClickEventArgs e) {
             var itemUri = (e.ClickedItem as ContentListModel).Path;
             MainPage.Current.ItemClick ?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri);
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
-                MainPage.Current.baseGrid.Visibility = Visibility.Collapsed;
+                MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
 
         private void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             var item = (sender as Pivot).SelectedItem as HeaderModel;
             NowItem = item.Title;
-            if (cacheDic.ContainsKey(item.Title)) {
-                //if (thisList != null && ListViewOffset.ContainsKey(NowItem)) {
-                //    var scroll = GetScrollViewer(thisList);
-                //    Debug.WriteLine("---->" + ListViewOffset[NowItem]);
-                //    var num = ListViewOffset[NowItem];
-                //    ListResources.Source = cacheDic[item.Title];
-                //    scroll.ChangeView(0, num, 1);
-                //} else {
-                    ListResources.Source = cacheDic[item.Title];
-                //}
-            }
-            else {
+            if (!cacheDic.ContainsKey(item.Title)) {
                 HomeLlistResources = new DQDLoadContext<ContentListModel>(DataHandler.SetHomeListResources, item.Number, HomeHost);
                 cacheDic.Add(item.Title, HomeLlistResources);
-                ListResources.Source = HomeLlistResources;
             }
+            ListResources.Source = cacheDic[NowItem];
         }
+
+        private void grid_SizeChanged(object sender, SizeChangedEventArgs e) { MyPivot.Width = (sender as Grid).ActualWidth; }
+
+        #endregion
 
         #region Save the position of listview scroll (Dropped)
         /// <summary>
@@ -125,6 +106,19 @@ namespace DQD.Net.Pages {
             //var vierew = GetScrollViewer(thisList);
             //vierew.ViewChanged += ScrollViewer_ViewChanged;
         }
+
+        #endregion
+
+        #region Properties and States
+
+        public static HomePage Current;
+        //private ListView thisList;
+        private string NowItem;
+        private Dictionary<string, DQDLoadContext<ContentListModel>> cacheDic;
+        private Dictionary<string, double> ListViewOffset;
+        private DQDLoadContext<ContentListModel> HomeLlistResources;
+        private const string HomeHost = "http://www.dongqiudi.com/";
+        private const string HomeHostInsert = "http://www.dongqiudi.com";
 
         #endregion
     }

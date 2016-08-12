@@ -8,6 +8,40 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource AppPersonalExtraBackground}">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="Mobile360">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentTitle.(TextBlock.FontSize)" Value="16"/>
+                        <Setter Target="ContentAuthor.(TextBlock.FontSize)" Value="10"/>
+                        <Setter Target="ContentDate.(TextBlock.FontSize)" Value="10"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Mobile480">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="361"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentTitle.(TextBlock.FontSize)" Value="20"/>
+                        <Setter Target="ContentDate.(TextBlock.FontSize)" Value="12"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Desktop">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowHeight="400" MinWindowWidth="800"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentAuthor.(TextBlock.FontSize)" Value="14"/>
+                        <Setter Target="ContentDate.(TextBlock.FontSize)" Value="14"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Border Background="{ThemeResource DQDBackground}"
                 Height="60"
                 VerticalAlignment="Top">
@@ -37,7 +71,7 @@
                     <Rectangle Height="1" 
                                Margin="5,0,5,0"
                                Fill="{ThemeResource BorderTicknessColor01}"/>
-                    <StackPanel Name="ContentStack" Margin="5,5,5,0"/>
+                    <StackPanel Name="ContentStack" Margin="5,0,5,0"/>
                 </StackPanel>
             </ScrollViewer>
         </Border>

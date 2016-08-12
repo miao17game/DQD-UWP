@@ -14,8 +14,37 @@
         <CollectionViewSource x:Name="HeaderResources"/>
     </Page.Resources>
 
-    <Grid x:Name="grid" Background="{ThemeResource AppPersonalExtraBackground02}">
-        <Pivot Name="MyPivot" 
+    <Grid x:Name="grid" 
+          SizeChanged="grid_SizeChanged"
+          Background="{ThemeResource AppPersonalExtraBackground02}">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="Mobile360">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Mobile480">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="361"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Desktop">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowHeight="400" MinWindowWidth="800"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Pivot Name="MyPivot" Width="{Binding Width, ElementName=grid ,Mode=OneWay}"
                ItemsSource="{Binding Source={StaticResource HeaderResources}}"
                SelectionChanged="MyPivot_SelectionChanged">
             <Pivot.HeaderTemplate>
@@ -36,7 +65,6 @@
                               SelectionMode="None" 
                               IsItemClickEnabled="True"
                               ItemClick="ListView_ItemClick"
-                              ContainerContentChanging="ContainerContentChanging"
                               Loaded="LocalPageListView_Loaded">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="model:ContentListModel">
@@ -47,30 +75,30 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition/>
+                                        <RowDefinition Height="2*"/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Text="{Binding Title}" 
-                                                   Grid.Row="0" 
-                                                   Grid.Column="1"
-                                                   Margin="3"
-                                                   TextWrapping="WrapWholeWords"/>
+                                               Grid.Row="0" 
+                                               Grid.Column="1"
+                                               Margin="3"
+                                               TextWrapping="WrapWholeWords"/>
                                     <TextBlock Text="{Binding Date}" 
-                                                   Grid.Row="1" 
-                                                   Grid.Column="1"
-                                                   Margin="3"/>
+                                               Grid.Row="1" 
+                                               Grid.Column="1"
+                                               Margin="3"
+                                               FontSize="14"
+                                               Foreground="{ThemeResource DQDSummTextColor}"/>
                                     <Image Source="{Binding Image}" 
                                                Grid.Column="0"
                                                Grid.RowSpan="2" 
-                                               Margin="5"/>
+                                               Margin="2"/>
                                     <Button Content="{Binding ShareNum}" 
-                                                Grid.RowSpan="2" 
-                                                Grid.Column="2"
-                                                Background="Transparent"
-                                                Foreground="{ThemeResource DQDBackground}"/>
-                                    <TextBlock Name="idx" 
-                                                   Foreground="White"
-                                                   Visibility="Collapsed"/>
+                                            Grid.RowSpan="2" 
+                                            Grid.ColumnSpan="3"
+                                            Background="Transparent"
+                                            HorizontalAlignment="Right"
+                                            Foreground="{ThemeResource DQDBackground}"/>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

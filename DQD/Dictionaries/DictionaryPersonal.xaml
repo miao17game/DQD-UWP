@@ -1353,7 +1353,7 @@
                             <Border x:Name="VerticalPanningThumb"
     								VerticalAlignment="Top"
     								HorizontalAlignment="Right"
-    								Background="{ThemeResource AppPersonalMusicBarBackground}"
+    								Background="{ThemeResource DQDBackground}"
     								BorderThickness="0"
     								Width="2"
     								MinHeight="32"

@@ -66,11 +66,11 @@ namespace DQD.Core. Tools {
             if ( Windows . Foundation . Metadata . ApiInformation . IsTypePresent ( "Windows.UI.ViewManagement.StatusBar" ) ) {
                 StatusBar statusBar = StatusBar . GetForCurrentView ( );
                 if ( !IsLightTheme ) {
-                    statusBar . BackgroundColor = Color . FromArgb ( 0 , 32 , 32 , 32 );
+                    statusBar . BackgroundColor = Color . FromArgb ( 0 , 51, 187, 115);
                     statusBar . ForegroundColor = Colors . White;
                 } else {
-                    statusBar . BackgroundColor = Color . FromArgb ( 0 , 246 , 246 , 246 );
-                    statusBar . ForegroundColor = Colors . Black;
+                    statusBar . BackgroundColor = Color . FromArgb ( 0 , 51, 187, 85);
+                    statusBar . ForegroundColor = Colors . White;
                 }
                 statusBar . BackgroundOpacity = 1;
             }

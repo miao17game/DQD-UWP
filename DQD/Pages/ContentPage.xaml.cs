@@ -44,7 +44,8 @@ namespace DQD.Net.Pages {
                     ContentStack.Children.Add(new TextBlock {
                         Text = item.Content,
                         TextWrapping = TextWrapping.WrapWholeWords,
-                        Margin =new Thickness(2,3,2,3),
+                        Margin = new Thickness(2, 3, 2, 3),
+                        FontSize = 14,
                     });
                 else {
                     var item2 = PConModel.ContentImage.Find(i => i.Index == index);
