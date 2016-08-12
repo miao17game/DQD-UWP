@@ -8,18 +8,20 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource AppPersonalExtraBackground}">
-        <WebView Name="webView" 
-                 Margin="5,0,0,0"
-                 NavigationStarting="webView_NavigationStarting"
-                 ContentLoading="webView_ContentLoading"
-                 DOMContentLoaded="webView_DOMContentLoaded"
-                 NavigationCompleted="webView_NavigationCompleted"
-                 NavigationFailed="webView_NavigationFailed"/>
         <Border Background="{ThemeResource DQDBackground}"
                 Height="70"
-                VerticalAlignment="Top"/>
-        <Border Background="{ThemeResource DQDBackground}">
-            <TextBlock Name="PageContent" TextWrapping="WrapWholeWords"/>
+                VerticalAlignment="Top">
+            <TextBlock Name="ContentTitle"
+                       FontSize="30"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"/>
+        </Border>
+        <Border Background="{ThemeResource AppPersonalExtraBackground}"
+                Margin="0,70,0,0">
+            <!--<TextBlock Name="PageContent" TextWrapping="WrapWholeWords"/>-->
+            <ScrollViewer>
+                <StackPanel Name="ContentStack" Margin=" 5"/>
+            </ScrollViewer>
         </Border>
 
     </Grid>

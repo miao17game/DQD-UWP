@@ -33,32 +33,22 @@ namespace DQD.Net.Pages {
         /// <param name="e">navigate args</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
             var value = e.Parameter as Uri;
-            if (value != null) {
-                Debug.WriteLine(value.ToString());
-                webView.Source = value;
+            var PConModel = await DataProcess.GetPageInnerContent(value.ToString());
+            ContentTitle.Text = PConModel.Title;
+            ContentStack.Children.Add(new TextBlock { Text = PConModel.Author });
+            ContentStack.Children.Add(new TextBlock { Text = PConModel.Date });
+            int num = PConModel.ContentImage.Count + PConModel.ContentString.Count;
+            Debug.WriteLine(num);
+            for (int index = 1; index <= num; index++) {
+                var item = PConModel.ContentString.Find(i => i.Index == index);
+                if (item != null)
+                    ContentStack.Children.Add(new TextBlock { Text = item.Content, TextWrapping = TextWrapping.WrapWholeWords });
+                else {
+                    var item2 = PConModel.ContentImage.Find(i => i.Index == index);
+                    if (item2 != null)
+                        ContentStack.Children.Add(new Image { Source = item2.Image, Margin = new Thickness(20,5,20,5) });
+                }
             }
-            var stringMessa = await DataProcess.GetPageInnerContent(value.ToString());
-            PageContent.Text = stringMessa;
-        }
-
-        private void webView_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args) {
-
-        }
-
-        private void webView_ContentLoading(WebView sender, WebViewContentLoadingEventArgs args) {
-
-        }
-
-        private void webView_DOMContentLoaded(WebView sender, WebViewDOMContentLoadedEventArgs args) {
-
-        }
-
-        private void webView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args) {
-
-        }
-
-        private void webView_NavigationFailed(object sender, WebViewNavigationFailedEventArgs e) {
-
         }
     }
 }
