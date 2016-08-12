@@ -130,7 +130,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\38565-105.jpg" />
-    <Content Include="Assets\Square310x310Logo.scale-100.png" />
     <Content Include="Assets\Square310x310Logo.scale-400.png" />
     <Content Include="Assets\title.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
