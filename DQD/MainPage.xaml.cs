@@ -15,6 +15,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Core;
+using Windows.System.Profile;
+using DQD.Core.Tools;
 
 namespace DQD.Net {
     /// <summary>
@@ -23,6 +26,7 @@ namespace DQD.Net {
     public sealed partial class MainPage:Page {
         public static MainPage Current;
         public Frame contentFrame;
+        public Grid baseGrid;
         public delegate void NavigateEventHandler(object sender,Type type,Frame frame);
         public delegate void ClickEventHandler(object sender, Type type, Frame frame,Uri uri);
         private NavigateEventHandler SelectionChanged = (sender,type,frame) => { frame.Navigate(type); };
@@ -32,6 +36,9 @@ namespace DQD.Net {
             Current=this;
             this.InitializeComponent();
             contentFrame = this.ContentFrame;
+            baseGrid = this.BaseGrid;
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+            StatusBarInit.InitDesktopStatusBar(RequestedTheme != ElementTheme.Dark);
         }
 
         /// <summary>
@@ -85,7 +92,31 @@ namespace DQD.Net {
         }
         #endregion
 
-        private void Grid_SizeChanged(object sender,SizeChangedEventArgs e) {
+        /// <summary>
+        /// OnBackRequested
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnBackRequested(object sender, BackRequestedEventArgs e) {
+            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
+                BaseGrid.Visibility = Visibility.Visible;
+            e.Handled = true;
+        }
+
+        private void grid_SizeChanged(object sender, SizeChangedEventArgs e) {
+            var TargetWidth = (sender as Grid).ActualWidth;
+            if (TargetWidth > 800) {
+                BaseGrid.Visibility = Visibility.Visible;
+            } else {
+                //if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") && TargetWidth < 600 ) {
+                //    if (ContentFrame.Content == null) { BaseGrid.Visibility = Visibility.Visible; } else { BaseGrid.Visibility = Visibility.Collapsed; }
+                //    return;
+                //}
+                if (ContentFrame.Content == null) { BaseGrid.Visibility = Visibility.Visible; } else { BaseGrid.Visibility = Visibility.Collapsed; }
+            }
+        }
+
+        private void BaseGrid_SizeChanged(object sender,SizeChangedEventArgs e) {
             RootPivot.HeaderWidth=(sender as Grid).ActualWidth/4;
         }
 
@@ -93,10 +124,12 @@ namespace DQD.Net {
             if (RequestedTheme == ElementTheme.Dark) {
                 (sender as Button).Content = char.ConvertFromUtf32(0xEC46);
                 RequestedTheme = ElementTheme.Light;
+                StatusBarInit.InitDesktopStatusBar(RequestedTheme != ElementTheme.Dark);
             }
             else {
                 (sender as Button).Content = char.ConvertFromUtf32(0xEC8A);
                 RequestedTheme = ElementTheme.Dark;
+                StatusBarInit.InitDesktopStatusBar(RequestedTheme != ElementTheme.Dark);
             }
         }
     }

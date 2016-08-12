@@ -35,11 +35,11 @@ namespace DQD.Core.DataVirtualization {
         }
 
         public bool Contains(object value) {
-            return _storage.Contains(value);
+            return storageList.Contains(value);
         }
 
         public int IndexOf(object value) {
-            return _storage.IndexOf(value);
+            return storageList.IndexOf(value);
         }
 
         public void Insert(int index,object value) {
@@ -64,7 +64,7 @@ namespace DQD.Core.DataVirtualization {
 
         public object this[int index] {
             get {
-                return _storage[index];
+                return storageList[index];
             }
             set {
                 throw new NotImplementedException();
@@ -72,11 +72,11 @@ namespace DQD.Core.DataVirtualization {
         }
 
         public void CopyTo(Array array,int index) {
-            ((IList)_storage).CopyTo(array,index);
+            ((IList)storageList).CopyTo(array,index);
         }
 
         public int Count {
-            get { return _storage.Count; }
+            get { return storageList.Count; }
         }
 
         public bool IsSynchronized {
@@ -88,26 +88,20 @@ namespace DQD.Core.DataVirtualization {
         }
 
         public IEnumerator GetEnumerator() {
-            return _storage.GetEnumerator();
+            return storageList.GetEnumerator();
         }
 
         #endregion
 
         #region ISupportIncrementalLoading
 
-        public bool HasMoreItems {
-            get { return HasMoreItemsOverride(); }
-        }
+        public bool HasMoreItems { get { return HasMoreItemsOverride(); } }
 
         public Windows.Foundation.IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count) {
-            if(_busy) {
+            if(isBusyOrNot)
                 /// don not load too much!
                 //throw new InvalidOperationException("Only one operation in flight at a time");
-                count = 0;
-            }
-
-            _busy=true;
-
+            isBusyOrNot =true;
             return AsyncInfo.Run((c) => LoadMoreItemsAsync(c,count));
         }
 
@@ -124,26 +118,18 @@ namespace DQD.Core.DataVirtualization {
         async Task<LoadMoreItemsResult> LoadMoreItemsAsync(CancellationToken c,uint count) {
             try {
                 var items = await LoadMoreItemsOverrideAsync(c,count);
-                var baseIndex = _storage.Count;
-
-                _storage.AddRange(items);
-
+                var baseIndex = storageList.Count;
+                storageList.AddRange(items);
                 // Now notify of the new items
                 NotifyOfInsertedItems(baseIndex,items.Count);
-
                 return new LoadMoreItemsResult { Count=(uint)items.Count };
-            } finally {
-                _busy=false;
-            }
+            } finally { isBusyOrNot=false; }
         }
 
         void NotifyOfInsertedItems(int baseIndex,int count) {
-            if(CollectionChanged==null) {
-                return;
-            }
-
+            if(CollectionChanged==null) { return; }
             for(int i = 0;i<count;i++) {
-                var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,_storage[i+baseIndex],i+baseIndex);
+                var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,storageList[i+baseIndex],i+baseIndex);
                 CollectionChanged(this,args);
             }
         }
@@ -159,8 +145,9 @@ namespace DQD.Core.DataVirtualization {
 
         #region State
 
-        List<object> _storage = new List<object>();
-        bool _busy = false;
+        List<object> storageList = new List<object>();
+        protected bool isBusyOrNot = false;
+        protected string Flag = "Default_Flag";
 
         #endregion 
     }

@@ -56,6 +56,8 @@
             <SolidColorBrush x:Key="ListViewItemBackground" Color="#454545"/>
             <!--DQDBackground-->
             <SolidColorBrush x:Key="DQDBackground" Color="#33BB73"/>
+            <!--DQDSummTextColor-->
+            <SolidColorBrush x:Key="DQDSummTextColor" Color="#909090"/>
 
             <Style x:Key="ImageSourceStyle" TargetType="Image">
                 <Setter Property="Stretch" Value="UniformToFill"/>
@@ -117,6 +119,8 @@
             <SolidColorBrush x:Key="ListViewItemBackground" Color="#ECECEC"/>
             <!--DQDBackground-->
             <SolidColorBrush x:Key="DQDBackground" Color="#33BB55"/>
+            <!--DQDSummTextColor-->
+            <SolidColorBrush x:Key="DQDSummTextColor" Color="#909090"/>
 
             <Style x:Key="ImageSourceStyle" TargetType="Image">
                 <Setter Property="Stretch" Value="UniformToFill"/>

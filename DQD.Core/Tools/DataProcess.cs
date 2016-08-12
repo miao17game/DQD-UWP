@@ -34,7 +34,6 @@ namespace DQD.Core. Tools {
                 model.ContentImage = new List<ContentImages>();
                 model.ContentString = new List<ContentStrings>();
                 foreach (var item in contents) {
-                    Debug.WriteLine(item.InnerText);
                     index++;
                     if (item.SelectSingleNode("img") != null)
                         model.ContentImage.Add(new ContentImages { Image = new BitmapImage(new Uri(item.SelectSingleNode("img").Attributes["src"].Value)), Index = index });

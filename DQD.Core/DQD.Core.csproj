@@ -114,7 +114,7 @@
     <Compile Include="Controls\ToastSmooth.xaml.cs">
       <DependentUpon>ToastSmooth.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataVirtualization\IncrementalLoading.cs" />
+    <Compile Include="DataVirtualization\DQDLoadContext.cs" />
     <Compile Include="DataVirtualization\IncrementalLoadingBase.cs" />
     <Compile Include="Models\PageContentModels\ContentImages.cs" />
     <Compile Include="Models\PageContentModels\ContentStrings.cs" />

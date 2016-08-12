@@ -35,14 +35,17 @@ namespace DQD.Net.Pages {
             var value = e.Parameter as Uri;
             var PConModel = await DataProcess.GetPageInnerContent(value.ToString());
             ContentTitle.Text = PConModel.Title;
-            ContentStack.Children.Add(new TextBlock { Text = PConModel.Author });
-            ContentStack.Children.Add(new TextBlock { Text = PConModel.Date });
+            ContentAuthor.Text = "来源：" + PConModel.Author;
+            ContentDate.Text = PConModel.Date;
             int num = PConModel.ContentImage.Count + PConModel.ContentString.Count;
-            Debug.WriteLine(num);
             for (int index = 1; index <= num; index++) {
                 var item = PConModel.ContentString.Find(i => i.Index == index);
                 if (item != null)
-                    ContentStack.Children.Add(new TextBlock { Text = item.Content, TextWrapping = TextWrapping.WrapWholeWords });
+                    ContentStack.Children.Add(new TextBlock {
+                        Text = item.Content,
+                        TextWrapping = TextWrapping.WrapWholeWords,
+                        Margin =new Thickness(2,3,2,3),
+                    });
                 else {
                     var item2 = PConModel.ContentImage.Find(i => i.Index == index);
                     if (item2 != null)

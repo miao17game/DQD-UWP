@@ -48,13 +48,13 @@ namespace DQD.Core. Tools {
         /// <param name="IsLightTheme">是否为亮主题</param>
         public static void InitDesktopStatusBar ( bool IsLightTheme ) {
             if ( !IsLightTheme ) {
-                SetTitleBarSelfView ( 0 , 32 , 32 , 32 , Colors . White , Colors . LightGray , Colors . Gray );
-                SetTitleBarButtonSelfView ( 0 , 32 , 32 , 32 , Colors . LightBlue );
-                SetTitleBarButtonHPIView ( Colors . SteelBlue , Colors . White , Colors . SteelBlue , Colors . Black , Colors . DarkGray , Colors . Gray );
+                SetTitleBarSelfView ( 0 , 51, 187, 115, Colors . White , Colors . LightGray , Colors . Gray );
+                SetTitleBarButtonSelfView ( 0 , 51, 187, 115, Colors .White);
+                SetTitleBarButtonHPIView ( Colors . SteelBlue , Colors . White , Colors .SteelBlue, Colors . Black , Colors . DarkGray , Colors . Gray );
             } else {
-                SetTitleBarSelfView ( 0 , 237 , 237 , 237 , Colors . Black , Colors . LightGray , Colors . Gray );
-                SetTitleBarButtonSelfView ( 0 , 237 , 237 , 237 , Colors . Black );
-                SetTitleBarButtonHPIView ( Colors . DarkGray , Colors . Black , Colors . LightGray , Colors . Black , Colors . DarkGray , Colors . Gray );
+                SetTitleBarSelfView ( 0 , 51, 187, 85 , Colors . White , Colors . LightGray , Colors . Gray );
+                SetTitleBarButtonSelfView ( 0 , 51, 187, 85, Colors . White );
+                SetTitleBarButtonHPIView ( Colors .SteelBlue, Colors . White , Colors .SteelBlue, Colors . Black , Colors . DarkGray , Colors . Gray );
             }
         }
 
