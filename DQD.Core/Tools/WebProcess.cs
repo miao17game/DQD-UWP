@@ -23,20 +23,10 @@ namespace DQD.Core. Tools {
             var request = WebRequest . Create ( urlString ) as HttpWebRequest;
             request . Method = "GET";
             try {
-                DispatcherTimer timer = new DispatcherTimer ( );
-                timer . Interval = new TimeSpan ( 0 , 0 , 0 , 1 );
-                int click = 0;
-                timer . Tick += async ( object sender , object e ) => {
-                    if ( click < 15 ) { click++; } else { timer . Stop ( );
-                        await Dispatcher . RunAsync ( CoreDispatcherPriority . Normal , ( ) => { new ToastSmooth ( "网络状态不佳 ：( " ) . Show ( ); } );
-                    }
-                };
-                timer . Start ( );
                 using ( var response = await request . GetResponseAsync ( ) as HttpWebResponse ) {
                     var stream = response . GetResponseStream ( );
                     var streamReader = new StreamReader ( stream , Encoding . UTF8 );
                     LrcStringBuider . Append ( await streamReader . ReadToEndAsync ( ) );
-                    timer . Stop ( );
                 }
             } catch ( WebException ex ) { Debug . WriteLine ( "\nTimeOut：\n" + ex . Message );
                 await Dispatcher . RunAsync ( CoreDispatcherPriority . Normal , ( ) => { new ToastSmooth ( "网络超时，请重试" ) . Show ( ); } );

@@ -411,6 +411,16 @@
                                Margin="0,5,5,5"
                                TextWrapping="WrapWholeWords"
                                Text="DQD-UWP绝对不会加入广告功能(*^_^*)"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="16"
+                               Margin="0,15,5,5"
+                               TextWrapping="WrapWholeWords"
+                               >
+                        <Run Text="版本号：1.0.1013"/><LineBreak/>
+                        <Run Text="联系作者"/><LineBreak/>
+                        <Run Text="WeChat：miao17game"/><LineBreak/>
+                        <Run Text="QQ：245396954"/><LineBreak/>
+                    </TextBlock>
                 </StackPanel>
             </RelativePanel>
         </Popup>

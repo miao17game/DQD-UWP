@@ -1,0 +1,55 @@
+﻿<UserControl
+    x:Class="DQD.Core.Controls.CommentPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DQD.Core.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid Name="Xgrid"
+          Margin="2"
+          CornerRadius="3"
+          Background="{ThemeResource AboutPageForeground}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Image Name="Ximage" 
+               Grid.RowSpan="2"
+               Source="{Binding ComImage}"
+               Width="50"
+               Height="50"
+               Margin=" 5"
+               VerticalAlignment="Top"/>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Column="1"
+                    Margin="5">
+            <TextBlock Name="Xname" 
+                       Text="{Binding ComName}"
+                       FontSize="14"
+                       FontWeight="SemiLight"
+                       Foreground="{ThemeResource DQDSummTextColor}"
+                       Margin="2,0,5,0"/>
+            <TextBlock Name="Xtime" 
+                       FontSize="13"
+                       FontWeight="Thin"
+                       Foreground="{ThemeResource DQDSummTextColor}"
+                       Text="{Binding ComTime}"
+                       Margin="2,0,5,0"/>
+        </StackPanel>
+        <TextBlock Name="Xcontent"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   FontSize="14"
+                   Text="{Binding ComContent}"
+                   TextWrapping="WrapWholeWords"
+                   Margin=" 7,5,7,0"/>
+    </Grid>
+</UserControl>

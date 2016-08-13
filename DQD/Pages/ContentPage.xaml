@@ -18,6 +18,7 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="ContentTitle.(TextBlock.FontSize)" Value="16"/>
+                        <Setter Target="CommentsTitle.(TextBlock.FontSize)" Value="14"/>
                         <Setter Target="ContentAuthor.(TextBlock.FontSize)" Value="10"/>
                         <Setter Target="ContentDate.(TextBlock.FontSize)" Value="10"/>
                     </VisualState.Setters>
@@ -59,6 +60,7 @@
                        Fill="#F0F0F0"
                        HorizontalAlignment="Left"/>
         </Grid>
+        
         <Border Background="{ThemeResource AppPersonalExtraBackground}"
                 Margin="0,60,0,0">
             <ScrollViewer>
@@ -78,7 +80,25 @@
                     <Rectangle Height="1" 
                                Margin="5,0,5,0"
                                Fill="{ThemeResource BorderTicknessColor01}"/>
+                    <!--ContentStackInCode-->
                     <StackPanel Name="ContentStack" Margin="10,0,10,0"/>
+                    <Grid Height=" 50">
+                        <TextBlock Name="CommentsTitle"
+                                   Text="热门评论"
+                                   FontSize="20"
+                                   Margin="15,2,0,2"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"/>
+                        <Rectangle Height="30" Width="10"
+                                   Fill="{ThemeResource DQDBackground}"
+                                   HorizontalAlignment="Left"/>
+                        <Rectangle Height="1"
+                                   Margin="5,0,5,0"
+                                   Fill="{ThemeResource BorderTicknessColor01}"
+                                   VerticalAlignment="Bottom"/>
+                    </Grid>
+                    <!--ConmentsStackInCode-->
+                    <StackPanel Name="CommentsStack" Margin="10,0,10,0"/>
                 </StackPanel>
             </ScrollViewer>
         </Border>

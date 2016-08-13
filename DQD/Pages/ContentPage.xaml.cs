@@ -1,4 +1,5 @@
-﻿using DQD.Core.Models.PageContentModels;
+﻿using DQD.Core.Controls;
+using DQD.Core.Models.PageContentModels;
 using DQD.Core.Tools;
 using ImageLib;
 using ImageLib.Cache.Memory;
@@ -47,7 +48,9 @@ namespace DQD.Net.Pages {
             var value = e.Parameter as Uri;
             if (value == null)
                 return;
-            await AddChildrenToStackPanel(value);
+            var urlString = await WebProcess.GetHtmlResources(value.ToString());
+            AddChildrenToStackPanel(urlString.ToString());
+            AddChildrenToCommentsStack(urlString.ToString());
         }
 
         #endregion
@@ -68,8 +71,8 @@ namespace DQD.Net.Pages {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private async System.Threading.Tasks.Task AddChildrenToStackPanel(Uri value) {
-            var PConModel = await DataProcess.GetPageInnerContent(value.ToString());
+        private void AddChildrenToStackPanel(string value) {
+            var PConModel = DataProcess.GetPageInnerContent(value);
             ContentTitle.Text = PConModel.Title;
             ContentAuthor.Text = "来源：" + PConModel.Author;
             ContentDate.Text = PConModel.Date;
@@ -77,9 +80,9 @@ namespace DQD.Net.Pages {
             for (int index = 1; index <= num; index++) {
                 object item = default(object);
                 ContentType type =
-                    (item = PConModel.ContentString.Find(i => i.Index == index)) != null ? ContentType.String:
-                    (item = PConModel.ContentImage.Find(i => i.Index == index)) != null ? ContentType.Image:
-                    (item = PConModel.ContentGif.Find(i => i.Index == index)) != null ? ContentType.Gif:
+                    (item = PConModel.ContentString.Find(i => i.Index == index)) != null ? ContentType.String :
+                    (item = PConModel.ContentImage.Find(i => i.Index == index)) != null ? ContentType.Image :
+                    (item = PConModel.ContentGif.Find(i => i.Index == index)) != null ? ContentType.Gif :
                     ContentType.None;
                 switch (type) {
                     case ContentType.String:
@@ -104,8 +107,25 @@ namespace DQD.Net.Pages {
                             Stretch = Stretch.UniformToFill
                         });
                         break;
-                    case ContentType.None:break;
+                    case ContentType.None: break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Add children to the Topcomments stackpanel
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private void AddChildrenToCommentsStack(string value) {
+            var PConModel = DataProcess.GetPageTopComments(value);
+            foreach (var item in PConModel) {
+                CommentsStack.Children.Add(new CommentPanel {
+                    ComContent = item.Content,
+                    ComImage = item.Image,
+                    ComName = item.Name,
+                    ComTime = item.Time,
+                });
             }
         }
 

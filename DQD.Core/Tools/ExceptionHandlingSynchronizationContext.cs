@@ -136,8 +136,8 @@ namespace DQD.Core. Tools {
             UnhandledException ( this , exWrapper );
 
 #if DEBUG && !DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
-            //if ( System . Diagnostics . Debugger . IsAttached )
-            //    System . Diagnostics . Debugger . Break ( );
+            if (System.Diagnostics.Debugger.IsAttached)
+                System.Diagnostics.Debugger.Break();
 #endif
 
             return exWrapper . Handled;

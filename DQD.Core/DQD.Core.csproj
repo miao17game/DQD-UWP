@@ -108,6 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\BasePage.cs" />
+    <Compile Include="Controls\CommentPanel.xaml.cs">
+      <DependentUpon>CommentPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PersonalPivot.cs" />
     <Compile Include="Controls\TabHeader.xaml.cs">
       <DependentUpon>TabHeader.xaml</DependentUpon>
@@ -117,6 +120,7 @@
     </Compile>
     <Compile Include="DataVirtualization\DQDLoadContext.cs" />
     <Compile Include="DataVirtualization\IncrementalLoadingBase.cs" />
+    <Compile Include="Models\CommentModels\CommentModel.cs" />
     <Compile Include="Models\PageContentModels\ContentGifs.cs" />
     <Compile Include="Models\PageContentModels\ContentImages.cs" />
     <Compile Include="Models\PageContentModels\ContentStrings.cs" />
@@ -141,6 +145,10 @@
     <EmbeddedResource Include="Properties\DQD.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\CommentPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\TabHeader.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
