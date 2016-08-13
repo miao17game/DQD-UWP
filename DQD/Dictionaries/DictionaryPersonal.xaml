@@ -370,7 +370,7 @@
                                         Width="44"
                                         RadiusX="10"
                                         RadiusY="10"
-                                        Fill="{ThemeResource AppPersonalMusicBarBackground}"
+                                        Fill="{ThemeResource DQDBackground2}"
                                         Stroke="{ThemeResource SwitchForeground}"
                                         StrokeThickness="{ThemeResource ToggleSwitchOnStrokeThickness}"
                                         Opacity="0"/>

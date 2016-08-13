@@ -1,5 +1,6 @@
 ﻿{
   "dependencies": {
+    "ImageLib.UWP": "5.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2"
   },
   "frameworks": {

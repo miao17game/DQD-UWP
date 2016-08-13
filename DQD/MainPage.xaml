@@ -9,11 +9,110 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-
+        <Style x:Key="MainPagePopupButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundTransparentBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="UseSystemFocusVisuals" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="rectangle"
+    											Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{TemplateBinding Background}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="rectangle"
+    											Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppPersonalFirstAccent}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="rectangle"
+    											Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppPersonalFirstAccent}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="rectangle"
+    											Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppPersonalFirstAccent}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+    											Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+    											Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledTransparentBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter"
+    							BorderBrush="{TemplateBinding BorderBrush}"
+    							BorderThickness="{TemplateBinding BorderThickness}"
+    							Content="{TemplateBinding Content}"
+    							Background="{TemplateBinding Background}"
+    							ContentTransitions="{TemplateBinding ContentTransitions}"
+    							ContentTemplate="{TemplateBinding ContentTemplate}"
+    							Padding="{TemplateBinding Padding}"
+    							HorizontalContentAlignment="Left"
+    							VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+    							AutomationProperties.AccessibilityView="Raw"/>
+                            <Rectangle x:Name="rectangle"
+    							Fill="Transparent"
+    							Height="0"
+    							VerticalAlignment="Top"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SummaryTextStyle" TargetType="TextBlock" >
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Thin"/>
+            <Setter Property="Foreground" Value="{ThemeResource AppPersonalTextColorAlphaItem01}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="TitleTextStyle" TargetType="TextBlock" >
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="{ThemeResource AppPersonalTextColorPure02}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Storyboard x:Name="EnterPopupBorder">
+            <FadeInThemeAnimation Storyboard.TargetName="PopupBorder" />
+        </Storyboard>
+        <Storyboard x:Name="OutPopupBorder">
+            <FadeOutThemeAnimation Storyboard.TargetName="PopupBorder" />
+        </Storyboard>
     </Page.Resources>
 
     <Grid x:Name="grid" 
-          Background="{ThemeResource DQDBackground}"
+          Background="{ThemeResource DQDSummTextColor}"
           SizeChanged="grid_SizeChanged">
 
         <VisualStateManager.VisualStateGroups>
@@ -54,6 +153,8 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="BaseGrid.(FrameworkElement.Width)" Value="500"/>
+                        <Setter Target="SettingsPopup.(FrameworkElement.Width)" Value="500"/>
+                        <Setter Target="PopupStack.(FrameworkElement.Width)" Value="500"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -63,26 +164,32 @@
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
+        
         <Grid Name="BaseGrid"
-              Margin="0,0,2,0"
-              SizeChanged="BaseGrid_SizeChanged">
+              Margin="0,0,1,0"
+              SizeChanged="BaseGrid_SizeChanged"
+              Background="{ThemeResource DQDBackground}">
             <Image Source="/Assets/title.png"
                    Height=" 40" 
                    Margin=" 15,10,0,5"
                    VerticalAlignment="Top"
                    HorizontalAlignment="Left"/>
-            <Button Name="ThemeModeBtn" 
-                    FontFamily="Segoe MDL2 Assets"
+            <Button Name="SettingsBtn" 
+                    Style="{StaticResource MainPageButtonBackHamburgerStyle}"
                     Foreground="White"
                     Background="Transparent"
-                    Content="&#xEC46;"
-                    FontSize="24"
+                    Content="&#xE115;"
+                    FontSize="20"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
-                    Margin="5"
+                    Margin="5,5,5,5"
                     Height=" 50"
                     Width=" 50"
-                    Click="ThemeModeBtn_Click"/>
+                    Click="SettingsBtn_Click"/>
+            <Rectangle Height="1"
+                       Fill="{ThemeResource DQDSummTextColor}"
+                       VerticalAlignment="Top"
+                       Margin="0,59,0,0"/>
             <MPV:PersonalPivot Name="RootPivot" 
                                Margin="0,60,0,0" 
                                Width="{Binding Width, ElementName=BaseGrid, Mode=TwoWay}"
@@ -128,7 +235,6 @@
 
         <Grid Name="sideGrid" Grid.Column="1">
             <Image Source="/Assets/38565-105.jpg"
-               
                Stretch="UniformToFill"/>
             <StackPanel Orientation="Vertical" 
                     HorizontalAlignment="Right"
@@ -142,9 +248,175 @@
                        FontSize="14"
                        Foreground="#C0C0C0"/>
             </StackPanel>
-
             <Frame Name="ContentFrame" />
         </Grid>
-        
+
+        <Border Name="PopupBorder" 
+                Background="{ThemeResource DQDPopupBackColor}"
+                Grid.ColumnSpan="2"
+                Visibility="Collapsed"/>
+
+        <Popup Name="SettingsPopup"
+               Width="300"
+               Grid.ColumnSpan="2"
+               HorizontalAlignment="Right"
+               IsLightDismissEnabled="True"
+               IsOpen="False"
+               SizeChanged="SettingsPopup_SizeChanged"
+               Closed="SettingsPopup_Closed">
+            <Popup.ChildTransitions>
+                <TransitionCollection>
+                    <PopupThemeTransition 
+                        FromHorizontalOffset="200" 
+                        FromVerticalOffset="0"/>
+                </TransitionCollection>
+            </Popup.ChildTransitions>
+            <!--<VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="OpenStates">
+                    <VisualState x:Name="Closed">
+                        <Storyboard>
+                            <PopOutThemeAnimation TargetName="SettingsPopup"/>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Opened">
+                        <Storyboard>
+                            <PopInThemeAnimation 
+                                        FromHorizontalOffset="300" 
+                                        TargetName="SettingsPopup"/>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>-->
+            <RelativePanel Name="PopupStack"
+                        Width="300" 
+                        Height="{Binding ActualHeight, ElementName=SettingsPopup,Mode=OneWay}"
+                        Background="{ThemeResource DQDBackground2}">
+                <Grid Name="TitleStack"
+                      RelativePanel.AlignTopWithPanel="True"
+                      RelativePanel.AlignLeftWithPanel="True"
+                      RelativePanel.AlignRightWithPanel="True">
+                    <Button Name="PopupBackButton"
+                            Click="PopupBackButton_Click"
+                            HorizontalAlignment="Left" 
+                            VerticalAlignment="Center"
+                            Margin="5"
+                            Style="{StaticResource MainPageButtonBackHamburgerStyle}">
+                        <Grid>
+                            <Ellipse Width=" 35" Height=" 35" Fill="#EFEFEF"/>
+                            <TextBlock Text="&#xE96F;" 
+                                   FontSize="20" 
+                                   Foreground="{ThemeResource DQDBackground2}"
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"
+                                   Margin="-5,0,0,0"/>
+                        </Grid>
+                    </Button>
+                    <Button Name="ThemeModeBtn" 
+                            Style="{StaticResource MainPageButtonBackHamburgerStyle}"
+                            Foreground="White"
+                            Background="Transparent"
+                            Content="&#xEC46;"
+                            FontSize="32"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            Margin="5"
+                            Height=" 50"
+                            Width=" 50"
+                            Click="ThemeModeBtn_Click"/>
+                </Grid>
+                <Button Content="设置"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Style="{StaticResource MainPagePopupButtonStyle}"
+                        Name="SettBtn"
+                        Margin="5,2" 
+                        Background="Transparent" 
+                        Foreground="#EFEFEF"
+                        Click="PopupInnerClick"
+                        RelativePanel.Below="TitleStack"
+                        HorizontalAlignment="Stretch"/>
+                <Button Content="关于"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Style="{StaticResource MainPagePopupButtonStyle}"
+                        Name="AboutBtn"
+                        Margin="5,2" 
+                        Background="Transparent" 
+                        Foreground="#EFEFEF"
+                        Click="PopupInnerClick"
+                        RelativePanel.Below="SettBtn"
+                        HorizontalAlignment="Stretch"/>
+                <StackPanel Name="SettMenu"
+                            Background="{ThemeResource AppPersonalExtraBackground02}"
+                            RelativePanel.AlignBottomWithPanel="True"
+                            RelativePanel.AlignTopWithPanel="True"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignRightWithPanel="True"
+                            Margin="1,60,0,0"
+                            Padding="5"
+                            Visibility="Collapsed">
+                    <Rectangle Height="1"
+                               Fill="{ThemeResource DQDBackground}"
+                               Margin=" -2,-2,-2,0"/>
+                    <TextBlock Text="设置" FontSize="20"/>
+                    <Grid Margin="0,10,0,0">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="多彩状态栏"
+                                   Style="{StaticResource TitleTextStyle}"/>
+                            <TextBlock Text="改变标题栏或状态栏风格"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                        </StackPanel>
+                        <ToggleSwitch Name="ColorSwitch" 
+                                      Style="{ThemeResource ThemeModeSwitch}" 
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,-100,0"
+                                      OnContent=" " 
+                                      OffContent=" " 
+                                      Toggled="Switch_Toggled" />
+                    </Grid>
+                </StackPanel>
+                <StackPanel Name="AboutMenu"
+                            Background="{ThemeResource AppPersonalExtraBackground02}"
+                            RelativePanel.AlignBottomWithPanel="True"
+                            RelativePanel.AlignTopWithPanel="True"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignRightWithPanel="True"
+                            Margin="1,60,0,0"
+                            Padding="5"
+                            Visibility="Collapsed">
+                    <Rectangle Height="1"
+                               Fill="{ThemeResource DQDBackground}"
+                               Margin=" -2,-2,-2,0"/>
+                    <TextBlock Text="关于" FontSize="20"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="12"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords"
+                               Text="这是一款第三方应用，App中所有内容均来源于www.dongqiudi.com，
+虽然内容来自网页，但绝非大家深恶痛绝的网页嵌套，大部分内容均已本地化，
+在网络畅通的情况下，可以快速的加载内容。"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="12"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords"
+                               Text="懂球帝的内容较多，大量的内容目前已经在开发中，以后会慢慢补齐。"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="12"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords"
+                               Text="由于是第三方应用，没有官方API支持，暂时不支持登录功能，圈子功能等内容，
+开发者正在努力的寻求解决方法，有办法的朋友也可以援助我/(ㄒoㄒ)/~~。"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="12"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords"
+                               Text="DQD-UWP绝对不会加入广告功能(*^_^*)"/>
+                </StackPanel>
+            </RelativePanel>
+        </Popup>
+
+        <Frame Name="PrepareFrame" 
+               Grid.ColumnSpan="2"/>
+
     </Grid>
 </Page>

@@ -5,8 +5,9 @@
     /// </summary>
     public static class SettingsConstants {
         // Data key
-        public const string IsThemeLight = "IS_THEME_LIGHT";
         public const string EmailDisqus = "EMAIL_DISQUS";
         public const string PasswordDisqus = "PASSWORD_DISQUS";
+        public const string IsLigheOrNot = "THEME_MODE";
+        public const string IsColorfulOrNot = "Color_MODE";
     }
 }

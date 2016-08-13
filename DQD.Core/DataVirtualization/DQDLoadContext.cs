@@ -23,7 +23,9 @@ namespace DQD.Core.DataVirtualization {
     // To create your own Infinite List, you can create a class like this one that doesn't have 'generator' or 'maxcount', 
     //  and instead downloads items from a live data source in LoadMoreItemsOverrideAsync.
     public class DQDLoadContext<T>:IncrementalLoadingBase {
-        public  DQDLoadContext(FetchDataCallbackHandler back,int num,string targetHost) {
+        #region Constructors
+
+        public DQDLoadContext(FetchDataCallbackHandler back,int num,string targetHost) {
             FetchCallback=back;
             number = num;
             this.targetHost = targetHost;
@@ -46,33 +48,43 @@ namespace DQD.Core.DataVirtualization {
 
         }
 
-        /// <summary>
-        /// do not wait haha - -
-        /// </summary>
+        #endregion
+
+        #region Founctions Overrided
+
         private async void LoadPreview() { await LoadMoreItemsAsync(0); }
 
-        protected async override Task<IList<object>> LoadMoreItemsOverrideAsync(System.Threading.CancellationToken c,uint count) {
+        /// <summary>
+        /// load resources of list from target html
+        /// </summary>
+        /// <param name="token">CancellationToken</param>
+        /// <param name="count">i don not know what num it is...maybe no use here</param>
+        /// <returns></returns>
+        protected async override Task<IList<object>> LoadMoreItemsOverrideAsync(System.Threading.CancellationToken token,uint count) {
             // Wait for work 
             await Task.Delay(10);
             var coll = new ObservableCollection<ContentListModel>();
             if (_Flag == InitSituation.Default) {
-                var targetHost = "http://www.dongqiudi.com?tab={1}&page={0}";
-                targetHost = string.Format(targetHost, number, 1);
+                wholeCount += 15;
+                var targetHost = "http://www.dongqiudi.com?tab={0}&page={1}";
+                targetHost = string.Format(targetHost, number , wholeCount / 15);
                 coll = await DataHandler.SetHomeListResources(targetHost);
                 _Flag = InitSituation.Special;
             } else {
+                wholeCount += 15;
                 // This code simply generates
                 var targetHost = "http://www.dongqiudi.com?tab={1}&page={0}";
-                targetHost = string.Format(targetHost, wholeCount / 15 + 1, number);
+                targetHost = string.Format(targetHost, wholeCount / 15 , number);
                 coll = await DataHandler.SetHomeListResources(targetHost);
-                wholeCount += (uint)coll.Count;
             }
             return (coll).ToArray();
         }
 
         protected override bool HasMoreItemsOverride() { return true; }
 
-        #region State
+        #endregion
+
+        #region Properties and State
 
         uint wholeCount = 0;
         public delegate Task<ObservableCollection<T>> FetchDataCallbackHandler(string targetHost);

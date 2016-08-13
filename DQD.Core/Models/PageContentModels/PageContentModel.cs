@@ -11,5 +11,6 @@ namespace DQD.Core.Models.PageContentModels {
         public string Date { get; set; }
         public List<ContentStrings> ContentString { get; set; }
         public List<ContentImages> ContentImage { get; set; }
+        public List<ContentGifs> ContentGif { get; set; }
     }
 }

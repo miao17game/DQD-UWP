@@ -107,6 +107,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\BasePage.cs" />
     <Compile Include="Controls\PersonalPivot.cs" />
     <Compile Include="Controls\TabHeader.xaml.cs">
       <DependentUpon>TabHeader.xaml</DependentUpon>
@@ -116,6 +117,7 @@
     </Compile>
     <Compile Include="DataVirtualization\DQDLoadContext.cs" />
     <Compile Include="DataVirtualization\IncrementalLoadingBase.cs" />
+    <Compile Include="Models\PageContentModels\ContentGifs.cs" />
     <Compile Include="Models\PageContentModels\ContentImages.cs" />
     <Compile Include="Models\PageContentModels\ContentStrings.cs" />
     <Compile Include="Models\DataHandler.cs" />

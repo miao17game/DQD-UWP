@@ -6,35 +6,36 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using DQD.Net.Pages;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.UI.Core;
 using Windows.System.Profile;
 using DQD.Core.Tools;
-using DQD.Core.Controls;
+using DQD.Core.Helpers;
 
 namespace DQD.Net {
     /// <summary>
     /// MainPage Code Page
     /// </summary>
     public sealed partial class MainPage:Page {
-        
+        #region Constructor
+
         public MainPage() {
             Current=this;
             this.InitializeComponent();
             contentFrame = this.ContentFrame;
             SideGrid = this.sideGrid;
+            PrepareFrame.Navigate(typeof(PreparePage));
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
-            StatusBarInit.InitDesktopStatusBar(RequestedTheme != ElementTheme.Dark);
-            StatusBarInit.InitMobileStatusBar(RequestedTheme != ElementTheme.Dark);
+            var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ??false;
+            var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
+            RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
+            ThemeModeBtn.Content = isLightOrNot ? char.ConvertFromUtf32(0xEC46) : char.ConvertFromUtf32(0xEC8A);
+            ColorSwitch.IsOn = isColorfulOrNot;
         }
+
+        #endregion
 
         #region Events
 
@@ -67,10 +68,70 @@ namespace DQD.Net {
         }
 
         private void ThemeModeBtn_Click(object sender, RoutedEventArgs e) {
-            (sender as Button).Content = RequestedTheme == ElementTheme.Dark?char.ConvertFromUtf32(0xEC46): char.ConvertFromUtf32(0xEC8A);
-            RequestedTheme = RequestedTheme == ElementTheme.Dark? ElementTheme.Light: ElementTheme.Dark;
-            StatusBarInit.InitMobileStatusBar(RequestedTheme != ElementTheme.Dark);
-            StatusBarInit.InitDesktopStatusBar(RequestedTheme != ElementTheme.Dark);
+            var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
+            var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
+            (sender as Button).Content = !isLightOrNot ? char.ConvertFromUtf32(0xEC46) : char.ConvertFromUtf32(0xEC8A);
+            RequestedTheme = !isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsLigheOrNot, !isLightOrNot);
+            if (isColorfulOrNot) {
+                StatusBarInit.InitDesktopStatusBar(!isLightOrNot);
+                StatusBarInit.InitMobileStatusBar(!isLightOrNot);
+            } else {
+                StatusBarInit.InitDesktopStatusBarToPrepare(!isLightOrNot);
+                StatusBarInit.InitMobileStatusBarToPrepare(!isLightOrNot);
+            }
+        }
+
+        private void Switch_Toggled(object sender, RoutedEventArgs e) {
+            var isColorfulOrNot = (sender as ToggleSwitch).IsOn;
+            var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsColorfulOrNot, (sender as ToggleSwitch).IsOn);
+            if (isColorfulOrNot) {
+                StatusBarInit.InitDesktopStatusBar(isLightOrNot);
+                StatusBarInit.InitMobileStatusBar(isLightOrNot);
+            } else {
+                StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
+                StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
+            }
+        }
+
+        private void SettingsBtn_Click(object sender, RoutedEventArgs e) {
+            SettingsPopup.IsOpen = true;
+            PopupBorder.Visibility = Visibility.Visible;
+            EnterPopupBorder.Begin();
+        }
+
+        private void SettingsPopup_SizeChanged(object sender, SizeChangedEventArgs e) {
+            PopupStack.Height = (sender as Popup).ActualHeight;
+        }
+
+        private void PopupBackButton_Click(object sender, RoutedEventArgs e) {
+            if (SettMenu.Visibility == Visibility.Visible) { SettMenu.Visibility = Visibility.Collapsed; return; }
+            if (AboutMenu.Visibility == Visibility.Visible) { AboutMenu.Visibility = Visibility.Collapsed; return; }
+            SettingsPopup.IsOpen = false;
+        }
+
+        private void PopupInnerClick(object sender, RoutedEventArgs e) {
+            var button = sender as Button;
+            if (button.Name.Equals("SettBtn")) {
+                SettMenu.Visibility = Visibility.Visible;
+                AboutMenu.Visibility = Visibility.Collapsed;
+            } else {
+                SettMenu.Visibility = Visibility.Collapsed;
+                AboutMenu.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void SettingsPopup_Closed(object sender, object e) {
+            OutPopupBorder.Completed += OnOutPopupBorderOut;
+            OutPopupBorder.Begin();
+            SettMenu.Visibility = Visibility.Collapsed;
+            AboutMenu.Visibility = Visibility.Collapsed;
+        }
+
+        private void OnOutPopupBorderOut(object sender, object e) {
+            OutPopupBorder.Completed -= OnOutPopupBorderOut;
+            PopupBorder.Visibility = Visibility.Collapsed;
         }
 
         #endregion
@@ -125,6 +186,26 @@ namespace DQD.Net {
         public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri);
         private NavigateEventHandler SelectionChanged = (sender, type, frame) => { frame.Navigate(type); };
         public ClickEventHandler ItemClick = (sender, type, frame, uri) => { frame.Navigate(type, uri); };
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// help to change style of statusbar
+        /// </summary>
+        /// <param name="isColorfulOrNot"></param>
+        /// <param name="isLightOrNot"></param>
+        public void ChangeStatusBar(bool isColorfulOrNot, bool isLightOrNot) {
+            RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
+            if (isColorfulOrNot) {
+                StatusBarInit.InitDesktopStatusBar(isLightOrNot);
+                StatusBarInit.InitMobileStatusBar(isLightOrNot);
+            } else {
+                StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
+                StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
+            }
+        }
 
         #endregion
     }

@@ -6,21 +6,12 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using DQD.Core.Models;
-using DQD.Core.Tools;
-using HtmlAgilityPack;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
 using DQD.Core.DataVirtualization;
-using DQD.Core.Controls;
 using Windows.System.Profile;
 
 namespace DQD.Net.Pages {
@@ -38,7 +29,7 @@ namespace DQD.Net.Pages {
             InitView();
         }
 
-        #region Founctions
+        #region Methods
 
         /// <summary>
         /// Init the Page Initual databundle resources.
@@ -57,8 +48,7 @@ namespace DQD.Net.Pages {
         private void ListView_ItemClick(object sender,ItemClickEventArgs e) {
             var itemUri = (e.ClickedItem as ContentListModel).Path;
             MainPage.Current.ItemClick ?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri);
-            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
-                MainPage.Current.SideGrid.Visibility = Visibility.Visible;
+            MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
 
         private void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {

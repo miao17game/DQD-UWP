@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -33,12 +34,21 @@ namespace DQD.Core. Tools {
                 uint index = 0;
                 model.ContentImage = new List<ContentImages>();
                 model.ContentString = new List<ContentStrings>();
+                model.ContentGif = new List<ContentGifs>();
                 foreach (var item in contents) {
                     index++;
-                    if (item.SelectSingleNode("img") != null)
-                        model.ContentImage.Add(new ContentImages { Image = new BitmapImage(new Uri(item.SelectSingleNode("img").Attributes["src"].Value)), Index = index });
-                    else
+                    if (item.SelectSingleNode("img") != null) {
+                        string Rstring = ".+.gif";
+                        Regex reg = new Regex(Rstring);
+                        var targetStr = item.SelectSingleNode("img").Attributes["src"].Value;
+                        var coll = reg.Matches(targetStr);
+                        if (coll.Count == 0)
+                            model.ContentImage.Add(new ContentImages { Image = new BitmapImage(new Uri(targetStr)), Index = index });
+                        else
+                            model.ContentGif.Add(new ContentGifs { ImageUri = new Uri(targetStr), Index = index });
+                    } else {
                         model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index });
+                    }
                 }
             } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
             } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());

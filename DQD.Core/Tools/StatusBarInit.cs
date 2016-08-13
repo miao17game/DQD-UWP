@@ -25,20 +25,31 @@ namespace DQD.Core. Tools {
         /// <summary>
         /// 为准备画面初始化Desktop任务栏
         /// </summary>
-        public static void InitDesktopStatusBarToPrepare ( ) {
-            SetTitleBarSelfView ( 0 , 27 , 154 , 239 , Colors . White , Colors . LightGray , Colors . Gray );
-            SetTitleBarButtonSelfView ( 0 , 27 , 154 , 239 , Colors . White );
-            SetTitleBarButtonHPIView ( Colors . SteelBlue , Colors . White , Colors . SteelBlue , Colors . Black , Colors . DarkGray , Colors . Gray );
+        public static void InitDesktopStatusBarToPrepare (bool IsLightTheme) {
+            if (!IsLightTheme) {
+                SetTitleBarSelfView(0, 32, 32, 32, Colors.White, Colors.LightGray, Colors.Gray);
+                SetTitleBarButtonSelfView(0, 32, 32, 32, Colors.White);
+                SetTitleBarButtonHPIView(Colors.SteelBlue, Colors.White, Colors.SteelBlue, Colors.White, Colors.DarkGray, Colors.Gray);
+            } else {
+                SetTitleBarSelfView(0, 246, 246, 246, Colors.Black, Colors.LightGray, Colors.Gray);
+                SetTitleBarButtonSelfView(0, 246, 246, 246, Colors.Black);
+                SetTitleBarButtonHPIView(Colors.SteelBlue, Colors.Black, Colors.SteelBlue, Colors.White, Colors.DarkGray, Colors.Gray);
+            }
         }
         /// <summary>
         /// 为准备画面初始化Mobile任务栏
         /// </summary>
-        public static void InitMobileStatusBarToPrepare ( ) {
-            if ( Windows . Foundation . Metadata . ApiInformation . IsTypePresent ( "Windows.UI.ViewManagement.StatusBar" ) ) {
-                StatusBar statusBar = StatusBar . GetForCurrentView ( );
-                statusBar . BackgroundColor = Color . FromArgb ( 0 , 27 , 154 , 239 );
-                statusBar . ForegroundColor = Colors . White;
-                statusBar . BackgroundOpacity = 1;
+        public static void InitMobileStatusBarToPrepare (bool IsLightTheme) {
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) {
+                StatusBar statusBar = StatusBar.GetForCurrentView();
+                if (!IsLightTheme) {
+                    statusBar.BackgroundColor = Color.FromArgb(0, 32, 32, 32);
+                    statusBar.ForegroundColor = Colors.White;
+                } else {
+                    statusBar.BackgroundColor = Color.FromArgb(0, 246, 246, 246);
+                    statusBar.ForegroundColor = Colors.Black;
+                }
+                statusBar.BackgroundOpacity = 1;
             }
         }
 
@@ -50,11 +61,11 @@ namespace DQD.Core. Tools {
             if ( !IsLightTheme ) {
                 SetTitleBarSelfView ( 0 , 51, 187, 115, Colors . White , Colors . LightGray , Colors . Gray );
                 SetTitleBarButtonSelfView ( 0 , 51, 187, 115, Colors .White);
-                SetTitleBarButtonHPIView ( Colors . SteelBlue , Colors . White , Colors .SteelBlue, Colors . Black , Colors . DarkGray , Colors . Gray );
+                SetTitleBarButtonHPIView ( Colors . SteelBlue , Colors . White , Colors .SteelBlue, Colors .White, Colors . DarkGray , Colors . Gray );
             } else {
                 SetTitleBarSelfView ( 0 , 51, 187, 85 , Colors . White , Colors . LightGray , Colors . Gray );
                 SetTitleBarButtonSelfView ( 0 , 51, 187, 85, Colors . White );
-                SetTitleBarButtonHPIView ( Colors .SteelBlue, Colors . White , Colors .SteelBlue, Colors . Black , Colors . DarkGray , Colors . Gray );
+                SetTitleBarButtonHPIView ( Colors .SteelBlue, Colors . White , Colors .SteelBlue, Colors . White , Colors . DarkGray , Colors . Gray );
             }
         }
 
