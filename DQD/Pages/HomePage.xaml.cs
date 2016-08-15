@@ -13,13 +13,15 @@ using Windows.UI.Xaml.Navigation;
 using System.Diagnostics;
 using DQD.Core.DataVirtualization;
 using Windows.System.Profile;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace DQD.Net.Pages {
     /// <summary>
     /// HomePage Code Page
     /// </summary>
     public sealed partial class HomePage:Page {
-        
+
+        #region Constructor
         public HomePage() {
             Current = this;
             cacheDic = new Dictionary<string, DQDLoadContext<ContentListModel>>();
@@ -28,6 +30,7 @@ namespace DQD.Net.Pages {
             this.InitializeComponent();
             InitView();
         }
+        #endregion
 
         #region Methods
 
@@ -47,7 +50,7 @@ namespace DQD.Net.Pages {
 
         private void ListView_ItemClick(object sender,ItemClickEventArgs e) {
             var itemUri = (e.ClickedItem as ContentListModel).Path;
-            MainPage.Current.ItemClick ?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri);
+            MainPage.Current.ItemClick?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri);
             MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
 

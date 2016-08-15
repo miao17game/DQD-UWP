@@ -25,12 +25,17 @@ namespace DQD.Net.Pages {
     public sealed partial class PreparePage : BasePage {
         private TranslateTransform translateT;
         DispatcherTimer WeocomeTimer;
+        private bool isColorfulOrNot;
+        private bool isLightOrNot;
 
         public PreparePage ( ) {
             translateT = this . RenderTransform as TranslateTransform;
             this . InitializeComponent ( );
-            StatusBarInit . InitDesktopStatusBar ( false );
-            StatusBarInit . InitMobileStatusBar ( false );
+            isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
+            isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
+            if (StatusBarInit.IsTargetMobile()) { StatusBarInit.InitInnerMobileStatusBar(true);}
+            StatusBarInit.InitDesktopStatusBar(false);
+            StatusBarInit.InitMobileStatusBar(false);
             InitSliderTimer ( );
             OutIMG.BeginTime = new TimeSpan(0, 0, 0, 0, 500);
             OutREC.BeginTime = new TimeSpan(0, 0, 0, 0, 500);
@@ -71,8 +76,6 @@ namespace DQD.Net.Pages {
             if ( translateT == null )
                 this . RenderTransform = new TranslateTransform ( );
             translateT . Y = 0;
-            var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
-            var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
             RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
             MainPage.Current.ChangeStatusBar(isColorfulOrNot, isLightOrNot);
         }

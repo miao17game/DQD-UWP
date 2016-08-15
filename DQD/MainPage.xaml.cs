@@ -13,6 +13,9 @@ using Windows.UI.Core;
 using Windows.System.Profile;
 using DQD.Core.Tools;
 using DQD.Core.Helpers;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media;
 
 namespace DQD.Net {
     /// <summary>
@@ -26,13 +29,13 @@ namespace DQD.Net {
             this.InitializeComponent();
             contentFrame = this.ContentFrame;
             SideGrid = this.sideGrid;
-            PrepareFrame.Navigate(typeof(PreparePage));
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
-            var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ??false;
+            var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
             var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
             RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
             ThemeModeBtn.Content = isLightOrNot ? char.ConvertFromUtf32(0xEC46) : char.ConvertFromUtf32(0xEC8A);
             ColorSwitch.IsOn = isColorfulOrNot;
+            PrepareFrame.Navigate(typeof(PreparePage));
         }
 
         #endregion
@@ -88,10 +91,22 @@ namespace DQD.Net {
             SettingsHelper.SaveSettingsValue(SettingsConstants.IsColorfulOrNot, (sender as ToggleSwitch).IsOn);
             if (isColorfulOrNot) {
                 StatusBarInit.InitDesktopStatusBar(isLightOrNot);
-                StatusBarInit.InitMobileStatusBar(isLightOrNot);
+                StatusBarInit.InitInnerDesktopStatusBar(true);
+                Window.Current.SetTitleBar(TitleBarRec);
+                if (StatusBarInit.IsTargetMobile()) {
+                    StatusBarInit.InitInnerMobileStatusBar(true);
+                    BaseGrid.Margin = new Thickness(0, 16, 0, 0);
+                    sideGrid.Margin = new Thickness(0, 16, 0, 0);
+                }
             } else {
                 StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
                 StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
+                StatusBarInit.InitInnerDesktopStatusBar(false);
+                if (StatusBarInit.IsTargetMobile()) {
+                    StatusBarInit.InitInnerMobileStatusBar(false);
+                    BaseGrid.Margin = new Thickness(0, 0, 0, 0);
+                    sideGrid.Margin = new Thickness(0, 0, 0, 0);
+                }
             }
         }
 
@@ -197,13 +212,22 @@ namespace DQD.Net {
         /// <param name="isColorfulOrNot"></param>
         /// <param name="isLightOrNot"></param>
         public void ChangeStatusBar(bool isColorfulOrNot, bool isLightOrNot) {
-            RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
             if (isColorfulOrNot) {
                 StatusBarInit.InitDesktopStatusBar(isLightOrNot);
-                StatusBarInit.InitMobileStatusBar(isLightOrNot);
+                Window.Current.SetTitleBar(TitleBarRec);
+                if (StatusBarInit.IsTargetMobile()) {
+                    StatusBarInit.InitInnerMobileStatusBar(true);
+                    BaseGrid.Margin = new Thickness(0, 16, 0, 0);
+                    sideGrid.Margin = new Thickness(0, 16, 0, 0);
+                }
             } else {
                 StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
                 StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
+                if (StatusBarInit.IsTargetMobile()) {
+                    StatusBarInit.InitInnerMobileStatusBar(false);
+                    BaseGrid.Margin = new Thickness(0, 0, 0, 0);
+                    sideGrid.Margin = new Thickness(0, 0, 0, 0);
+                }
             }
         }
 

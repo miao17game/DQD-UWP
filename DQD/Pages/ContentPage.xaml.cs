@@ -20,6 +20,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -32,6 +33,9 @@ namespace DQD.Net.Pages {
         #region Constructor
 
         public ContentPage() {
+            transToSideGrid = this.RenderTransform as TranslateTransform;
+            if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
+            this.Opacity = 0;
             this.InitializeComponent();
             InitImageLoader();
         }
@@ -76,6 +80,7 @@ namespace DQD.Net.Pages {
             ContentTitle.Text = PConModel.Title;
             ContentAuthor.Text = "来源：" + PConModel.Author;
             ContentDate.Text = PConModel.Date;
+            ContentStack.Children.Clear();
             int num = PConModel.ContentImage.Count + PConModel.ContentString.Count + PConModel.ContentGif.Count;
             for (int index = 1; index <= num; index++) {
                 object item = default(object);
@@ -119,6 +124,7 @@ namespace DQD.Net.Pages {
         /// <returns></returns>
         private void AddChildrenToCommentsStack(string value) {
             var PConModel = DataProcess.GetPageTopComments(value);
+            CommentsStack.Children.Clear();
             foreach (var item in PConModel) {
                 CommentsStack.Children.Add(new CommentPanel {
                     ComContent = item.Content,
@@ -127,8 +133,38 @@ namespace DQD.Net.Pages {
                     ComTime = item.Time,
                 });
             }
+            this.Opacity = 1;
+            InitStoryBoard();
         }
 
+        #endregion
+
+        #region Animations
+        #region Animations Properties
+        Storyboard storyToSideGrid = new Storyboard();
+        TranslateTransform transToSideGrid;
+        DoubleAnimation doubleAnimation;
+        #endregion
+
+        public void InitStoryBoard() {
+            doubleAnimation = new DoubleAnimation() {
+                Duration = new Duration(TimeSpan.FromMilliseconds(520)),
+                From = this.ActualWidth,
+                To = 0,
+            } ;
+            doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
+            doubleAnimation.Completed += DoublAnimation_Completed;
+            storyToSideGrid = new Storyboard();
+            Storyboard.SetTarget(doubleAnimation, transToSideGrid);
+            Storyboard.SetTargetProperty(doubleAnimation, "X");
+            storyToSideGrid.Children.Add(doubleAnimation);
+            storyToSideGrid.Begin();
+        }
+
+        private void DoublAnimation_Completed(object sender, object e) {
+            storyToSideGrid.Stop();
+            doubleAnimation.Completed -= DoublAnimation_Completed;
+        }
         #endregion
 
         #region Properties and State
@@ -136,5 +172,13 @@ namespace DQD.Net.Pages {
         private enum ContentType { String = 1, Image = 2, Gif = 3 ,None = 4, }
 
         #endregion
+
+        private void MoreCommentsBtn_Click(object sender, RoutedEventArgs e) {
+            InitStoryBoard();
+        }
+
+        private void BackBtn_Click(object sender, RoutedEventArgs e) {
+            MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
+        }
     }
 }

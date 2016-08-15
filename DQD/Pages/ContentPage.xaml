@@ -21,6 +21,12 @@
                         <Setter Target="CommentsTitle.(TextBlock.FontSize)" Value="14"/>
                         <Setter Target="ContentAuthor.(TextBlock.FontSize)" Value="10"/>
                         <Setter Target="ContentDate.(TextBlock.FontSize)" Value="10"/>
+                        <Setter Target="BackBtn.(FrameworkElement.Visibility)" Value="Visible"/>
+                        <Setter Target="ContentTitle.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>50,0,0,0</Thickness>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Mobile480">
@@ -30,6 +36,12 @@
                     <VisualState.Setters>
                         <Setter Target="ContentTitle.(TextBlock.FontSize)" Value="20"/>
                         <Setter Target="ContentDate.(TextBlock.FontSize)" Value="12"/>
+                        <Setter Target="BackBtn.(FrameworkElement.Visibility)" Value="Visible"/>
+                        <Setter Target="ContentTitle.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>50,0,0,0</Thickness>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Desktop">
@@ -47,8 +59,15 @@
         <Grid Background="{ThemeResource DQDBackground}"
                 Height="60"
                 VerticalAlignment="Top">
+            <Button Name="BackBtn"
+                    Style="{StaticResource MainPagePopupButtonStyle}"
+                    Content="&#xE0A6;"
+                    FontFamily="Segoe MDL2 Assets"
+                    Margin="12,0,2,0"
+                    Click="BackBtn_Click"
+                    Visibility="Collapsed"/>
             <TextBlock Name="ContentTitle"
-                       FontSize="24"
+                       FontSize="22"
                        Margin="15,2,0,2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
@@ -99,6 +118,12 @@
                     </Grid>
                     <!--ConmentsStackInCode-->
                     <StackPanel Name="CommentsStack" Margin="10,0,10,0"/>
+                    <Button Name="MoreCommentsBtn"
+                            HorizontalAlignment="Stretch"
+                            Height=" 50"
+                            Margin="5"
+                            Content="查看更多精彩评论"
+                            Click="MoreCommentsBtn_Click"/>
                 </StackPanel>
             </ScrollViewer>
         </Border>
