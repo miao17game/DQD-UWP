@@ -34,6 +34,8 @@ namespace DQD.Core. Tools {
                 model.ContentImage = new List<ContentImages>();
                 model.ContentString = new List<ContentStrings>();
                 model.ContentGif = new List<ContentGifs>();
+                model.ContentVideo = new List<ContentVideos>();
+                model.ContentFlash = new List<ContentFlashs>();
                 foreach (var item in contents) {
                     index++;
                     if (item.SelectSingleNode("img") != null) {
@@ -41,8 +43,10 @@ namespace DQD.Core. Tools {
                         Regex reg = new Regex(Rstring);
                         var targetStr = item.SelectSingleNode("img").Attributes["src"].Value;
                         var coll = reg.Matches(targetStr);
-                        if (coll.Count == 0) { model.ContentImage.Add(new ContentImages { Image = new BitmapImage(new Uri(targetStr)), Index = index }); }
-                        else { model.ContentGif.Add(new ContentGifs { ImageUri = new Uri(targetStr), Index = index }); }
+                        if (coll.Count == 0) { model.ContentImage.Add(new ContentImages { Image = new BitmapImage(new Uri(targetStr)), Index = index });
+                        } else { model.ContentGif.Add(new ContentGifs { ImageUri = new Uri(targetStr), Index = index }); }
+                    } else if (item.SelectSingleNode("video") != null) { model.ContentVideo.Add(new ContentVideos { VideoUri = new Uri(item.SelectSingleNode("video").Attributes["src"].Value), Index = index });
+                    } else if (item.SelectSingleNode("embed") != null) { model.ContentFlash.Add(new ContentFlashs { FlashUri = new Uri(item.SelectSingleNode("embed").Attributes["src"].Value), Index = index });
                     } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
                 }
             } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
@@ -76,6 +80,47 @@ namespace DQD.Core. Tools {
             } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
             } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
             } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            }
+            return list;
+        }
+
+        public static async Task<List<AllCommentModel>> GetPageAllComments(string targetHost) {
+            var list = new List<AllCommentModel>();
+            try {
+                StringBuilder urlString = new StringBuilder();
+                urlString = await WebProcess.GetHtmlResources(targetHost);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(urlString.ToString());
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//ol[@id='all_comment']";
+                HtmlNodeCollection consDiv = rootnode.SelectNodes(XPathString);
+                var wholeContentColl = consDiv.ElementAt(0).SelectNodes("li");
+                foreach (var eachLi in wholeContentColl) {
+                    var model = new AllCommentModel();
+                    model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("img").Attributes["src"].Value));
+                    model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
+                    model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
+                    var targetStr = eachLi.SelectSingleNode("p[@class='comCon']").InnerText;
+                    model.Content = targetStr.Substring(9, targetStr.Length - 13);
+                    var ReDiv = eachLi.SelectSingleNode("div[@class='recomm']");
+                    if (ReDiv != null) {
+                        model.ReName = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='name']").InnerText;
+                        model.ReTime = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='time']").InnerText;
+                        var targetStr2 = ReDiv.SelectNodes("p").ElementAt(1).InnerText;
+                        model.ReContent = targetStr2.Substring(17, targetStr2.Length - 17);
+                    }
+                    list.Add(model);
+                }
+            } catch (NullReferenceException NRE) {
+                Debug.WriteLine(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                Debug.WriteLine(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                Debug.WriteLine(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                Debug.WriteLine(FE.Message.ToString());
+            } catch (Exception E) {
+                Debug.WriteLine(E.Message.ToString());
             }
             return list;
         }

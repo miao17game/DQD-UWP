@@ -16,6 +16,7 @@ using DQD.Core.Helpers;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media;
+using DQD.Core.Models;
 
 namespace DQD.Net {
     /// <summary>
@@ -198,9 +199,9 @@ namespace DQD.Net {
         public Frame contentFrame;
         public Grid SideGrid;
         public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
-        public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri);
+        public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri ,int num);
         private NavigateEventHandler SelectionChanged = (sender, type, frame) => { frame.Navigate(type); };
-        public ClickEventHandler ItemClick = (sender, type, frame, uri) => { frame.Navigate(type, uri); };
+        public ClickEventHandler ItemClick = (sender, type, frame, uri ,num) => { frame.Navigate(type, new ParameterNavigate { Number=num,Uri=uri,}); };
 
         #endregion
 

@@ -50,7 +50,8 @@ namespace DQD.Net.Pages {
 
         private void ListView_ItemClick(object sender,ItemClickEventArgs e) {
             var itemUri = (e.ClickedItem as ContentListModel).Path;
-            MainPage.Current.ItemClick?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri);
+            var itemNum = (e.ClickedItem as ContentListModel).ID;
+            MainPage.Current.ItemClick?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri, itemNum);
             MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
 

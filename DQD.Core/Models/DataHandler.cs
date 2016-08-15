@@ -15,6 +15,7 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using DQD.Core.Tools;
 using HtmlAgilityPack;
+using System.Text.RegularExpressions;
 
 namespace DQD.Core.Models {
     /// <summary>
@@ -76,7 +77,11 @@ namespace DQD.Core.Models {
                     model.Date=item.SelectSingleNode("div[@class='info']").SelectSingleNode("span[@class='time']").InnerText;
                     model.ShareNum=Convert.ToInt32(item.SelectSingleNode("div[@class='info']").SelectSingleNode("a[@class='comment']").InnerText);
                     model.Share=new Uri(HomeHostInsert+item.SelectSingleNode("div[@class='info']").SelectSingleNode("a[@class='comment']").Attributes["href"].Value);
-                    model.Path = new Uri(HomeHostInsert + item.SelectSingleNode("a").Attributes["href"].Value);
+                    var href = item.SelectSingleNode("a").Attributes["href"].Value;
+                    Regex rex = new Regex(@"[0-9]{1,}");
+                    var collection = rex.Match(href);
+                    model.Path = new Uri(HomeHostInsert + href);
+                    model.ID = Convert.ToInt32(collection.Value);
                     model.Title=item.SelectSingleNode("h2").SelectNodes("a").FirstOrDefault().InnerText.ToString();
                     var coll = item.SelectNodes("a").ElementAt(0).InnerText;
                     string imgSource = !string.IsNullOrEmpty(coll) ? item.SelectNodes("a").ElementAt(0).SelectSingleNode("img").Attributes.FirstOrDefault().Value : null;

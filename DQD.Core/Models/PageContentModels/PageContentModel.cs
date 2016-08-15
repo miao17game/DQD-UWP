@@ -12,5 +12,7 @@ namespace DQD.Core.Models.PageContentModels {
         public List<ContentStrings> ContentString { get; set; }
         public List<ContentImages> ContentImage { get; set; }
         public List<ContentGifs> ContentGif { get; set; }
+        public List<ContentVideos> ContentVideo { get; set; }
+        public List<ContentFlashs> ContentFlash { get; set; }
     }
 }

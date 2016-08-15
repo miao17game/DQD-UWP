@@ -1,4 +1,7 @@
 ﻿using DQD.Core.Controls;
+using DQD.Core.DataVirtualization;
+using DQD.Core.Models;
+using DQD.Core.Models.CommentModels;
 using DQD.Core.Models.PageContentModels;
 using DQD.Core.Tools;
 using ImageLib;
@@ -19,6 +22,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -49,12 +53,15 @@ namespace DQD.Net.Pages {
         /// </summary>
         /// <param name="e">navigate args</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
-            var value = e.Parameter as Uri;
-            if (value == null)
+            var parameter = e.Parameter as ParameterNavigate;
+            HostSource = parameter.Uri;
+            HostNumber = parameter.Number;
+            if (HostSource == null)
                 return;
-            var urlString = await WebProcess.GetHtmlResources(value.ToString());
+            var urlString = await WebProcess.GetHtmlResources(HostSource.ToString());
             AddChildrenToStackPanel(urlString.ToString());
             AddChildrenToCommentsStack(urlString.ToString());
+            if (StatusBarInit.IsTargetMobile()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15,0,0,0); }
         }
 
         #endregion
@@ -81,13 +88,19 @@ namespace DQD.Net.Pages {
             ContentAuthor.Text = "来源：" + PConModel.Author;
             ContentDate.Text = PConModel.Date;
             ContentStack.Children.Clear();
-            int num = PConModel.ContentImage.Count + PConModel.ContentString.Count + PConModel.ContentGif.Count;
+            int num = PConModel.ContentImage.Count + 
+                PConModel.ContentString.Count + 
+                PConModel.ContentGif.Count + 
+                PConModel.ContentVideo.Count + 
+                PConModel.ContentFlash.Count ;
             for (int index = 1; index <= num; index++) {
                 object item = default(object);
                 ContentType type =
                     (item = PConModel.ContentString.Find(i => i.Index == index)) != null ? ContentType.String :
                     (item = PConModel.ContentImage.Find(i => i.Index == index)) != null ? ContentType.Image :
                     (item = PConModel.ContentGif.Find(i => i.Index == index)) != null ? ContentType.Gif :
+                    (item = PConModel.ContentVideo.Find(i => i.Index == index)) != null ? ContentType.Video :
+                    (item = PConModel.ContentFlash.Find(i => i.Index == index)) != null ? ContentType.Flash :
                     ContentType.None;
                 switch (type) {
                     case ContentType.String:
@@ -102,14 +115,52 @@ namespace DQD.Net.Pages {
                         ContentStack.Children.Add(new Image {
                             Source = (item as ContentImages).Image,
                             Margin = new Thickness(5, 5, 5, 5),
-                            Stretch = Stretch.UniformToFill
+                            Stretch = Stretch.UniformToFill,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            MinHeight = 200,
+                            MinWidth = 300,
                         });
                         break;
                     case ContentType.Gif:
                         ContentStack.Children.Add(new ImageView {
                             UriSource = (item as ContentGifs).ImageUri,
                             Margin = new Thickness(5, 5, 5, 5),
-                            Stretch = Stretch.UniformToFill
+                            Stretch = Stretch.UniformToFill,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            MinHeight = 200,
+                            MinWidth = 300,
+                        });
+                        break;
+                    case ContentType.Video:
+                        ContentStack.Children.Add(new MediaElement {
+                            Source = (item as ContentVideos).VideoUri,
+                            Margin = new Thickness(5),
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            MinHeight = 200,
+                            MinWidth = 300,
+                            AreTransportControlsEnabled = true,
+                        });
+                        break;
+                    case ContentType.Flash:
+                        ContentStack.Children.Add(new MediaElement {
+                            Source = (item as ContentFlashs).FlashUri,
+                            Margin = new Thickness(5),
+                            AreTransportControlsEnabled = true,
+                            HorizontalAlignment=HorizontalAlignment.Center,
+                            MinHeight = 200,
+                            MinWidth = 300,
+                        });
+                        ContentStack.Children.Add(new TextBlock {
+                            Text = "若不支持Youku视频播放，请转到浏览器查看" ,
+                            Margin = new Thickness(5),
+                            FontSize = 12,
+                        });
+                        ContentStack.Children.Add(new HyperlinkButton {
+                            NavigateUri = (item as ContentFlashs).FlashUri,
+                            Margin = new Thickness(5),
+                            Content = ContentTitle.Text,
+                            Foreground = ((Brush)Application.Current.Resources["DQDBackground"]),
+                            FontSize = 12,
                         });
                         break;
                     case ContentType.None: break;
@@ -148,7 +199,7 @@ namespace DQD.Net.Pages {
 
         public void InitStoryBoard() {
             doubleAnimation = new DoubleAnimation() {
-                Duration = new Duration(TimeSpan.FromMilliseconds(520)),
+                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
                 From = this.ActualWidth,
                 To = 0,
             } ;
@@ -169,16 +220,43 @@ namespace DQD.Net.Pages {
 
         #region Properties and State
 
-        private enum ContentType { String = 1, Image = 2, Gif = 3 ,None = 4, }
+        private enum ContentType { None = 0, String = 1, Image = 2, Gif = 3 , Video = 4, Flash = 5}
+        private Uri HostSource;
+        private int HostNumber;
 
         #endregion
 
         private void MoreCommentsBtn_Click(object sender, RoutedEventArgs e) {
-            InitStoryBoard();
+            if (CommentsResources.Source == null) {
+                var sources = new DQDLoadContext<AllCommentModel>(HostNumber, HostSource.ToString(), DataIncrementalType.AllComsContent);
+                CommentsResources.Source = sources;
+            }
+            PopupAllComments.IsOpen = true;
+            PopupBackBorder.Visibility = Visibility.Visible;
+            EnterPopupBorder.Begin();
         }
 
         private void BackBtn_Click(object sender, RoutedEventArgs e) {
             MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
+        }
+
+        private void PopupAllComments_SizeChanged(object sender, SizeChangedEventArgs e) {
+            InnerGrid.Width = (sender as Popup).ActualWidth;
+            InnerGrid.Height = (sender as Popup).ActualHeight;
+        }
+
+        private void CloseAllComsBtn_Click(object sender, RoutedEventArgs e) {
+            PopupAllComments.IsOpen = false;
+        }
+
+        private void PopupAllComments_Closed(object sender, object e) {
+            OutPopupBorder.Completed += OnOutPopupBorderOut;
+            OutPopupBorder.Begin();
+        }
+
+        private void OnOutPopupBorderOut(object sender, object e) {
+            OutPopupBorder.Completed -= OnOutPopupBorderOut;
+            PopupBackBorder.Visibility = Visibility.Collapsed;
         }
     }
 }

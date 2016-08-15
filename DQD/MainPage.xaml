@@ -380,9 +380,8 @@
                     <TextBlock FontWeight="Thin"
                                FontSize="16"
                                Margin="0,15,5,5"
-                               TextWrapping="WrapWholeWords"
-                               >
-                        <Run Text="版本号：1.0.1014"/><LineBreak/>
+                               TextWrapping="WrapWholeWords">
+                        <Run Text="版本号：1.0.1016"/><LineBreak/>
                         <Run Text="联系作者"/><LineBreak/>
                         <Run Text="WeChat：miao17game"/><LineBreak/>
                         <Run Text="QQ：245396954"/><LineBreak/>

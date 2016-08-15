@@ -21,6 +21,8 @@ namespace DQD.Core.Models {
         public Uri Share { get; set; }
         [DataMember]
         public int ShareNum { get; set; }
+        [DataMember]
+        public int ID { get; set; }
 
         public ContentListModel() { }
 

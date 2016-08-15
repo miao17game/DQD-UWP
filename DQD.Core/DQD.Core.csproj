@@ -118,9 +118,12 @@
     <Compile Include="Controls\ToastSmooth.xaml.cs">
       <DependentUpon>ToastSmooth.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataVirtualization\DataIncrementalType.cs" />
     <Compile Include="DataVirtualization\DQDLoadContext.cs" />
     <Compile Include="DataVirtualization\IncrementalLoadingBase.cs" />
+    <Compile Include="Models\CommentModels\AllCommentModel.cs" />
     <Compile Include="Models\CommentModels\CommentModel.cs" />
+    <Compile Include="Models\PageContentModels\ContentFlashs.cs" />
     <Compile Include="Models\PageContentModels\ContentGifs.cs" />
     <Compile Include="Models\PageContentModels\ContentImages.cs" />
     <Compile Include="Models\PageContentModels\ContentStrings.cs" />
@@ -134,11 +137,14 @@
     <Compile Include="Helpers\StaticResources.cs" />
     <Compile Include="Models\HeaderModel.cs" />
     <Compile Include="Models\ContentListModel.cs" />
+    <Compile Include="Models\PageContentModels\ContentVideos.cs" />
     <Compile Include="Models\PageContentModels\PageContentModel.cs" />
+    <Compile Include="Models\ParameterNavigate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\DataProcess.cs" />
     <Compile Include="Tools\DelegateCommand.cs" />
     <Compile Include="Tools\ExceptionHandlingSynchronizationContext.cs" />
+    <Compile Include="Tools\ItemConverter.cs" />
     <Compile Include="Tools\MessageToken.cs" />
     <Compile Include="Tools\StatusBarInit.cs" />
     <Compile Include="Tools\WebProcess.cs" />

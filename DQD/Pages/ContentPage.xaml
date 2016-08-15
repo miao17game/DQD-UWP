@@ -1,12 +1,26 @@
 ﻿<Page
-    x:Class="DQD.Net.Pages.ContentPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DQD.Net.Pages"
     xmlns:Gifs ="using:ImageLib.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:DQD.Core.Models.CommentModels"
+    xmlns:control="using:DQD.Core.Controls"
+    xmlns:Converters="using:DQD.Core.Tools"
+    x:Class="DQD.Net.Pages.ContentPage"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <Converters:ItemConverter x:Key="VisibilityConverter"/>
+        <CollectionViewSource x:Name="CommentsResources"/>
+        <Storyboard x:Name="EnterPopupBorder">
+            <FadeInThemeAnimation Storyboard.TargetName="PopupBackBorder" />
+        </Storyboard>
+        <Storyboard x:Name="OutPopupBorder">
+            <FadeOutThemeAnimation Storyboard.TargetName="PopupBackBorder" />
+        </Storyboard>
+    </Page.Resources>
 
     <Grid Background="{ThemeResource AppPersonalExtraBackground}">
 
@@ -59,14 +73,15 @@
         <Grid Background="{ThemeResource DQDBackground}"
                 Height="60"
                 VerticalAlignment="Top">
-            <Button Name="BackBtn"
+            <Button x:Name="BackBtn"
                     Style="{StaticResource MainPagePopupButtonStyle}"
                     Content="&#xE0A6;"
                     FontFamily="Segoe MDL2 Assets"
                     Margin="12,0,2,0"
                     Click="BackBtn_Click"
-                    Visibility="Collapsed"/>
-            <TextBlock Name="ContentTitle"
+                    Visibility="Collapsed"
+                    Foreground="{ThemeResource AppPersonalTextColorPure}"/>
+            <TextBlock x:Name="ContentTitle"
                        FontSize="22"
                        Margin="15,2,0,2"
                        HorizontalAlignment="Left"
@@ -79,18 +94,18 @@
                        Fill="#F0F0F0"
                        HorizontalAlignment="Left"/>
         </Grid>
-        
+
         <Border Background="{ThemeResource AppPersonalExtraBackground}"
                 Margin="0,60,0,0">
             <ScrollViewer>
                 <StackPanel >
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Name="ContentAuthor" 
+                        <TextBlock x:Name="ContentAuthor" 
                                    Foreground="{ThemeResource DQDSummTextColor}"
                                    FontSize="12"
                                    FontWeight="Thin"
                                    Margin="10,5,5,5"/>
-                        <TextBlock Name="ContentDate" 
+                        <TextBlock x:Name="ContentDate" 
                                    Foreground="{ThemeResource DQDSummTextColor}"
                                    FontSize="12"
                                    FontWeight="Thin"
@@ -100,9 +115,9 @@
                                Margin="5,0,5,0"
                                Fill="{ThemeResource BorderTicknessColor01}"/>
                     <!--ContentStackInCode-->
-                    <StackPanel Name="ContentStack" Margin="10,0,10,0"/>
+                    <StackPanel x:Name="ContentStack" Margin="10,0,10,0"/>
                     <Grid Height=" 50">
-                        <TextBlock Name="CommentsTitle"
+                        <TextBlock x:Name="CommentsTitle"
                                    Text="热门评论"
                                    FontSize="20"
                                    Margin="15,2,0,2"
@@ -117,8 +132,8 @@
                                    VerticalAlignment="Bottom"/>
                     </Grid>
                     <!--ConmentsStackInCode-->
-                    <StackPanel Name="CommentsStack" Margin="10,0,10,0"/>
-                    <Button Name="MoreCommentsBtn"
+                    <StackPanel x:Name="CommentsStack" Margin="10,0,10,0"/>
+                    <Button x:Name="MoreCommentsBtn"
                             HorizontalAlignment="Stretch"
                             Height=" 50"
                             Margin="5"
@@ -128,5 +143,148 @@
             </ScrollViewer>
         </Border>
 
+        <Border x:Name="PopupBackBorder"
+                Background="{ThemeResource DQDPopupBackColor}"
+                Visibility="Collapsed"
+                Margin="0,-16,0,0"/>
+
+        <Popup x:Name="PopupAllComments" 
+               Margin="0,60,0,0"
+               IsOpen="False"
+               SizeChanged="PopupAllComments_SizeChanged"
+               Closed="PopupAllComments_Closed">
+            <Popup.ChildTransitions>
+                <TransitionCollection>
+                    <PopupThemeTransition 
+                        FromHorizontalOffset="0" 
+                        FromVerticalOffset="300"/>
+                </TransitionCollection>
+            </Popup.ChildTransitions>
+            <Grid x:Name="InnerGrid"
+                  Background="{ThemeResource AppPersonalExtraBackground}"
+                  Width="{Binding ActualWidth, ElementName=PopupAllComments, Mode=OneWay}"
+                  Height="{Binding ActualHeight, ElementName=PopupAllComments, Mode=OneWay}"
+                  VerticalAlignment="Bottom">
+                <Button x:Name="CloseAllComsBtn"
+                        VerticalAlignment="Top"
+                        Height="30"
+                        Content="&#xE96E;"
+                        FontSize="22"
+                        FontFamily="Segoe MDL2 Assets"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource MainPageButtonBackHamburgerStyle}"
+                        Click="CloseAllComsBtn_Click"/>
+                <Grid Height=" 50" 
+                      Margin="0,30,0,0"
+                      VerticalAlignment="Top"
+                      Background="{ThemeResource DQDBackground}">
+                    <TextBlock x:Name="AllComsTitle"
+                                   Text="所有评论"
+                                   FontSize="20"
+                                   Margin="15,2,0,2"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"/>
+                    <Rectangle Height="30" Width="10"
+                                   Fill="#EFEFEF"
+                                   HorizontalAlignment="Left"/>
+                    <Rectangle Height="1"
+                                   Margin="5,0,5,0"
+                                   Fill="{ThemeResource BorderTicknessColor01}"
+                                   VerticalAlignment="Bottom"/>
+                </Grid>
+                <!--#region All Comments ListView -->
+                <ListView x:Name="AllComsStack" 
+                          Margin="0,80,0,0"
+                          ItemsSource="{Binding Source={StaticResource CommentsResources}}"
+                          IsTapEnabled="False"
+                          ItemContainerStyle="{ThemeResource SpecialListViewItemExpanded}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate >
+                            <Grid x:Name="Xgrid"
+                                  Margin="2"
+                                  CornerRadius="3"
+                                  Background="{ThemeResource AboutPageForeground}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height=" auto"/>
+                                </Grid.RowDefinitions>
+                                <Image x:Name="Ximage" 
+                                       Grid.RowSpan="3"
+                                       Source="{Binding Image}"
+                                       Width="50"
+                                       Height="50"
+                                       Margin=" 5"
+                                       VerticalAlignment="Top"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Grid.Column="1"
+                                            Margin="5">
+                                    <TextBlock x:Name="Xname" 
+                                               Text="{Binding Name}"
+                                               FontSize="14"
+                                               FontWeight="SemiLight"
+                                               Foreground="{ThemeResource DQDSummTextColor}"
+                                               Margin="2,0,5,0"/>
+                                    <TextBlock x:Name="Xtime" 
+                                               FontSize="13"
+                                               FontWeight="Thin"
+                                               Foreground="{ThemeResource DQDSummTextColor}"
+                                               Text="{Binding Time}"
+                                               Margin="2,0,5,0"/>
+                                </StackPanel>
+                                <TextBlock x:Name="Xcontent"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           FontSize="14"
+                                           Text="{Binding Content}"
+                                           TextWrapping="WrapWholeWords"
+                                           Margin=" 7,5,7,0"/>
+                                <TextBlock Name="TestMessage" 
+                                           Text="{Binding ReName}" 
+                                           Visibility="Collapsed"/>
+                                <Grid Grid.Column="1"
+                                      Grid.Row="2"
+                                      Margin="20,3,3,3"
+                                      CornerRadius="3"
+                                      Visibility="{Binding ElementName=TestMessage, Path=Text, Converter={StaticResource VisibilityConverter} ,ConverterParameter='',ConverterLanguage=''}"
+                                      Background="{ThemeResource AppPersonalExtraBackground}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal"
+                                                Grid.Row="0"
+                                                Margin="5">
+                                        <TextBlock x:Name="XRename" 
+                                               Text="{Binding ReName}"
+                                               FontSize="14"
+                                               FontWeight="SemiLight"
+                                               Foreground="{ThemeResource DQDSummTextColor}"
+                                               Margin="2,0,5,0"/>
+                                        <TextBlock x:Name="XRetime" 
+                                               FontSize="13"
+                                               FontWeight="Thin"
+                                               Foreground="{ThemeResource DQDSummTextColor}"
+                                               Text="{Binding ReTime}"
+                                               Margin="2,0,5,0"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="XRecontent"
+                                               FontSize="14"
+                                               Grid.Row="1"
+                                               Text="{Binding ReContent}"
+                                               TextWrapping="WrapWholeWords"
+                                               Margin=" 7,5,7,5"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <!--#endregion-->
+            </Grid>
+        </Popup>
     </Grid>
 </Page>

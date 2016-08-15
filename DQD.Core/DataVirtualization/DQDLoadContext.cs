@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DQD.Core.Models;
 using System.Threading;
+using DQD.Core.Models.CommentModels;
+using DQD.Core.Tools;
 
 namespace DQD.Core.DataVirtualization {
     // This class implements IncrementalLoadingBase. 
@@ -30,6 +32,7 @@ namespace DQD.Core.DataVirtualization {
             number = num;
             this.targetHost = targetHost;
             _Flag = InitSituation.Special;
+            dataType = DataIncrementalType.BaseListContent;
         }
 
         /// <summary>
@@ -41,6 +44,15 @@ namespace DQD.Core.DataVirtualization {
             number = num;
             this.targetHost = targetHost;
             _Flag = InitSituation.Default;
+            dataType = DataIncrementalType.BaseListContent;
+            LoadPreview();
+        }
+
+        public DQDLoadContext(int num, string targetHost, DataIncrementalType type) {
+            number = num;
+            this.targetHost = targetHost;
+            _Flag = InitSituation.Special;
+            dataType = type;
             LoadPreview();
         }
 
@@ -60,24 +72,35 @@ namespace DQD.Core.DataVirtualization {
         /// <param name="token">CancellationToken</param>
         /// <param name="count">i don not know what num it is...maybe no use here</param>
         /// <returns></returns>
-        protected async override Task<IList<object>> LoadMoreItemsOverrideAsync(System.Threading.CancellationToken token,uint count) {
+        protected async override Task<IList<object>> LoadMoreItemsOverrideAsync(CancellationToken token,uint count) {
             // Wait for work 
             await Task.Delay(10);
-            var coll = new ObservableCollection<ContentListModel>();
             if (_Flag == InitSituation.Default) {
+                var coll = new ObservableCollection<ContentListModel>();
                 wholeCount += 15;
                 var targetHost = "http://www.dongqiudi.com?tab={0}&page={1}";
-                targetHost = string.Format(targetHost, number , wholeCount / 15);
+                targetHost = string.Format(targetHost, number, wholeCount / 15);
                 coll = await DataHandler.SetHomeListResources(targetHost);
                 _Flag = InitSituation.Special;
-            } else {
-                wholeCount += 15;
-                // This code simply generates
-                var targetHost = "http://www.dongqiudi.com?tab={1}&page={0}";
-                targetHost = string.Format(targetHost, wholeCount / 15 , number);
-                coll = await DataHandler.SetHomeListResources(targetHost);
+                return (coll).ToArray();
             }
-            return (coll).ToArray();
+            /// allComments handler
+            if (dataType == DataIncrementalType.AllComsContent) {
+                var coll = new List<AllCommentModel>();
+                wholeCount += 30;
+                // This code simply generates
+                var targetHost = "http://dongqiudi.com/article/{0}?page={1}#comment_anchor"; 
+                targetHost = string.Format(targetHost, number, wholeCount / 30);
+                coll = await DataProcess.GetPageAllComments(targetHost);
+                return (coll).ToArray();
+            }
+            var _coll = new ObservableCollection<ContentListModel>();
+            wholeCount += 15;
+            // This code simply generates
+            var _targetHost= "http://www.dongqiudi.com?tab={1}&page={0}";
+            targetHost = string.Format(_targetHost, wholeCount / 15, number);
+            _coll = await DataHandler.SetHomeListResources(_targetHost);
+            return (_coll).ToArray();
         }
 
         protected override bool HasMoreItemsOverride() { return true; }
@@ -95,6 +118,7 @@ namespace DQD.Core.DataVirtualization {
         private const string HomeHostInsert = "http://www.dongqiudi.com";
         private enum InitSituation { Default=1, Special=2, }
         private InitSituation _Flag;
+        private DataIncrementalType dataType;
 
         #endregion
     }
