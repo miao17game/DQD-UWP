@@ -976,7 +976,7 @@
                                 </Grid>
                             </ControlTemplate>
                             <ControlTemplate x:Key="VerticalIncrementTemplate" TargetType="RepeatButton">
-                                <Grid x:Name="Root">
+                                <Grid x:Name="Root" Opacity="0">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal" />
@@ -1018,7 +1018,7 @@
                                 </Grid>
                             </ControlTemplate>
                             <ControlTemplate x:Key="VerticalDecrementTemplate" TargetType="RepeatButton">
-                                <Grid x:Name="Root">
+                                <Grid x:Name="Root" Opacity="0">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal" />
@@ -1059,8 +1059,13 @@
                                     <FontIcon x:Name="Arrow" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE0E4;" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" FontSize="6" />
                                 </Grid>
                             </ControlTemplate>
+                            <!--垂直鼠标滑条模板-->
                             <ControlTemplate x:Key="VerticalThumbTemplate" TargetType="Thumb">
-                                <Rectangle x:Name="ThumbVisual" Fill="{ThemeResource AppScrollViewerForeground}">
+                                <Rectangle x:Name="ThumbVisual" 
+                                           Fill="{ThemeResource AppScrollViewerForeground}"
+                                           RadiusX="3"
+                                           RadiusY="3"
+                                           Opacity="0.85">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal" />
@@ -1306,11 +1311,11 @@
     								Grid.RowSpan="5"
     								Margin="0"
     								StrokeThickness="{ThemeResource ScrollBarTrackBorderThemeThickness}"
-    								Fill="{ThemeResource AppScrollViewerBackground}"
+    								Fill="Transparent"
     								Stroke="{ThemeResource SystemControlForegroundTransparentBrush}" />
                             <RepeatButton x:Name="VerticalSmallDecrease"
-    								Height="12"
-    								MinWidth="12"
+    								Height="8"
+    								MinWidth="8"
     								IsTabStop="False"
     								Interval="50"
     								Margin="0"
@@ -1329,8 +1334,8 @@
     								Grid.Row="2"
     								Background="{ThemeResource SystemControlForegroundChromeHighBrush}"
     								Template="{StaticResource VerticalThumbTemplate}"
-    								Width="12"
-    								MinHeight="12"
+    								Width="8"
+    								MinHeight="8"
     								AutomationProperties.AccessibilityView="Raw" />
                             <RepeatButton x:Name="VerticalLargeIncrease"
     								HorizontalAlignment="Stretch"
@@ -1340,8 +1345,8 @@
     								Grid.Row="3"
     								Template="{StaticResource RepeatButtonTemplate}" />
                             <RepeatButton x:Name="VerticalSmallIncrease"
-    								Height="12"
-    								MinWidth="12"
+    								Height="8"
+    								MinWidth="8"
     								IsTabStop="False"
     								Interval="50"
     								Margin="0"
@@ -1353,7 +1358,7 @@
                             <Border x:Name="VerticalPanningThumb"
     								VerticalAlignment="Top"
     								HorizontalAlignment="Right"
-    								Background="{ThemeResource DQDBackground}"
+    								Background="{ThemeResource SystemControlForegroundChromeHighBrush}"
     								BorderThickness="0"
     								Width="2"
     								MinHeight="32"
@@ -2447,6 +2452,7 @@
 
                                         <Line Grid.Column="1" 
                                               Grid.Row="1"
+                                              Margin="0,2,0,0"
                                               Stroke="{TemplateBinding BackgroundLineStoke}" 
                                               IsHitTestVisible="False" 
                                               VerticalAlignment="Top" 
@@ -2457,6 +2463,7 @@
                                         <Line x:Name="TipLine" 
                                               Grid.Column="1" 
                                               Grid.Row="1"
+                                              Margin="0,2,0,0"
                                               Stroke="{TemplateBinding IndicatorLineStroke}" 
                                               IsHitTestVisible="False" 
                                               VerticalAlignment="Top" 
@@ -3041,7 +3048,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <!-- Default style for Windows.UI.Xaml.Controls.ListViewHeaderItem -->
     <Style TargetType="ListViewHeaderItem">
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />

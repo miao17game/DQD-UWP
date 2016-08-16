@@ -18,7 +18,7 @@ namespace DQD.Core. Tools {
         private const string HomeHost = "http://www.dongqiudi.com/";
         private const string MatchHost = "http://www.dongqiudi.com/match";
         private const string DefaultImageFlagHost = "http://static1.dongqiudi.com/web-new/web/images/defaultTeam.png";
-        private enum TableItemType { Round = 0, Away = 1, Home = 2, Link = 3, Vs = 4, Stat = 5, Times = 6 } 
+        private enum TableItemType { Round = 0, Away = 1, Home = 2, Link = 3, Vs = 4, Stat = 5, Live = 6 ,Times = 7 } 
 
         #endregion
 
@@ -154,11 +154,12 @@ namespace DQD.Core. Tools {
                                 item.Attributes["class"].Value.Equals("home") ? TableItemType.Home :
                                 item.Attributes["class"].Value.Equals("vs") ? TableItemType.Vs :
                                 item.Attributes["class"].Value.Equals("stat") ? TableItemType.Stat :
+                                item.Attributes["class"].Value.Equals("stat live") ? TableItemType.Live :
                                 item.Attributes["class"].Value.Equals("link") ? TableItemType.Link :
                                 default(TableItemType);
                             switch (type) {
                                 case TableItemType.Times:
-                                    model.Time = item.InnerText;
+                                    model.Time = item.SelectSingleNode("p")==null? item.InnerText:"直播中";
                                     break;
                                 case TableItemType.Round:
                                     model.MatchRound = item.InnerText.Substring(21, item.InnerText.Length - 38);
@@ -180,6 +181,10 @@ namespace DQD.Core. Tools {
                                     model.Score = "VS";
                                     break;
                                 case TableItemType.Stat:
+                                    model.IsOverOrNot = true;
+                                    model.Score = item.InnerText;
+                                    break;
+                                case TableItemType.Live:
                                     model.IsOverOrNot = true;
                                     model.Score = item.InnerText;
                                     break;

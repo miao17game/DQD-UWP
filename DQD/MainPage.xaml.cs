@@ -32,6 +32,7 @@ namespace DQD.Net {
             this.InitializeComponent();
             contentFrame = this.ContentFrame;
             SideGrid = this.sideGrid;
+            VersionText.Text = "版本号：" + Utils.GetAppVersion();
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
             var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
