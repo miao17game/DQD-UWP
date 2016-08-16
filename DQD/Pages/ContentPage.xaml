@@ -183,6 +183,7 @@
                                    FontSize="20"
                                    Margin="15,2,0,2"
                                    HorizontalAlignment="Left"
+                               Foreground="#EFEFEF"
                                    VerticalAlignment="Center"/>
                     <Rectangle Height="30" Width="10"
                                    Fill="#EFEFEF"

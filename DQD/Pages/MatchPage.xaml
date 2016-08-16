@@ -3,12 +3,186 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DQD.Net.Pages"
+    xmlns:model="using:DQD.Core.Models.MatchModels"
+    xmlns:BaseModel="using:DQD.Core.Models"
     xmlns:MPV="using:DQD.Core.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Text="Match" FontSize="50"/>
+    <Page.Resources>
+        <CollectionViewSource x:Name="ListResources"/>
+        <CollectionViewSource x:Name="HeaderResources"/>
+        <CollectionViewSource x:Name="ItemsGrouped"
+                          IsSourceGrouped="True"
+                          ItemsPath="InternalList"/>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource AppPersonalExtraBackground02}">
+
+        <Pivot Name="MyPivot" 
+               Width="{Binding Width, ElementName=grid ,Mode=OneWay}"
+               ItemsSource="{Binding Source={StaticResource HeaderResources}}"
+               SelectionChanged="MyPivot_SelectionChanged">
+            <Pivot.HeaderTemplate>
+                <DataTemplate x:DataType="BaseModel:HeaderModel">
+                    <TextBlock Text="{Binding Title}"
+                               Margin="0,0,0,5" 
+                               TextAlignment="Center" 
+                               FontSize="16"
+                               Width="55"
+                               Foreground="{ThemeResource AppPersonalTextColorPure02}"/>
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+            <Pivot.ItemTemplate>
+                <DataTemplate x:DataType="BaseModel:HeaderModel" >
+                    <RelativePanel>
+                        <SemanticZoom x:Name="semanticZoom" 
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignRightWithPanel="True"
+                                      RelativePanel.AlignBottomWithPanel="True"
+                                      Padding="0"
+                                      Margin="0"
+                                      IsZoomedInViewActive="True">
+                            <SemanticZoom.ZoomedOutView>
+                                <GridView Name="SemanticZoomGridView" 
+                                          Margin="0" 
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"
+                                          ItemsSource="{Binding Source={StaticResource ItemsGrouped}, Path=CollectionGroups}"
+                                          Background="Transparent" 
+                                          Width="{Binding ActualWidth, ElementName=grid, Mode=OneWay}" >
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate >
+                                            <Grid Background="Transparent" 
+                                                  Margin="5,7.5,5,7.5"
+                                                  Height="48"       
+                                                  Width="300"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center">
+                                                <Rectangle 
+                                                    Fill="{ThemeResource DQDBackground}"
+                                                    RadiusX="3" 
+                                                    RadiusY="3"/>
+                                                <TextBlock Text="{Binding Group.Key}"
+                                                           Foreground="{ThemeResource AppPersonalTextColorPure}"
+                                                           FontSize="16"
+                                                           FontWeight="Thin"
+                                                           Padding="0"
+                                                           HorizontalAlignment="Center" 
+                                                           VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+                                </GridView>
+                            </SemanticZoom.ZoomedOutView>
+                            <SemanticZoom.ZoomedInView>
+                                <ListView x:Name="MatchListView" 
+                                          ItemContainerStyle="{StaticResource SpecialListViewItemExpanded}" 
+                                          ItemsSource="{Binding Source={StaticResource ItemsGrouped}}"
+                                          IsItemClickEnabled="True">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="model:MatchListModel">
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="1.5*"/>
+                                                    <ColumnDefinition Width="auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="2*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="2*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Time}" 
+                                               Grid.Column="0"
+                                               Grid.Row="1"
+                                               Margin="3"
+                                               VerticalAlignment="Center"
+                                               Foreground="{ThemeResource DQDSummTextColor}"/>
+                                                <TextBlock Text="{Binding MatchRound}" 
+                                               Grid.Column="0"
+                                               Grid.Row="0"
+                                               Margin="3"
+                                               FontSize="14"
+                                               VerticalAlignment="Center"/>
+                                                <Image Source="{Binding AwayImage}" 
+                                                       Grid.Column="2"
+                                                       Grid.RowSpan="2"
+                                                       Width="40"
+                                                       Height="40"
+                                                       Margin="2"/>
+                                                <TextBlock Text="{Binding AwayTeam}" 
+                                               Grid.Column="3"
+                                               Grid.RowSpan="2"
+                                               Margin="3"
+                                               FontSize="14"
+                                               VerticalAlignment="Center"
+                                               Foreground="{ThemeResource DQDSummTextColor}"/>
+                                                <TextBlock Text="{Binding Score}" 
+                                               Grid.Column="4"
+                                               Grid.RowSpan="2"
+                                               Margin="3"
+                                               FontSize="14"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding HomeTeam}" 
+                                               Grid.Column="5"
+                                               Grid.RowSpan="2"
+                                               Margin="3"
+                                               FontSize="14"
+                                               FlowDirection="RightToLeft"
+                                               VerticalAlignment="Center"
+                                               Foreground="{ThemeResource DQDSummTextColor}"/>
+                                                <Image Source="{Binding HomeImage}" 
+                                                       Grid.Column="6"
+                                                       Grid.RowSpan="2"
+                                                       Width="40"
+                                                       Height="40"
+                                                       Margin="2"/>
+                                                <TextBlock Text="" 
+                                               Grid.Column="7"
+                                               Grid.RowSpan="2"
+                                               Margin="3"
+                                               FontSize="14"
+                                               VerticalAlignment="Center"
+                                               Foreground="{ThemeResource DQDSummTextColor}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.GroupStyle>
+                                        <GroupStyle HidesIfEmpty="True" >
+                                            <GroupStyle.HeaderTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{ThemeResource DQDBackground}"
+                                                            BorderBrush="Transparent" 
+                                                            BorderThickness="0"
+                                                            Margin=" 0"
+                                                            VerticalAlignment="Stretch">
+                                                        <TextBlock Text="{Binding Key}" 
+                                                                   Foreground="#EFEFEF"
+                                                                   FontSize="16"
+                                                                   Padding="0,10,0,10"
+                                                                   FontWeight="Thin"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </GroupStyle.HeaderTemplate>
+                                        </GroupStyle>
+                                    </ListView.GroupStyle>
+                                </ListView>
+                            </SemanticZoom.ZoomedInView>
+                        </SemanticZoom>
+                    </RelativePanel>
+                </DataTemplate>
+            </Pivot.ItemTemplate>
+        </Pivot>
+
     </Grid>
 </Page>

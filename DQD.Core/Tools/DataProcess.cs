@@ -1,4 +1,5 @@
 ﻿using DQD.Core.Models.CommentModels;
+using DQD.Core.Models.MatchModels;
 using DQD.Core.Models.PageContentModels;
 using HtmlAgilityPack;
 using System;
@@ -12,7 +13,14 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace DQD.Core. Tools {
     public static class DataProcess {
+        #region Properties and State
+
         private const string HomeHost = "http://www.dongqiudi.com/";
+        private const string MatchHost = "http://www.dongqiudi.com/match";
+        private const string DefaultImageFlagHost = "http://static1.dongqiudi.com/web-new/web/images/defaultTeam.png";
+        private enum TableItemType { Round = 0, Away = 1, Home = 2, Link = 3, Vs = 4, Stat = 5, Times = 6 } 
+
+        #endregion
 
         public static Uri ConvertToUri(string str) { return !string.IsNullOrEmpty(str) ? new Uri(str) : null; }
         
@@ -111,16 +119,85 @@ namespace DQD.Core. Tools {
                     }
                     list.Add(model);
                 }
-            } catch (NullReferenceException NRE) {
-                Debug.WriteLine(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) {
-                Debug.WriteLine(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) {
-                Debug.WriteLine(ANE.Message.ToString());
-            } catch (FormatException FE) {
-                Debug.WriteLine(FE.Message.ToString());
-            } catch (Exception E) {
-                Debug.WriteLine(E.Message.ToString());
+            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
+            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
+            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            }
+            return list;
+        }
+
+        public static List<MatchListModel> GetMatchItemsContent(string stringBUD) {
+            var list = new List<MatchListModel>();
+            try {
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(stringBUD);
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//tr";
+                HtmlNodeCollection consTrs = rootnode.SelectNodes(XPathString);
+                string Category = default(string);
+                foreach (var TrItem in consTrs) {
+                    if (TrItem.SelectSingleNode("th")!= null)
+                        Category = TrItem.SelectSingleNode("th").InnerText;
+                    else {
+                        var model = new MatchListModel();
+                        model.GroupCategory = Category;
+                        model.Rel = Convert.ToInt64(TrItem.Attributes["rel"].Value);
+                        model.ID = TrItem.Attributes["id"].Value;
+                        var TdItems = TrItem.SelectNodes("td");
+                        foreach (var item in TdItems) {
+                            TableItemType type =
+                                item.Attributes["class"].Value.Equals("times") ? TableItemType.Times :
+                                item.Attributes["class"].Value.Equals("round") ? TableItemType.Round :
+                                item.Attributes["class"].Value.Equals("away") ? TableItemType.Away :
+                                item.Attributes["class"].Value.Equals("home") ? TableItemType.Home :
+                                item.Attributes["class"].Value.Equals("vs") ? TableItemType.Vs :
+                                item.Attributes["class"].Value.Equals("stat") ? TableItemType.Stat :
+                                item.Attributes["class"].Value.Equals("link") ? TableItemType.Link :
+                                default(TableItemType);
+                            switch (type) {
+                                case TableItemType.Times:
+                                    model.Time = item.InnerText;
+                                    break;
+                                case TableItemType.Round:
+                                    model.MatchRound = item.InnerText.Substring(21, item.InnerText.Length - 38);
+                                    break;
+                                case TableItemType.Away:
+                                    model.AwayTeam = item.InnerText.Substring(50, item.InnerText.Length-67);
+                                    model.AwayImage = string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("img").Attributes["src"].Value).Value) ? 
+                                        new Uri(item.SelectSingleNode("img").Attributes["src"].Value) : 
+                                        new Uri(DefaultImageFlagHost);
+                                    break;
+                                case TableItemType.Home:
+                                    model.HomeTeam = item.InnerText.Substring(25, item.InnerText.Length - 67);
+                                    model.HomeImage = string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("img").Attributes["src"].Value).Value) ?
+                                        new Uri(item.SelectSingleNode("img").Attributes["src"].Value) : 
+                                        new Uri(DefaultImageFlagHost);
+                                    break;
+                                case TableItemType.Vs:
+                                    model.IsOverOrNot = false;
+                                    model.Score = "VS";
+                                    break;
+                                case TableItemType.Stat:
+                                    model.IsOverOrNot = true;
+                                    model.Score = item.InnerText;
+                                    break;
+                                case TableItemType.Link:
+                                    var linkContent = item.SelectSingleNode("a");
+                                    model.ArticleLink = linkContent == null ? null : new Uri(MatchHost+linkContent.Attributes["href"].Value);
+                                    break;
+                                default:break;
+                            }
+                        }
+                        list.Add(model);
+                    }
+                }
+            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
+            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
+            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
             }
             return list;
         }
