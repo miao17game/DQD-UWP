@@ -62,6 +62,10 @@
             <SolidColorBrush x:Key="DQDSummTextColor" Color="#909090"/>
             <!--DQDPopupBackColor-->
             <SolidColorBrush x:Key="DQDPopupBackColor" Color="#BB000000"/>
+            <!--DQDReTextColor-->
+            <SolidColorBrush x:Key="DQDReTextColor" Color="#EFEFEF"/>
+            <!--DQDReBackColor-->
+            <Color x:Key="DQDReBackColor">#99000000</Color>
 
             <Style x:Key="ImageSourceStyle" TargetType="Image">
                 <Setter Property="Stretch" Value="UniformToFill"/>
@@ -129,6 +133,10 @@
             <SolidColorBrush x:Key="DQDSummTextColor" Color="#909090"/>
             <!--DQDPopupBackColor-->
             <SolidColorBrush x:Key="DQDPopupBackColor" Color="#BBFFFFFF"/>
+            <!--DQDReTextColor-->
+            <SolidColorBrush x:Key="DQDReTextColor" Color="#303030"/>
+            <!--DQDReBackColor-->
+            <Color x:Key="DQDReBackColor">#99FFFFFF</Color>
 
             <Style x:Key="ImageSourceStyle" TargetType="Image">
                 <Setter Property="Stretch" Value="UniformToFill"/>

@@ -51,13 +51,24 @@ namespace DQD.Net.Pages {
             HeaderResources.Source = headerList;
         }
 
-        public async Task<List<AlphaKeyGroup<MatchListModel>>> FetchHtml(string rel,string date,string scrolltimes,string timezone) {
-            var newUrl = string.Format(TargetUrl, rel, date, scrolltimes, timezone);
-            Debug.WriteLine(newUrl);
+        private string GetFormatDateNow() {
+            string stringModel = "{0}-{1}-{2}";
+            var nowDate = DateTime.Now;
+            return string.Format(
+                stringModel,
+                nowDate.Year.ToString(),
+                nowDate.Month >= 10 ? nowDate.Month.ToString() : "0" + nowDate.Month.ToString(),
+                nowDate.Day > 10 ? nowDate.Day.ToString() : "0" + nowDate.Day.ToString());
+        }
+
+        public async Task<List<AlphaKeyGroup<MatchListModel>>> FetchHtml(string rel,string scrolltimes,string timezone) {
             return GetAlphaKeyGroup.GetAlphaGroupSampleItems(
                 DataProcess.GetMatchItemsContent(
                     JObject.Parse(
-                        (await WebProcess.GetHtmlResources(newUrl)).ToString())["html"].ToString()));
+                        (await WebProcess.GetHtmlResources(
+                            string.Format(TargetUrl, rel, GetFormatDateNow(), scrolltimes, timezone)))
+                            .ToString())["html"]
+                            .ToString()));
         }
 
         #endregion
@@ -69,7 +80,7 @@ namespace DQD.Net.Pages {
             NowItem = item.Title;
             var rel = item.Number.ToString();
             if (!cacheDic.ContainsKey(item.Title)) {
-                Resources = await FetchHtml(rel, "2016-08-16","0","-8");
+                Resources = await FetchHtml(rel,"0","-8");
                 if(Resources.Count == 0) { new ToastSmooth("近期没有比赛").Show(); }
                 cacheDic.Add(item.Title, Resources);
             }

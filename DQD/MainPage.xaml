@@ -47,6 +47,11 @@
                                 <Thickness>0,8,0,0</Thickness>
                             </Setter.Value>
                         </Setter>
+                        <Setter Target="BaseBorder.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0,0,0,0</Thickness>
+                            </Setter.Value>
+                        </Setter>
                         <Setter Target="BaseGrid.(FrameworkElement.Margin)">
                             <Setter.Value>
                                 <Thickness>0,16,0,0</Thickness>
@@ -72,6 +77,11 @@
                         <Setter Target="BackgroundImage.(FrameworkElement.Margin)">
                             <Setter.Value>
                                 <Thickness>0,8,0,0</Thickness>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="BaseBorder.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0,0,0,0</Thickness>
                             </Setter.Value>
                         </Setter>
                         <Setter Target="BaseGrid.(FrameworkElement.Margin)">
@@ -192,6 +202,17 @@
             <Image Name="BackgroundImage" 
                    Source="/Assets/38565-105.jpg"
                    Stretch="UniformToFill"/>
+            <Rectangle  
+                       Height="85"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Bottom">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="Transparent" Offset="0.0" x:Name="GradientStop1"/>
+                        <GradientStop Color="{ThemeResource DQDReBackColor}" Offset="0.99" x:Name="GradientStop2"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <StackPanel Name="SummaStack"
                         Orientation="Vertical" 
                         HorizontalAlignment="Right"
@@ -200,10 +221,10 @@
                         Margin="15">
                 <TextBlock Text="懂球帝"
                        FontSize="28"
-                       Foreground="#C0C0C0"/>
+                       Foreground="{ThemeResource DQDReTextColor}"/>
                 <TextBlock Text="为足球而生"
                        FontSize="14"
-                       Foreground="#C0C0C0"/>
+                       Foreground="{ThemeResource DQDReTextColor}"/>
             </StackPanel>
             <Frame Name="ContentFrame" />
         </Grid>
@@ -228,22 +249,6 @@
                         FromVerticalOffset="0"/>
                 </TransitionCollection>
             </Popup.ChildTransitions>
-            <!--<VisualStateManager.VisualStateGroups>
-                <VisualStateGroup x:Name="OpenStates">
-                    <VisualState x:Name="Closed">
-                        <Storyboard>
-                            <PopOutThemeAnimation TargetName="SettingsPopup"/>
-                        </Storyboard>
-                    </VisualState>
-                    <VisualState x:Name="Opened">
-                        <Storyboard>
-                            <PopInThemeAnimation 
-                                        FromHorizontalOffset="300" 
-                                        TargetName="SettingsPopup"/>
-                        </Storyboard>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>-->
             <RelativePanel Name="PopupStack"
                         Width="300" 
                         Height="{Binding ActualHeight, ElementName=SettingsPopup,Mode=OneWay}"
@@ -291,6 +296,17 @@
                         Click="PopupInnerClick"
                         RelativePanel.Below="SettBtn"
                         HorizontalAlignment="Stretch"/>
+                <Button Content="关于懂球帝"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Style="{StaticResource MainPagePopupButtonStyle}"
+                        Name="AboutDongQDBtn"
+                        Margin="5,2" 
+                        Background="Transparent" 
+                        Foreground="#EFEFEF"
+                        Click="PopupInnerClick"
+                        RelativePanel.Below="AboutBtn"
+                        HorizontalAlignment="Stretch"/>
                 <Grid RelativePanel.Below="PopupBackButton"
                         RelativePanel.AlignLeftWithPanel="True"
                         RelativePanel.AlignRightWithPanel="True"
@@ -318,12 +334,9 @@
                             RelativePanel.AlignTopWithPanel="True"
                             RelativePanel.AlignLeftWithPanel="True"
                             RelativePanel.AlignRightWithPanel="True"
-                            Margin="1,53,0,0"
-                            Padding="5,12,5,5"
+                            Margin="0.25,53,0,0"
+                            Padding="15,12,5,5"
                             Visibility="Collapsed">
-                    <Rectangle Height="1"
-                               Fill="{ThemeResource DQDBackground}"
-                               Margin=" -2,-2,-2,0"/>
                     <TextBlock Text="设置" FontSize="20"/>
                     <Grid Margin="0,10,0,0">
                         <StackPanel Orientation="Vertical">
@@ -347,49 +360,119 @@
                             RelativePanel.AlignTopWithPanel="True"
                             RelativePanel.AlignLeftWithPanel="True"
                             RelativePanel.AlignRightWithPanel="True"
-                            Margin="1,53,0,0"
-                            Padding="5,12,5,5"
-                            Visibility="Collapsed">
-                    <Rectangle Height="1"
+                            Margin="0.25,53,0,0"
+                            Padding="0,12,0,5"
+                            Visibility="Visible">
+                    <ScrollViewer Height="{Binding Height, ElementName=AboutMenu, Mode=OneWay}">
+                        <StackPanel Margin="15,0,10,0">
+                            <Rectangle Height="1"
                                Fill="{ThemeResource DQDBackground}"
                                Margin=" -2,-2,-2,0"/>
-                    <TextBlock Text="关于" FontSize="20"/>
-                    <TextBlock FontWeight="Thin"
+                            <TextBlock Text="关于" FontSize="20"/>
+                            <TextBlock FontWeight="Thin"
                                FontSize="12"
                                Margin="0,5,5,5"
                                TextWrapping="WrapWholeWords"
                                Text="这是一款第三方应用，App中所有内容均来源于www.dongqiudi.com，
 虽然内容来自网页，但绝非大家深恶痛绝的网页嵌套，大部分内容均已本地化，
 在网络畅通的情况下，可以快速的加载内容。"/>
-                    <TextBlock FontWeight="Thin"
+                            <TextBlock FontWeight="Thin"
                                FontSize="12"
                                Margin="0,5,5,5"
                                TextWrapping="WrapWholeWords"
                                Text="懂球帝的内容较多，大量的内容目前已经在开发中，以后会慢慢补齐。"/>
-                    <TextBlock FontWeight="Thin"
+                            <TextBlock FontWeight="Thin"
                                FontSize="12"
                                Margin="0,5,5,5"
                                TextWrapping="WrapWholeWords"
                                Text="由于是第三方应用，没有官方API支持，暂时不支持登录功能，圈子功能等内容，
 开发者正在努力的寻求解决方法，有办法的朋友也可以援助我/(ㄒoㄒ)/~~。"/>
-                    <TextBlock FontWeight="Thin"
+                            <TextBlock FontWeight="Thin"
                                FontSize="12"
                                Margin="0,5,5,5"
                                TextWrapping="WrapWholeWords"
                                Text="DQD-UWP绝对不会加入广告功能(*^_^*)"/>
-                    <TextBlock FontWeight="Thin"
+                            <TextBlock FontWeight="Thin"
                                FontSize="16"
                                Margin="0,15,5,5"
                                TextWrapping="WrapWholeWords">
-                        <Run Text="版本号：1.0.1016"/><LineBreak/>
+                        <Run Text="版本号：1.0.1017"/><LineBreak/>
                         <LineBreak/>
                         <Run Text="待解决的问题：" FontSize="14"/><LineBreak/>
                         <Run Text="1）所有评论加载存在问题" FontSize="12"/><LineBreak/>
                         <Run Text="2）YouKu视频暂时无法支持" FontSize="12"/><LineBreak/>
+                        <Run Text="3）赛事集锦暂时无法支持" FontSize="12"/><LineBreak/>
+                        <Run Text="4）评论中的图片无法显示" FontSize="12"/><LineBreak/>
+                        <Run Text="5）登陆功能暂不支持" FontSize="12"/><LineBreak/>
                         <LineBreak/>
-                        <Run Text="联系作者"/><LineBreak/>
+                        <Run Text="上述部分问题，受限于懂球帝官网功能不完整，开发者可能暂时无法解决,希望不要因此给我一★问候(；′⌒`)♥" FontSize="12" FontWeight="SemiBold"/><LineBreak/>
+                        <LineBreak/>
+                        <Run Text="联系作者" FontWeight="SemiBold"/><LineBreak/>
                         <Run Text="WeChat：miao17game"/><LineBreak/>
                         <Run Text="QQ：245396954"/><LineBreak/>
+                        <Run Text="博客："/><LineBreak/>
+                        <Run Text="新浪微博："/>
+                            </TextBlock>
+                            <HyperlinkButton Content="弱智Coder泡麵君" 
+                                     NavigateUri="http://weibo.com/miao17game?refer_flag=1001030102_" 
+                                     Foreground="{ThemeResource DQDBackground}"
+                                     Padding="0"
+                                     Margin="80,-30,0,0"/>
+                            <HyperlinkButton Content="Wallace Sun"
+                                     NavigateUri="http://noodlesblog.azurewebsites.net/" 
+                                     Foreground="{ThemeResource DQDBackground}"
+                                     Padding="0"
+                                     Margin="50,-73,0,0"/>
+                            <TextBlock FontWeight="Thin"
+                               FontSize="16"
+                               Margin="0,15,5,5"
+                               TextWrapping="WrapWholeWords">
+                        <Run Text="通过邮件反馈问题" FontWeight="SemiBold"/>
+                            </TextBlock>
+                            <Button Content="我要反馈"
+                            Background="{ThemeResource DQDBackground}"
+                            Foreground="#EFEFEF"
+                            Name="FeedBackBtn" 
+                            Margin="1,0,0,0"
+                            Click="FeedBackBtn_Click"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+                <StackPanel Name="AboutDongQDMenu"
+                            Background="{ThemeResource AppPersonalExtraBackground02}"
+                            RelativePanel.AlignBottomWithPanel="True"
+                            RelativePanel.AlignTopWithPanel="True"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignRightWithPanel="True"
+                            Margin="0.25,53,0,0"
+                            Padding="15,12,5,5"
+                            Visibility="Collapsed">
+                    <TextBlock Text="关于懂球帝" FontSize="20"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="12"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords"
+                               Text="懂球帝于2013年12月5日正式发布，目前已经成为全国最大的足球媒体和社区，中国目前用户量最多最大，影响力最大的足球媒体。我们致力于为中国足球的发展贡献自己的力量。"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="12"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords"
+                               Text="投稿请发送到： tougao@dongqiudi.com"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="12"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords"
+                               Text="懂球帝尊重知识产权和各方的诉求，如有版权和相关其他诉求，可邮件联系我们沟通。 hezuo@dongqiudi.com"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="12"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords"
+                               Text="如果您有任何关于懂球帝的问题，可以在微博联系@懂球帝，我们的工作人员会以最快的速度回复您。"/>
+                    <TextBlock FontWeight="Thin"
+                               FontSize="16"
+                               Margin="0,15,5,5"
+                               TextWrapping="WrapWholeWords">
+                        <Run Text="以上信息来源于懂球帝官网"/><LineBreak/>
                     </TextBlock>
                 </StackPanel>
             </RelativePanel>

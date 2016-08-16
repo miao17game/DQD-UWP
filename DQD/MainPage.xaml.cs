@@ -17,6 +17,8 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media;
 using DQD.Core.Models;
+using Edi.UWP.Helpers;
+using Windows.Security.ExchangeActiveSyncProvisioning;
 
 namespace DQD.Net {
     /// <summary>
@@ -112,6 +114,7 @@ namespace DQD.Net {
         }
 
         private void SettingsBtn_Click(object sender, RoutedEventArgs e) {
+            InsideResources.CollapsedAllPanel();
             SettingsPopup.IsOpen = true;
             PopupBorder.Visibility = Visibility.Visible;
             EnterPopupBorder.Begin();
@@ -122,32 +125,30 @@ namespace DQD.Net {
         }
 
         private void PopupBackButton_Click(object sender, RoutedEventArgs e) {
-            if (SettMenu.Visibility == Visibility.Visible) { SettMenu.Visibility = Visibility.Collapsed; return; }
-            if (AboutMenu.Visibility == Visibility.Visible) { AboutMenu.Visibility = Visibility.Collapsed; return; }
+            foreach (var item in InsideResources.GetPopupPanelColl()) {
+                if (item.Value.Visibility == Visibility.Visible){item.Value.Visibility = Visibility.Collapsed; return;}
+            }
             SettingsPopup.IsOpen = false;
         }
 
         private void PopupInnerClick(object sender, RoutedEventArgs e) {
             var button = sender as Button;
-            if (button.Name.Equals("SettBtn")) {
-                SettMenu.Visibility = Visibility.Visible;
-                AboutMenu.Visibility = Visibility.Collapsed;
-            } else {
-                SettMenu.Visibility = Visibility.Collapsed;
-                AboutMenu.Visibility = Visibility.Visible;
-            }
+            InsideResources.CollapsedAllPanel();
+            InsideResources.GetPanelInstance(button.Name).Visibility = Visibility.Visible;
         }
 
         private void SettingsPopup_Closed(object sender, object e) {
             OutPopupBorder.Completed += OnOutPopupBorderOut;
             OutPopupBorder.Begin();
-            SettMenu.Visibility = Visibility.Collapsed;
-            AboutMenu.Visibility = Visibility.Collapsed;
         }
 
         private void OnOutPopupBorderOut(object sender, object e) {
             OutPopupBorder.Completed -= OnOutPopupBorderOut;
             PopupBorder.Visibility = Visibility.Collapsed;
+        }
+
+        private async void FeedBackBtn_Click(object sender, RoutedEventArgs e) {
+            await ReportError(null, "N/A", true);
         }
 
         #endregion
@@ -178,6 +179,15 @@ namespace DQD.Net {
         };
 
             /// <summary>
+            /// The dictionary map of Popup collection. 
+            /// </summary>
+            static private Dictionary<string, StackPanel> PopupInnerMaps = new Dictionary<string, StackPanel> {
+            {"SettBtn",Current.SettMenu},
+            {"AboutBtn",Current.AboutMenu},
+            {"AboutDongQDBtn",Current.AboutDongQDMenu},
+        };
+
+            /// <summary>
             /// Get target page type by typeof.
             /// </summary>
             /// <param name="str">item name</param>
@@ -190,6 +200,20 @@ namespace DQD.Net {
             /// <param name="str">item name</param>
             /// <returns></returns>
             public static Frame GetTFrameype(string str) { return FramesMaps.ContainsKey(str) ? FramesMaps[str] : null; }
+
+            public static Dictionary<string, StackPanel> GetPopupPanelColl() { return PopupInnerMaps; }
+
+            /// <summary>
+            /// Get target StackPanel by item name.
+            /// </summary>
+            /// <param name="str">item name</param>
+            /// <returns></returns>
+            public static StackPanel GetPanelInstance(string str) { return PopupInnerMaps.ContainsKey(str) ? PopupInnerMaps[str] : null; }
+
+            /// <summary>
+            /// Collapsed All StackPanel
+            /// </summary>
+            public static void CollapsedAllPanel() { foreach(var item in PopupInnerMaps) { item.Value.Visibility = Visibility.Collapsed; } }
         }
         #endregion
 
@@ -230,6 +254,37 @@ namespace DQD.Net {
                     sideGrid.Margin = new Thickness(0, 0, 0, 0);
                 }
             }
+        }
+
+        /// <summary>
+        /// ReportError Method
+        /// </summary>
+        /// <param name="viewName"></param>
+        /// <param name="msg"></param>
+        /// <param name="pageSummary"></param>
+        /// <param name="includeDeviceInfo"></param>
+        /// <returns></returns>
+        public static async Task ReportError(string msg = null, string pageSummary = "N/A", bool includeDeviceInfo = true) {
+            var deviceInfo = new EasClientDeviceInformation();
+
+            string subject = "DQD-UWP 反馈";
+            string body = $"问题描述：{msg}  " +
+                          $"\n\n\n\n\n\n（程序版本：{Utils.GetAppVersion()} ";
+
+            if (includeDeviceInfo) {
+                body += $", \n设备名：{deviceInfo.FriendlyName}, " +
+                          $"\n操作系统：{deviceInfo.OperatingSystem}, " +
+                          $"\nSKU：{deviceInfo.SystemSku}, " +
+                          $"\n产品名称：{deviceInfo.SystemProductName}, " +
+                          $"\n制造商：{deviceInfo.SystemManufacturer}, " +
+                          $"\n固件版本：{deviceInfo.SystemFirmwareVersion}, " +
+                          $"\n硬件版本：{deviceInfo.SystemHardwareVersion}）";
+            } else {
+                body += ")";
+            }
+
+            string to = "miao17game@qq.com";
+            await Tasks.OpenEmailComposeAsync(to, subject, body);
         }
 
         #endregion
