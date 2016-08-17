@@ -179,6 +179,7 @@ namespace DQD.Net.Pages {
                             MinHeight = 200,
                             MinWidth = 300,
                             AreTransportControlsEnabled = true,
+                            AutoPlay = false,
                         });
                         break;
                     case ContentType.Flash:

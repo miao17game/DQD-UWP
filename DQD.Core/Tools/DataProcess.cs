@@ -1,6 +1,7 @@
 ﻿using DQD.Core.Models.CommentModels;
 using DQD.Core.Models.MatchModels;
 using DQD.Core.Models.PageContentModels;
+using DQD.Core.Models.TeamModels;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -198,6 +199,32 @@ namespace DQD.Core. Tools {
                         }
                         list.Add(model);
                     }
+                }
+            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
+            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
+            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            }
+            return list;
+        }
+
+        public static List<LeagueModel> GetLeagueContent(string stringBUD) {
+            var list = new List<LeagueModel>();
+            try {
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(stringBUD);
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//div[@id='stat_list']";
+                HtmlNodeCollection startListA = rootnode.SelectNodes(XPathString).ElementAt(0).SelectNodes("a");
+                foreach (var listItemA in startListA) {
+                    var model = new LeagueModel();
+                    model.Href = new Uri(HomeHost + listItemA.Attributes["href"].Value);
+                    model.LeagueName = 
+                        listItemA.Attributes["rel"] != null?
+                        listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25): 
+                        listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25);
+                    list.Add(model);
                 }
             } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
             } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());

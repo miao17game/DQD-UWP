@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DQD.Core.Models.TeamModels;
+using DQD.Core.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +24,22 @@ namespace DQD.Net.Pages {
     public sealed partial class DataPage:Page {
         public DataPage() {
             this.InitializeComponent();
+            this.NavigationCacheMode = NavigationCacheMode.Required;
+            InitBounldResources();
+        }
+
+        private async void InitBounldResources() {
+            ListResources.Source = DataProcess.GetLeagueContent((await WebProcess.GetHtmlResources(TargetHost)).ToString());
+        }
+
+        #region State
+        const string TargetHost = "http://www.dongqiudi.com/data";
+        #endregion
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e) {
+            var itemUri = (e.ClickedItem as LeagueModel).Href;
+            MainPage.Current.ItemClick?.Invoke(this, typeof(DataContentPage), MainPage.Current.contentFrame, itemUri, 0);
+            MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
     }
 }
