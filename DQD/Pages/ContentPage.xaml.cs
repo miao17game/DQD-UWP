@@ -12,10 +12,12 @@ using ImageLib.Controls;
 using ImageLib.Gif;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -64,6 +66,39 @@ namespace DQD.Net.Pages {
             if (StatusBarInit.IsTargetMobile()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15,0,0,0); }
         }
 
+        private void MoreCommentsBtn_Click(object sender, RoutedEventArgs e) {
+            if (CommentsResources.Source == null) {
+                var sources = new DQDDataContext<AllCommentModel>(FetchMoreResources, HostNumber, 30, targetHost, InitSelector.Default);
+                CommentsResources.Source = sources;
+            }
+            PopupAllComments.IsOpen = true;
+            PopupBackBorder.Visibility = Visibility.Visible;
+            EnterPopupBorder.Begin();
+        }
+
+        private void BackBtn_Click(object sender, RoutedEventArgs e) {
+            MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
+        }
+
+        private void PopupAllComments_SizeChanged(object sender, SizeChangedEventArgs e) {
+            InnerGrid.Width = (sender as Popup).ActualWidth;
+            InnerGrid.Height = (sender as Popup).ActualHeight;
+        }
+
+        private void CloseAllComsBtn_Click(object sender, RoutedEventArgs e) {
+            PopupAllComments.IsOpen = false;
+        }
+
+        private void PopupAllComments_Closed(object sender, object e) {
+            OutPopupBorder.Completed += OnOutPopupBorderOut;
+            OutPopupBorder.Begin();
+        }
+
+        private void OnOutPopupBorderOut(object sender, object e) {
+            OutPopupBorder.Completed -= OnOutPopupBorderOut;
+            PopupBackBorder.Visibility = Visibility.Collapsed;
+        }
+
         #endregion
 
         #region Methods
@@ -75,6 +110,11 @@ namespace DQD.Net.Pages {
                 StorageCacheImpl = new LimitedStorageCache(ApplicationData.Current.LocalCacheFolder,
                             "cache", new SHA1CacheGenerator(), 1024 * 1024 * 1024)
             }.AddDecoder<GifDecoder>().Build(), false);
+        }
+
+        private async Task<ObservableCollection<AllCommentModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
+            targetHost = string.Format(targetHost, number, nowWholeCountX / rollNum);
+            return await DataProcess.GetPageAllComments(targetHost);
         }
 
         /// <summary>
@@ -146,6 +186,7 @@ namespace DQD.Net.Pages {
                             Source = (item as ContentFlashs).FlashUri,
                             Margin = new Thickness(5),
                             AreTransportControlsEnabled = true,
+                            AutoPlay = false,
                             HorizontalAlignment=HorizontalAlignment.Center,
                             MinHeight = 200,
                             MinWidth = 300,
@@ -220,43 +261,11 @@ namespace DQD.Net.Pages {
 
         #region Properties and State
 
+        private string targetHost = "http://dongqiudi.com/article/{0}?page={1}#comment_anchor"; 
         private enum ContentType { None = 0, String = 1, Image = 2, Gif = 3 , Video = 4, Flash = 5}
         private Uri HostSource;
         private int HostNumber;
 
         #endregion
-
-        private void MoreCommentsBtn_Click(object sender, RoutedEventArgs e) {
-            if (CommentsResources.Source == null) {
-                var sources = new DQDLoadContext<AllCommentModel>(HostNumber, HostSource.ToString(), DataIncrementalType.AllComsContent);
-                CommentsResources.Source = sources;
-            }
-            PopupAllComments.IsOpen = true;
-            PopupBackBorder.Visibility = Visibility.Visible;
-            EnterPopupBorder.Begin();
-        }
-
-        private void BackBtn_Click(object sender, RoutedEventArgs e) {
-            MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
-        }
-
-        private void PopupAllComments_SizeChanged(object sender, SizeChangedEventArgs e) {
-            InnerGrid.Width = (sender as Popup).ActualWidth;
-            InnerGrid.Height = (sender as Popup).ActualHeight;
-        }
-
-        private void CloseAllComsBtn_Click(object sender, RoutedEventArgs e) {
-            PopupAllComments.IsOpen = false;
-        }
-
-        private void PopupAllComments_Closed(object sender, object e) {
-            OutPopupBorder.Completed += OnOutPopupBorderOut;
-            OutPopupBorder.Begin();
-        }
-
-        private void OnOutPopupBorderOut(object sender, object e) {
-            OutPopupBorder.Completed -= OnOutPopupBorderOut;
-            PopupBackBorder.Visibility = Visibility.Collapsed;
-        }
     }
 }

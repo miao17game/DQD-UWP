@@ -4,6 +4,7 @@ using DQD.Core.Models.PageContentModels;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -92,8 +93,8 @@ namespace DQD.Core. Tools {
             return list;
         }
 
-        public static async Task<List<AllCommentModel>> GetPageAllComments(string targetHost) {
-            var list = new List<AllCommentModel>();
+        public static async Task<ObservableCollection<AllCommentModel>> GetPageAllComments(string targetHost) {
+            var list = new ObservableCollection<AllCommentModel>();
             try {
                 StringBuilder urlString = new StringBuilder();
                 urlString = await WebProcess.GetHtmlResources(targetHost);

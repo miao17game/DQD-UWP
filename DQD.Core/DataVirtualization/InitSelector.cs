@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DQD.Core.DataVirtualization {
-    public enum DataIncrementalType {
-        BaseListContent = 1,
-        AllComsContent = 2,
+    public enum InitSelector {
+        Default = 1,
+        Special = 2,
     }
 }

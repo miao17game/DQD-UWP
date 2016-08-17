@@ -56,6 +56,43 @@ namespace DQD.Core.Models {
         }
 
         /// <summary>
+        /// Handle the html resources from DQD SpecialHeader Group.
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<ObservableCollection<HeaderModel>> SetSpecialHeaderGroupResources(string targetPath) {
+            string HomeHostInsert = targetPath + "/";
+            ObservableCollection<HeaderModel> HeaderGroup = new ObservableCollection<HeaderModel>();
+            try {
+                StringBuilder urlString = new StringBuilder();
+                urlString = await WebProcess.GetHtmlResources(HomeHostInsert);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(urlString.ToString());
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//div[@id='tab']";
+                HtmlNodeCollection hrefsDiv = rootnode.SelectNodes(XPathString);
+                var hrefs = hrefsDiv.ElementAt(0).SelectNodes("a");
+                foreach (var item in hrefs) {
+                    HeaderModel model = new HeaderModel();
+                    model.pathHref = HomeHostInsert + item.Attributes["href"].Value;
+                    model.Title = item.InnerText;
+                    model.Number = Convert.ToInt32(item.Attributes["rel"].Value);
+                    HeaderGroup.Add(model);
+                }
+            } catch (NullReferenceException NRE) {
+                Debug.WriteLine(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                Debug.WriteLine(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                Debug.WriteLine(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                Debug.WriteLine(FE.Message.ToString());
+            } catch (Exception E) {
+                Debug.WriteLine(E.Message.ToString());
+            }
+            return HeaderGroup;
+        }
+
+        /// <summary>
         /// Handle the html resources from DQD Header Group.
         /// </summary>
         /// <returns></returns>

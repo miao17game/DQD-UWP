@@ -118,9 +118,9 @@
     <Compile Include="Controls\ToastSmooth.xaml.cs">
       <DependentUpon>ToastSmooth.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataVirtualization\DataIncrementalType.cs" />
-    <Compile Include="DataVirtualization\DQDLoadContext.cs" />
-    <Compile Include="DataVirtualization\IncrementalLoadingBase.cs" />
+    <Compile Include="DataVirtualization\DQDDataContext.cs" />
+    <Compile Include="DataVirtualization\DQDDataContextBase.cs" />
+    <Compile Include="DataVirtualization\InitSelector.cs" />
     <Compile Include="Models\CommentModels\AllCommentModel.cs" />
     <Compile Include="Models\CommentModels\CommentModel.cs" />
     <Compile Include="Models\MatchModels\MatchGroup.cs" />

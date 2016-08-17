@@ -14,6 +14,7 @@ using System.Diagnostics;
 using DQD.Core.DataVirtualization;
 using Windows.System.Profile;
 using Windows.UI.Xaml.Media.Animation;
+using System.Threading.Tasks;
 
 namespace DQD.Net.Pages {
     /// <summary>
@@ -24,7 +25,7 @@ namespace DQD.Net.Pages {
         #region Constructor
         public HomePage() {
             Current = this;
-            cacheDic = new Dictionary<string, DQDLoadContext<ContentListModel>>();
+            cacheDic = new Dictionary<string, DQDDataContext<ContentListModel>>();
             ListViewOffset = new Dictionary<string, double>();
             this.NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
@@ -40,8 +41,14 @@ namespace DQD.Net.Pages {
         private async void InitView() {
             ObservableCollection<HeaderModel> headerList = new ObservableCollection<HeaderModel>();
             headerList = await DataHandler.SetHeaderGroupResources();
-            foreach (var item in headerList) { cacheDic.Add(item.Title, new DQDLoadContext<ContentListModel>(item.Number, HomeHost)); }
+            foreach (var item in headerList) { cacheDic.Add(item.Title, new DQDDataContext<ContentListModel>(FetchMoreResources, item.Number, 15, HomeHost, InitSelector.Special)); }
             HeaderResources.Source = headerList;
+        }
+
+        private async Task<ObservableCollection<ContentListModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
+            var Host = "http://www.dongqiudi.com?tab={0}&page={1}";
+            Host = string.Format(Host, number, nowWholeCountX / 15);
+            return await DataHandler.SetHomeListResources(Host);
         }
 
         #endregion
@@ -59,7 +66,7 @@ namespace DQD.Net.Pages {
             var item = (sender as Pivot).SelectedItem as HeaderModel;
             NowItem = item.Title;
             if (!cacheDic.ContainsKey(item.Title)) {
-                HomeLlistResources = new DQDLoadContext<ContentListModel>(DataHandler.SetHomeListResources, item.Number, HomeHost);
+                HomeLlistResources = new DQDDataContext<ContentListModel>(FetchMoreResources, item.Number, 15, HomeHost, InitSelector.Special);
                 cacheDic.Add(item.Title, HomeLlistResources);
             }
             ListResources.Source = cacheDic[NowItem];
@@ -108,9 +115,9 @@ namespace DQD.Net.Pages {
         public static HomePage Current;
         //private ListView thisList;
         private string NowItem;
-        private Dictionary<string, DQDLoadContext<ContentListModel>> cacheDic;
+        private Dictionary<string, DQDDataContext<ContentListModel>> cacheDic;
         private Dictionary<string, double> ListViewOffset;
-        private DQDLoadContext<ContentListModel> HomeLlistResources;
+        private DQDDataContext<ContentListModel> HomeLlistResources;
         private const string HomeHost = "http://www.dongqiudi.com/";
         private const string HomeHostInsert = "http://www.dongqiudi.com";
 
