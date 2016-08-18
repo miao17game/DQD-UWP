@@ -44,9 +44,10 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Pivot Name="MyPivot" Width="{Binding Width, ElementName=grid ,Mode=OneWay}"
-               ItemsSource="{Binding Source={StaticResource HeaderResources}}"
-               SelectionChanged="MyPivot_SelectionChanged">
+        <Pivot Name="MyPivot" 
+                           Width="{Binding Width, ElementName=grid ,Mode=OneWay}"
+                           ItemsSource="{Binding Source={StaticResource HeaderResources}}"
+                           SelectionChanged="MyPivot_SelectionChanged">
             <Pivot.HeaderTemplate>
                 <DataTemplate x:DataType="model:HeaderModel">
                     <TextBlock Text="{Binding Title}"

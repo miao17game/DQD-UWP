@@ -15,6 +15,7 @@ using DQD.Core.DataVirtualization;
 using Windows.System.Profile;
 using Windows.UI.Xaml.Media.Animation;
 using System.Threading.Tasks;
+using DQD.Core.Controls;
 
 namespace DQD.Net.Pages {
     /// <summary>
@@ -58,7 +59,7 @@ namespace DQD.Net.Pages {
         private void ListView_ItemClick(object sender,ItemClickEventArgs e) {
             var itemUri = (e.ClickedItem as ContentListModel).Path;
             var itemNum = (e.ClickedItem as ContentListModel).ID;
-            MainPage.Current.ItemClick?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri, itemNum);
+            MainPage.Current.ItemClick?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri, itemNum,null);
             MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
 

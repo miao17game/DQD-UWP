@@ -22,7 +22,7 @@
         </Storyboard>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource AppPersonalExtraBackground}">
+    <Grid Name="BaseGrid" Background="{ThemeResource AppPersonalExtraBackground}">
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
@@ -287,5 +287,6 @@
                 <!--#endregion-->
             </Grid>
         </Popup>
+
     </Grid>
 </Page>

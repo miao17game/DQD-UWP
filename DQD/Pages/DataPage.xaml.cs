@@ -37,8 +37,8 @@ namespace DQD.Net.Pages {
         #endregion
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e) {
-            var itemUri = (e.ClickedItem as LeagueModel).Href;
-            MainPage.Current.ItemClick?.Invoke(this, typeof(DataContentPage), MainPage.Current.contentFrame, itemUri, 0);
+            var item = e.ClickedItem as LeagueModel;
+            MainPage.Current.ItemClick?.Invoke(this, typeof(DataContentPage), MainPage.Current.contentFrame, item.Href, 0,item.LeagueName);
             MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
     }

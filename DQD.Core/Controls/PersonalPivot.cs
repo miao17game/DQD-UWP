@@ -96,9 +96,9 @@ namespace DQD.Core.Controls {
 
         private void ZhiHuPivot_Loaded(object sender,RoutedEventArgs e) {
             if(Items.Count>1) {
-                var res = Window.Current.Bounds.Width/Items.Count;
-                if(AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
-                    HeaderWidth=res;
+                var res = Utils.ScreenSize().Width/Items.Count;
+                if (Utils.IsMobile)
+                    HeaderWidth =res;
                 _tipLine.X2=HeaderWidth;
             }
         }
@@ -122,8 +122,8 @@ namespace DQD.Core.Controls {
             if(_previsousOffset!=0) {
                 var x = (double)sender.GetValue(dp);
                 var right = x>_previsousOffset;
-
-                if(right) {
+                _tipLine.X2 = HeaderWidth;
+                if (right) {
                     // 非边界
                     if(SelectedIndex+1!=Items.Count) {
                         var newX = (x-_previsousOffset)/Items.Count+(SelectedIndex*HeaderWidth);

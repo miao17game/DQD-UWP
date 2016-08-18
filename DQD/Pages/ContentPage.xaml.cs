@@ -22,6 +22,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -55,6 +56,7 @@ namespace DQD.Net.Pages {
         /// </summary>
         /// <param name="e">navigate args</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
+            //YoukuView.Visibility = Visibility.Collapsed;
             var parameter = e.Parameter as ParameterNavigate;
             HostSource = parameter.Uri;
             HostNumber = parameter.Number;
@@ -201,7 +203,7 @@ namespace DQD.Net.Pages {
                             NavigateUri = (item as ContentFlashs).FlashUri,
                             Margin = new Thickness(5),
                             Content = ContentTitle.Text,
-                            Foreground = ((Brush)Application.Current.Resources["DQDBackground"]),
+                            Foreground = (Brush)Application.Current.Resources["DQDBackground"],
                             FontSize = 12,
                         });
                         break;

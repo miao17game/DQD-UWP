@@ -8,5 +8,6 @@ namespace DQD.Core.Models {
     public class ParameterNavigate {
         public int Number { get; set; }
         public Uri Uri { get; set; }
+        public string Summary { get; set; }
     }
 }

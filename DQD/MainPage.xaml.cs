@@ -224,9 +224,9 @@ namespace DQD.Net {
         public Frame contentFrame;
         public Grid SideGrid;
         public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
-        public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri ,int num);
+        public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri ,int num, string content);
         private NavigateEventHandler SelectionChanged = (sender, type, frame) => { frame.Navigate(type); };
-        public ClickEventHandler ItemClick = (sender, type, frame, uri ,num) => { frame.Navigate(type, new ParameterNavigate { Number=num,Uri=uri,}); };
+        public ClickEventHandler ItemClick = (sender, type, frame, uri ,num ,content) => { frame.Navigate(type, new ParameterNavigate { Number=num,Uri=uri,Summary= content }); };
 
         #endregion
 

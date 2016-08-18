@@ -4,12 +4,407 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DQD.Net.Pages"
     xmlns:MPV="using:DQD.Core.Controls"
+    xmlns:model="using:DQD.Core.Models.TeamModels"
+    xmlns:Converters="using:DQD.Core.Tools.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <CollectionViewSource x:Name="IntergralListResources"/>
+        <CollectionViewSource x:Name="ShootListResources"/>
+        <CollectionViewSource x:Name="HelpListResources"/>
+        <CollectionViewSource x:Name="ScheduleListResources"/>
+        <Converters:TeamModelConverter x:Key="VisibilityConverter"/>
+        <Converters:TopOrBottomConverter x:Key="UpOrDownConverter"/>
+        <Storyboard x:Name="EnterPopupBorder">
+            <FadeInThemeAnimation Storyboard.TargetName="PopupBackBorder" />
+        </Storyboard>
+        <Storyboard x:Name="OutPopupBorder">
+            <FadeOutThemeAnimation Storyboard.TargetName="PopupBackBorder" />
+        </Storyboard>
+        <Style x:Key="SpecialListViewItemData" TargetType="ListViewItem" >
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Grid x:Name="ContentBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0"
+                                                         To="1"/>
+                                            <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0"
+                                                         To="1"/>
+                                            <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PressedSelected">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0"
+                                                         To="1"/>
+                                            <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled"/>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="{ThemeResource ListViewItemDisabledThemeOpacity}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="MultiSelectStates">
+                                    <VisualState x:Name="MultiSelectDisabled">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheckBoxTransform"
+                                                                        Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="-32" KeySpline="0.1,0.9,0.2,1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectClipTransform"
+                                                                       Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="32" KeySpline="0.1,0.9,0.2,1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterTranslateTransform"
+                                                                       Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="32"/>
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.333" Value="Collapsed" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MultiSelectEnabled">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheckBoxTransform"
+                                                                        Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-32"/>
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectClipTransform"
+                                                                       Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="32"/>
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterTranslateTransform"
+                                                                       Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-32"/>
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheck" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterGrid" Storyboard.TargetProperty="Margin">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="32,0,0,0" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DataVirtualizationStates">
+                                    <VisualState x:Name="DataAvailable">
+                                        <Storyboard>
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" 
+                                                                               Storyboard.TargetProperty="Opacity" >
+                                                    <DiscreteDoubleKeyFrame KeyTime="00:00:00.000" Value="0"/>
+                                                    <SplineDoubleKeyFrame KeyTime="00:00:00.780" KeySpline="0.2,0 0,1" Value="0.2"/>
+                                                    <SplineDoubleKeyFrame KeyTime="00:00:01.380" KeySpline="0.2,0 0,1" Value="1"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentTransform" Storyboard.TargetProperty="Y" >
+                                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="100"/>
+                                                    <SplineDoubleKeyFrame KeyTime="0:0:0.467" KeySpline="0.2,0 0,1" Value="0"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DataPlaceholder">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextBlock" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="ReorderHintStates">
+                                    <VisualState x:Name="NoReorderHint"/>
+                                    <VisualState x:Name="BottomReorderHint">
+                                        <Storyboard>
+                                            <DragOverThemeAnimation TargetName="ContentBorder" ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" Direction="Bottom" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="TopReorderHint">
+                                        <Storyboard>
+                                            <DragOverThemeAnimation TargetName="ContentBorder" ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" Direction="Top" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="RightReorderHint">
+                                        <Storyboard>
+                                            <DragOverThemeAnimation TargetName="ContentBorder" ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" Direction="Right" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="LeftReorderHint">
+                                        <Storyboard>
+                                            <DragOverThemeAnimation TargetName="ContentBorder" ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" Direction="Left" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition To="NoReorderHint" GeneratedDuration="0:0:0.2"/>
+                                    </VisualStateGroup.Transitions>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DragStates">
+                                    <VisualState x:Name="NotDragging" />
+                                    <VisualState x:Name="Dragging">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="{ThemeResource ListViewItemDragThemeOpacity}" />
+                                            <DragItemThemeAnimation TargetName="ContentBorder" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DraggingTarget">
+                                        <Storyboard>
+                                            <DropTargetItemThemeAnimation TargetName="ContentBorder" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MultipleDraggingPrimary">
+                                        <Storyboard>
+                                            <!-- These two Opacity animations are required - the FadeInThemeAnimations
+                                             on the same elements animate an internal Opacity. -->
+                                            <DoubleAnimation Storyboard.TargetName="MultiArrangeOverlayBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1" />
+                                            <DoubleAnimation Storyboard.TargetName="MultiArrangeOverlayText"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1" />
+                                            <DoubleAnimation Storyboard.TargetName="ContentBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="{ThemeResource ListViewItemDragThemeOpacity}" />
+                                            <FadeInThemeAnimation TargetName="MultiArrangeOverlayBackground" />
+                                            <FadeInThemeAnimation TargetName="MultiArrangeOverlayText" />
+                                            <DragItemThemeAnimation TargetName="ContentBorder" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MultipleDraggingSecondary">
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation TargetName="ContentBorder" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DraggedPlaceholder">
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation TargetName="ContentBorder" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition To="NotDragging" GeneratedDuration="0:0:0.2"/>
+                                    </VisualStateGroup.Transitions>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="ContentPresenterTranslateTransform"/>
+                            </Grid.RenderTransform>
+                            <Rectangle x:Name="Background"
+                                    IsHitTestVisible="False"
+                                    Fill="{ThemeResource ListViewItemBackground}"
+                                    Opacity="1" 
+                                    VerticalAlignment="Top"
+                                   Height="1"
+                                    Control.IsTemplateFocusTarget="True"/>
+                            <Rectangle x:Name="BorderBackground"
+                                    IsHitTestVisible="False"
+                                    Fill="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                                    Opacity="0" 
+                                    Control.IsTemplateFocusTarget="True"/>
+                            <Grid x:Name="ContentPresenterGrid"
+                              Background="Transparent"
+                              Margin="0,0,0,0">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="ContentTransform"/>
+                                </Grid.RenderTransform>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"/>
+                            </Grid>
+                            <!-- The 'Xg' text simulates the amount of space one line of text will occupy.
+                              In the DataPlaceholder state, the Content is not loaded yet so we
+                              approximate the size of the item using placeholder text. -->
+                            <TextBlock x:Name="PlaceholderTextBlock"
+                                    Opacity="0"
+                                    Text="Xg"
+                                    Foreground="{x:Null}"
+                                    Margin="{TemplateBinding Padding}"
+                                    IsHitTestVisible="False"
+                                    AutomationProperties.AccessibilityView="Raw"/>
+                            <Rectangle x:Name="PlaceholderRect"
+                                    Visibility="Collapsed"
+                                    Fill="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"/>
+                            <Rectangle x:Name="MultiArrangeOverlayBackground"
+                                    IsHitTestVisible="False"
+                                    Opacity="0"
+                                    Fill="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                    Grid.ColumnSpan="2"/>
+                            <Border x:Name="MultiSelectSquare"
+                                BorderBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                BorderThickness="2"
+                                Width="20"
+                                Height="20"
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Visibility="Collapsed" >
+                                <Border.Clip>
+                                    <RectangleGeometry Rect="0,0,20,20">
+                                        <RectangleGeometry.Transform>
+                                            <TranslateTransform x:Name="MultiSelectClipTransform"/>
+                                        </RectangleGeometry.Transform>
+                                    </RectangleGeometry>
+                                </Border.Clip>
+                                <Border.RenderTransform>
+                                    <TranslateTransform x:Name="MultiSelectCheckBoxTransform"/>
+                                </Border.RenderTransform>
+                                <FontIcon x:Name="MultiSelectCheck"
+                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                      Glyph="&#xE73E;"
+                                      FontSize="16"
+                                      Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                      Visibility="Collapsed"
+                                      Opacity="0"/>
+                            </Border>
+                            <TextBlock x:Name="MultiArrangeOverlayText"
+                                    Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DragItemsCount}"
+                                    Foreground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                    FontSize="26.667"
+                                    IsHitTestVisible="False"
+                                    Opacity="0"
+                                    TextWrapping="Wrap"
+                                    TextTrimming="WordEllipsis"
+                                    Margin="18,9,0,0"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    Grid.ColumnSpan="2"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    
     <Grid Name="BaseGrid" 
-          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+          Background="{ThemeResource AppPersonalExtraBackground02}"
           SizeChanged="BaseGrid_SizeChanged">
 
         <VisualStateManager.VisualStateGroups>
@@ -68,6 +463,7 @@
                        Margin="15,2,0,2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
+                       Height="30"
                        Foreground="{ThemeResource AppPersonalTextColorPure}"/>
             <Rectangle Height="1"
                        Fill="{ThemeResource DQDSummTextColor}"
@@ -84,8 +480,7 @@
                                SelectionChanged="MyPivot_SelectionChanged"
                                IndicatorLineStroke="{ThemeResource DQDBackground}" 
                                BackgroundLineStoke="Transparent"
-                               IndicatorLineStokeThickness="5"
-                               Style="{ThemeResource BottemPV}">
+                               IndicatorLineStokeThickness="5">
             <MPV:PersonalPivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" 
@@ -97,25 +492,250 @@
                                    FontSize="20"/>
                 </DataTemplate>
             </MPV:PersonalPivot.HeaderTemplate>
-            <PivotItem Name="HomePItem" 
-                           Header="积分榜"
-                           Background="White" >
-                <Frame Name="HomePFrame"/>
+            <PivotItem Name="IntergralPItem" 
+                           Header="积分榜" >
+                <ListView Name="IntergralList"
+                          SelectionMode="None"
+                          Background="{ThemeResource AppPersonalExtraBackground02}"
+                          ItemContainerStyle="{ThemeResource SpecialListViewItemData}"
+                          ItemsSource="{Binding Source={StaticResource IntergralListResources}}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="model:TeamLeagueModel">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Name="ModelType"
+                                           Text="{Binding ModelType}"
+                                           Visibility="Collapsed"/>
+                                <TextBlock Name="TopOrBottom"
+                                               Text="{Binding UpOrDown}"
+                                               Visibility="Collapsed"/>
+                                <TextBlock Name="TopRankOrNot"
+                                               Text="{Binding TopRankOrNot}"
+                                               Visibility="Collapsed"/> 
+                                <!--#region ListTitle-->
+                                <Border Background="{ThemeResource DQDListTitleColor}"
+                                        Height="50"
+                                        Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='ListTitle'}">
+                                    <TextBlock Text="{Binding ListTitle}" 
+                                           Grid.Row="0" 
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="20"/>
+                                </Border>
+                                <!--#endregion-->
+                                
+                                <!--#region Header-->
+                                <Grid Height="50"
+                                      Grid.Row="1" 
+                                      Background="{ThemeResource DQDListHeaderColor}"
+                                      Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='LeaTeamHeader'}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.7*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.9*"/>
+                                        <ColumnDefinition Width="0.7*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding RankHeader}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"/>
+                                    <TextBlock Text="{Binding TeamHeader}" 
+                                               Grid.Column="1"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Margin="10,0,0,0"/>
+                                    <TextBlock Text="{Binding AmountHeader}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="3"/>
+                                    <TextBlock Text="{Binding WinHeader}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="4"/>
+                                    <TextBlock Text="{Binding DrawHeader}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="5"/>
+                                    <TextBlock Text="{Binding LoseHeader}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="6"/>
+                                    <TextBlock Text="{Binding ScoreBallHeader}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="7"/>
+                                    <TextBlock Text="{Binding LostBallHeader}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="8"/>
+                                    <TextBlock Text="{Binding NetBallHeader}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="9"/>
+                                    <TextBlock Text="{Binding IntegralHeader}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="10"/>
+                                </Grid>
+                                <!--#endregion-->
+                                
+                                <!--#region LeagueTeam-->
+                                <Grid Height="50"
+                                      Grid.Row="2" 
+                                      Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='LeagueTeam'}"
+                                      Background="{
+                                    Binding ElementName=TopOrBottom, 
+                                    Path=Text, 
+                                    Converter={StaticResource UpOrDownConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.7*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.9*"/>
+                                        <ColumnDefinition Width="0.7*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Rank}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"/>
+                                    <Image Source="{Binding TeamIcon}"
+                                           Margin="5"
+                                           Grid.Column="1"/>
+                                    <TextBlock Text="{Binding Team}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               FontSize="14"
+                                               Grid.Column="2"/>
+                                    <TextBlock Text="{Binding Amount}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="3"/>
+                                    <TextBlock Text="{Binding Win}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="4"/>
+                                    <TextBlock Text="{Binding Draw}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="5"/>
+                                    <TextBlock Text="{Binding Lose}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="6"/>
+                                    <TextBlock Text="{Binding ScoreBall}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="7"/>
+                                    <TextBlock Text="{Binding LostBall}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="8"/>
+                                    <TextBlock Text="{Binding NetBall}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="9"/>
+                                    <TextBlock Text="{Binding Integral}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="10"/>
+                                </Grid>
+                                <!--#endregion-->
+
+                                <!--#region CupTeam-->
+                                <Grid Height="50"
+                                      Grid.Row="2" 
+                                      Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='CupModel'}"
+                                      Background="{
+                                    Binding ElementName=TopRankOrNot, 
+                                    Path=Text, 
+                                    Converter={StaticResource UpOrDownConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="0.5*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="0.5*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Time}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Margin=" 2,0,0,0"
+                                               Grid.Column="0"/>
+                                    <Image Source="{Binding AwayTeamIcon}"
+                                           Margin="5"
+                                           Grid.Column="1"/>
+                                    <TextBlock Text="{Binding AwayTeam}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="2"/>
+                                    <TextBlock Text="{Binding Score}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="3"/>
+                                    <TextBlock Text="{Binding HomeTeam}" 
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="4"/>
+                                    <Image Source="{Binding HomeTeamIcon}"
+                                           Margin="5"
+                                           Grid.Column="5"/>
+                                </Grid>
+                                <!--#endregion-->
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </PivotItem>
-            <PivotItem Name="MatchPItem" 
+            <PivotItem Name="ShootPItem" 
                            Header="射手榜"
                            Background="SteelBlue">
-                <Frame Name="MatchPFrame"/>
+                <ListView Name="ShootList"/>
             </PivotItem>
-            <PivotItem Name="VideoPItem" 
+            <PivotItem Name="HelpPItem" 
                            Header="助攻榜"
                            Background="Black">
-                <Frame Name="VideoPFrame"/>
+                <ListView Name="HelpList"/>
             </PivotItem>
-            <PivotItem Name="DataPItem" 
+            <PivotItem Name="SchedulePItem" 
                            Header="赛程表"
                            Background="Pink">
-                <Frame Name="DataPFrame"/>
+                <ListView Name="ScheduleList"/>
             </PivotItem>
         </MPV:PersonalPivot>
 

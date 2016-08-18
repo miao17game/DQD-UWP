@@ -66,6 +66,7 @@
                         <Setter Target="sideGrid.(UIElement.Visibility)" Value="Collapsed"/>
                         <Setter Target="BackgroundImage.(UIElement.Opacity)" Value="0"/>
                         <Setter Target="SummaStack.(UIElement.Opacity)" Value="0"/>
+                        <Setter Target="BackRec.(UIElement.Opacity)" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
                 
@@ -99,6 +100,7 @@
                         <Setter Target="sideGrid.(UIElement.Visibility)" Value="Collapsed"/>
                         <Setter Target="SummaStack.(UIElement.Opacity)" Value="0"/>
                         <Setter Target="BackgroundImage.(UIElement.Opacity)" Value="0"/>
+                        <Setter Target="BackRec.(UIElement.Opacity)" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
                 
@@ -202,7 +204,7 @@
             <Image Name="BackgroundImage" 
                    Source="/Assets/38565-105.jpg"
                    Stretch="UniformToFill"/>
-            <Rectangle  
+            <Rectangle Name="BackRec" 
                        Height="85"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Bottom">

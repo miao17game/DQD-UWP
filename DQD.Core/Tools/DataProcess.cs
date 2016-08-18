@@ -1,4 +1,5 @@
-﻿using DQD.Core.Models.CommentModels;
+﻿using DQD.Core.Controls;
+using DQD.Core.Models.CommentModels;
 using DQD.Core.Models.MatchModels;
 using DQD.Core.Models.PageContentModels;
 using DQD.Core.Models.TeamModels;
@@ -6,11 +7,13 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace DQD.Core. Tools {
@@ -20,9 +23,15 @@ namespace DQD.Core. Tools {
         private const string HomeHost = "http://www.dongqiudi.com/";
         private const string MatchHost = "http://www.dongqiudi.com/match";
         private const string DefaultImageFlagHost = "http://static1.dongqiudi.com/web-new/web/images/defaultTeam.png";
-        private enum TableItemType { Round = 0, Away = 1, Home = 2, Link = 3, Vs = 4, Stat = 5, Live = 6 ,Times = 7 } 
+        private enum TableItemType { Round = 0, Away = 1, Home = 2, Link = 3, Vs = 4, Stat = 5, Live = 6 ,Times = 7 }
 
         #endregion
+
+        public static async void ReportError(string erroeMessage) {
+            await Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+                new ToastSmooth(erroeMessage).Show();
+            });
+        }
 
         public static Uri ConvertToUri(string str) { return !string.IsNullOrEmpty(str) ? new Uri(str) : null; }
         
@@ -59,11 +68,16 @@ namespace DQD.Core. Tools {
                     } else if (item.SelectSingleNode("embed") != null) { model.ContentFlash.Add(new ContentFlashs { FlashUri = new Uri(item.SelectSingleNode("embed").Attributes["src"].Value), Index = index });
                     } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
                 }
-            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
-            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
-            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            } catch (NullReferenceException NRE) {
+                ReportError(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                ReportError(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                ReportError(FE.Message.ToString());
+            } catch (Exception E) {
+                ReportError(E.Message.ToString());
             } return model;
         }
 
@@ -85,11 +99,16 @@ namespace DQD.Core. Tools {
                     model.Content = targetStr.Substring(9, targetStr.Length-13);
                     list.Add(model);
                 }
-            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
-            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
-            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            } catch (NullReferenceException NRE) {
+                ReportError(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                ReportError(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                ReportError(FE.Message.ToString());
+            } catch (Exception E) {
+                ReportError(E.Message.ToString());
             }
             return list;
         }
@@ -121,11 +140,16 @@ namespace DQD.Core. Tools {
                     }
                     list.Add(model);
                 }
-            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
-            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
-            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            } catch (NullReferenceException NRE) {
+                ReportError(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                ReportError(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                ReportError(FE.Message.ToString());
+            } catch (Exception E) {
+                ReportError(E.Message.ToString());
             }
             return list;
         }
@@ -200,11 +224,16 @@ namespace DQD.Core. Tools {
                         list.Add(model);
                     }
                 }
-            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
-            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
-            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            } catch (NullReferenceException NRE) {
+                ReportError(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                ReportError(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                ReportError(FE.Message.ToString());
+            } catch (Exception E) {
+                ReportError(E.Message.ToString());
             }
             return list;
         }
@@ -226,13 +255,131 @@ namespace DQD.Core. Tools {
                         listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25);
                     list.Add(model);
                 }
-            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
-            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
-            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            } catch (NullReferenceException NRE) {
+                ReportError(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                ReportError(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                ReportError(FE.Message.ToString());
+            } catch (Exception E) {
+                ReportError(E.Message.ToString());
             }
             return list;
         }
-    }
+
+        public static List<TeamLeagueModel> GetLeagueTeamsContent(string stringBUD) {
+            var list = new List<TeamLeagueModel>();
+            try {
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(stringBUD);
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//table[@class='list_1']";
+                HtmlNodeCollection startListTrs = rootnode.SelectNodes(XPathString);
+                foreach (var table in startListTrs) {
+                    var trs = table.SelectNodes("tr");
+                    foreach (var listItem in trs) {
+                        var model = new TeamLeagueModel();
+                        var ths = listItem.SelectNodes("th");
+                        var tds = listItem.SelectNodes("td");
+                        TeamLeagueModel.TeamModelType type =
+                            tds != null && ( tds.ElementAt(0).Attributes["class"] == null && tds.Count==10) ? TeamLeagueModel.TeamModelType.LeagueTeam :
+                            tds != null && ( tds.ElementAt(0).Attributes["class"] != null || tds.Count != 10) ? TeamLeagueModel.TeamModelType.CupModel :
+                            ths.Count == 1 ? TeamLeagueModel.TeamModelType.ListTitle :
+                            TeamLeagueModel.TeamModelType.LeaTeamHeader;
+                        switch (type) {
+                            case TeamLeagueModel.TeamModelType.ListTitle:
+                                model.ModelType = TeamLeagueModel.TeamModelType.ListTitle;
+                                model.ListTitle = listItem.SelectSingleNode("th").InnerText;
+                                break;
+                            case TeamLeagueModel.TeamModelType.LeagueTeam:
+                                model.ModelType = TeamLeagueModel.TeamModelType.LeagueTeam;
+                                InsertLeagueTeamModel(listItem, model);
+                                break;
+                            case TeamLeagueModel.TeamModelType.LeaTeamHeader:
+                                model.ModelType = TeamLeagueModel.TeamModelType.LeaTeamHeader;
+                                InsertLeaTeamHeader(model, ths);
+                                break;
+                            case TeamLeagueModel.TeamModelType.CupModel:
+                                model.ModelType = TeamLeagueModel.TeamModelType.CupModel;
+                                InsertCupTeamModel(listItem, model);
+                                break;
+                        }
+                        list.Add(model);
+                    }
+                }
+            } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {ReportError(ANE.Message.ToString());
+            } catch (FormatException FE) {ReportError(FE.Message.ToString());
+            } catch (Exception E) {ReportError(E.Message.ToString());
+            }
+            return list;
+        }
+
+        
+
+        #region Methods inside
+        private static void InsertLeaTeamHeader(TeamLeagueModel model, HtmlNodeCollection ths) {
+            model.RankHeader = ths.ElementAt(0).InnerText;
+            model.TeamHeader = ths.ElementAt(1).InnerText;
+            model.AmountHeader = ths.ElementAt(2).InnerText;
+            model.WinHeader = ths.ElementAt(3).InnerText;
+            model.DrawHeader = ths.ElementAt(4).InnerText;
+            model.LoseHeader = ths.ElementAt(5).InnerText;
+            model.ScoreBallHeader = ths.ElementAt(6).InnerText;
+            model.LostBallHeader = ths.ElementAt(7).InnerText;
+            model.NetBallHeader = ths.ElementAt(8).InnerText;
+            model.IntegralHeader = ths.ElementAt(9).InnerText;
+        }
+
+        private static void InsertLeagueTeamModel(HtmlNode listItem, TeamLeagueModel model) {
+            var tds = listItem.SelectNodes("td");
+            model.Rank = Convert.ToUInt32(tds.ElementAt(0).InnerText);
+            model.Team = tds.ElementAt(1).InnerText;
+            model.Amount = Convert.ToUInt32(tds.ElementAt(2).InnerText);
+            model.Win = Convert.ToUInt32(tds.ElementAt(3).InnerText);
+            model.Draw = Convert.ToUInt32(tds.ElementAt(4).InnerText);
+            model.Lose = Convert.ToUInt32(tds.ElementAt(5).InnerText);
+            model.ScoreBall = Convert.ToUInt32(tds.ElementAt(6).InnerText);
+            model.LostBall = Convert.ToUInt32(tds.ElementAt(7).InnerText);
+            model.NetBall = Convert.ToInt32(tds.ElementAt(8).InnerText);
+            model.Integral = Convert.ToUInt32(tds.ElementAt(9).InnerText);
+            model.UpOrDown =
+                listItem.Attributes["class"]==null? TeamLeagueModel.TopOrBottom.None:
+                listItem.Attributes["class"].Value.Equals("top_rank") ? TeamLeagueModel.TopOrBottom.Top :
+                listItem.Attributes["class"].Value.Equals("bottom_rank") ? TeamLeagueModel.TopOrBottom.Bottom :
+                TeamLeagueModel.TopOrBottom.None;
+            model.TeamIcon =
+                string.IsNullOrEmpty(new Regex(@"\/.png").Match(tds.ElementAt(1).SelectSingleNode("img").Attributes["src"].Value).Value) ?
+                new Uri(tds.ElementAt(1).SelectSingleNode("img").Attributes["src"].Value) :
+                new Uri(DefaultImageFlagHost);
+        }
+
+        private static void InsertCupTeamModel(HtmlNode listItem, TeamLeagueModel model) {
+            var ctds = listItem.SelectNodes("td");
+            model.TopRankOrNot = 
+                listItem.Attributes["class"]==null? TeamLeagueModel.TopOrBottom.None:
+                listItem.Attributes["class"].Value.Equals("top_rank") ? TeamLeagueModel.TopOrBottom.Top :
+                TeamLeagueModel.TopOrBottom.None;
+            model.Time = ctds.ElementAt(0).Attributes["utc"] != null && !ctds.ElementAt(0).Attributes["utc"].Value .Equals("0")?
+                new DateTime(1970, 1, 1, 8, 0, 0).AddSeconds(Convert.ToInt64(ctds.ElementAt(0).Attributes["utc"].Value)).ToString("yy-MM-dd HH:mm") :
+                ctds.ElementAt(0).Attributes["utc"] != null && ctds.ElementAt(0).Attributes["utc"].Value.Equals("0")?
+                "待定":"总分";
+            model.Score = ctds.ElementAt(2).InnerText;
+            model.AwayTeam = ctds.ElementAt(1).InnerText;
+            model.HomeTeam = ctds.ElementAt(3).InnerText;
+            model.AwayTeamIcon =
+                string.IsNullOrEmpty(new Regex(@"\/.png").Match(ctds.ElementAt(1).SelectSingleNode("img").Attributes["src"].Value).Value) ?
+                new Uri(ctds.ElementAt(1).SelectSingleNode("img").Attributes["src"].Value) :
+                new Uri(DefaultImageFlagHost);
+            model.HomeTeamIcon =
+                string.IsNullOrEmpty(new Regex(@"\/.png").Match(ctds.ElementAt(3).SelectSingleNode("img").Attributes["src"].Value).Value) ?
+                new Uri(ctds.ElementAt(3).SelectSingleNode("img").Attributes["src"].Value) :
+                new Uri(DefaultImageFlagHost);
+        }
+        #endregion
+
+        }
 }
