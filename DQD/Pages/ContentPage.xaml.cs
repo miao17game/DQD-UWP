@@ -270,5 +270,13 @@ namespace DQD.Net.Pages {
         private int HostNumber;
 
         #endregion
+
+        private void BackToTopBtn_Click(object sender, RoutedEventArgs e) {
+
+        }
+
+        private void RefreshBtn_Click(object sender, RoutedEventArgs e) {
+            
+        }
     }
 }
