@@ -23,13 +23,14 @@ namespace DQD.Core. Tools {
         private const string HomeHost = "http://www.dongqiudi.com/";
         private const string MatchHost = "http://www.dongqiudi.com/match";
         private const string DefaultImageFlagHost = "http://static1.dongqiudi.com/web-new/web/images/defaultTeam.png";
+        private const string DefaultMenberHost = "http://static1.dongqiudi.com/web-new/web/images/defaultPlayer.png";
         private enum TableItemType { Round = 0, Away = 1, Home = 2, Link = 3, Vs = 4, Stat = 5, Live = 6 ,Times = 7 }
 
         #endregion
 
         public static async void ReportError(string erroeMessage) {
             await Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
-                new ToastSmooth(erroeMessage).Show();
+                new ToastSmooth("获取数据发生错误\n"+erroeMessage).Show();
             });
         }
 
@@ -318,7 +319,49 @@ namespace DQD.Core. Tools {
             return list;
         }
 
-        
+        public static List<SoccerMemberModel> GetSoccerMemberContent(string stringBUD) {
+            var list = new List<SoccerMemberModel>();
+            try {
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(stringBUD);
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//table[@class='list_1']";
+                HtmlNodeCollection startListTrs = rootnode.SelectNodes(XPathString);
+                foreach (var table in startListTrs) {
+                    var trs = table.SelectNodes("tr");
+                    foreach (var listItem in trs) {
+                        var model = new SoccerMemberModel();
+                        var ths = listItem.SelectNodes("th");
+                        var tds = listItem.SelectNodes("td");
+                        SoccerMemberModel.SocMenType type =
+                            ths==null || ths.Count == 0 ? SoccerMemberModel.SocMenType.Content:
+                            SoccerMemberModel.SocMenType.Header;
+                        switch (type) {
+                            case SoccerMemberModel.SocMenType.Content:
+                                model.ModelType = SoccerMemberModel.SocMenType.Content;
+                                InsertSoccerMemberModel(listItem, model);
+                                break;
+                            case SoccerMemberModel.SocMenType.Header:
+                                model.ModelType = SoccerMemberModel.SocMenType.Header;
+                                InsertSocMemHeaderModel(model, ths);
+                                break;
+                        }
+                        list.Add(model);
+                    }
+                }
+            } catch (NullReferenceException NRE) {
+                ReportError(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                ReportError(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                ReportError(FE.Message.ToString());
+            } catch (Exception E) {
+                ReportError(E.Message.ToString());
+            }
+            return list;
+        }
 
         #region Methods inside
         private static void InsertLeaTeamHeader(TeamLeagueModel model, HtmlNodeCollection ths) {
@@ -379,7 +422,30 @@ namespace DQD.Core. Tools {
                 new Uri(ctds.ElementAt(3).SelectSingleNode("img").Attributes["src"].Value) :
                 new Uri(DefaultImageFlagHost);
         }
+
+        private static void InsertSocMemHeaderModel(SoccerMemberModel model, HtmlNodeCollection ths) {
+            model.RankHeader = ths.ElementAt(0).InnerText;
+            model.TeamHeader = ths.ElementAt(2).InnerText;
+            model.MemberHeader = ths.ElementAt(1).InnerText;
+            model.StatHeader = ths.ElementAt(3).InnerText;
+        }
+
+        private static void InsertSoccerMemberModel(HtmlNode listItem, SoccerMemberModel model) {
+            var tds = listItem.SelectNodes("td");
+            model.Rank = Convert.ToUInt32(tds.ElementAt(0).InnerText);
+            model.Team = tds.ElementAt(2).InnerText;
+            model.Member = tds.ElementAt(1).InnerText;
+            model.Stat = Convert.ToUInt32(tds.ElementAt(3).InnerText);
+            model.TeamIcon =
+                 string.IsNullOrEmpty(new Regex(@"\/.png").Match(tds.ElementAt(2).SelectSingleNode("img").Attributes["src"].Value).Value) ?
+                 new Uri(tds.ElementAt(2).SelectSingleNode("img").Attributes["src"].Value) :
+                 new Uri(DefaultImageFlagHost);
+            model.MemberIcon =
+                 string.IsNullOrEmpty(new Regex(@"\/.png").Match(tds.ElementAt(1).SelectSingleNode("img").Attributes["src"].Value).Value) ?
+                 new Uri(tds.ElementAt(1).SelectSingleNode("img").Attributes["src"].Value) :
+                 new Uri(DefaultMenberHost);
+        }
         #endregion
 
-        }
+    }
 }

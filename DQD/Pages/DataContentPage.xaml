@@ -725,12 +725,214 @@
             <PivotItem Name="ShootPItem" 
                            Header="射手榜"
                            Background="SteelBlue">
-                <ListView Name="ShootList"/>
+                <ListView Name="ShootList"
+                          SelectionMode="None"
+                          Background="{ThemeResource AppPersonalExtraBackground02}"
+                          ItemContainerStyle="{ThemeResource SpecialListViewItemData}"
+                          ItemsSource="{Binding Source={StaticResource ShootListResources}}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="model:SoccerMemberModel">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Name="ModelType"
+                                           Text="{Binding ModelType}"
+                                           Visibility="Collapsed"/>
+
+                                <!--#region Header-->
+                                <Grid Height="50"
+                                      Grid.Row="0" 
+                                      Background="{ThemeResource DQDListHeaderColor}"
+                                      Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='Header'}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding RankHeader}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"/>
+                                    <TextBlock Text="{Binding MemberHeader}" 
+                                               Grid.Column="1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding TeamHeader}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="3"/>
+                                    <TextBlock Text="{Binding StatHeader}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="5"/>
+                                </Grid>
+                                <!--#endregion-->
+
+                                <!--#region Member-->
+                                <Grid Height="50"
+                                      Grid.Row="1" 
+                                      Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='Content'}"
+                                      Background="{
+                                    Binding ElementName=TopOrBottom, 
+                                    Path=Text, 
+                                    Converter={StaticResource UpOrDownConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Rank}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"/>
+                                    <Image Source="{Binding MemberIcon}"
+                                           Margin="5"
+                                           Grid.Column="1"/>
+                                    <TextBlock Text="{Binding Member}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               FontSize="14"
+                                               Grid.Column="2"/>
+                                    <Image Source="{Binding TeamIcon}"
+                                           Margin="4"
+                                           Grid.Column="3"/>
+                                    <TextBlock Text="{Binding Team}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="4"/>
+                                    <TextBlock Text="{Binding Stat}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="5"/>
+                                </Grid>
+                                <!--#endregion-->
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </PivotItem>
             <PivotItem Name="HelpPItem" 
                            Header="助攻榜"
                            Background="Black">
-                <ListView Name="HelpList"/>
+                <ListView Name="HelpList"
+                          SelectionMode="None"
+                          Background="{ThemeResource AppPersonalExtraBackground02}"
+                          ItemContainerStyle="{ThemeResource SpecialListViewItemData}"
+                          ItemsSource="{Binding Source={StaticResource HelpListResources}}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="model:SoccerMemberModel">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Name="ModelType"
+                                           Text="{Binding ModelType}"
+                                           Visibility="Collapsed"/>
+
+                                <!--#region Header-->
+                                <Grid Height="50"
+                                      Grid.Row="0" 
+                                      Background="{ThemeResource DQDListHeaderColor}"
+                                      Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='Header'}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding RankHeader}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"/>
+                                    <TextBlock Text="{Binding MemberHeader}" 
+                                               Grid.Column="1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding TeamHeader}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="3"/>
+                                    <TextBlock Text="{Binding StatHeader}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="5"/>
+                                </Grid>
+                                <!--#endregion-->
+
+                                <!--#region Member-->
+                                <Grid Height="50"
+                                      Grid.Row="1" 
+                                      Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='Content'}"
+                                      Background="{
+                                    Binding ElementName=TopOrBottom, 
+                                    Path=Text, 
+                                    Converter={StaticResource UpOrDownConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Rank}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="0"/>
+                                    <Image Source="{Binding MemberIcon}"
+                                           Margin="5"
+                                           Grid.Column="1"/>
+                                    <TextBlock Text="{Binding Member}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               FontSize="14"
+                                               Grid.Column="2"/>
+                                    <Image Source="{Binding TeamIcon}"
+                                           Margin="4"
+                                           Grid.Column="3"/>
+                                    <TextBlock Text="{Binding Team}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="4"/>
+                                    <TextBlock Text="{Binding Stat}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="5"/>
+                                </Grid>
+                                <!--#endregion-->
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </PivotItem>
             <PivotItem Name="SchedulePItem" 
                            Header="赛程表"

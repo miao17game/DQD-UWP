@@ -26,14 +26,18 @@ namespace DQD.Net.Pages {
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class DataContentPage : Page {
+        #region Constructor
+
         public DataContentPage() {
             Current = this;
             transToSideGrid = this.RenderTransform as TranslateTransform;
             if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            cacheDicList = new Dictionary<Uri, Dictionary<string, List<TeamLeagueModel>>>();
+            cacheDicList = new Dictionary<Uri, Dictionary<string, IList<object>>>();
         }
+
+        #endregion
 
         #region Events
 
@@ -54,7 +58,7 @@ namespace DQD.Net.Pages {
                 cacheDicList[HostSource] =
                 cacheDicList.ContainsKey(HostSource) ?
                 cacheDicList[HostSource] :
-                new Dictionary<string, List<TeamLeagueModel>>();
+                new Dictionary<string, IList<object>>();
             await InsertListResources("IntergralPItem");
             if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
             this.Opacity = 1;
@@ -70,12 +74,16 @@ namespace DQD.Net.Pages {
             await InsertListResources(item);
         }
 
+        #endregion
+
+        #region Methods
+
         private async System.Threading.Tasks.Task InsertListResources(string item) {
             InsideResources.GetTListSource(item).Source =
                             targetDicList[item] =
                             targetDicList.ContainsKey(item) ?
                             targetDicList[item] :
-                            DataProcess.GetLeagueTeamsContent(
+                            InsideResources.GetEventHandler(item).Invoke(
                                 (await WebProcess.GetHtmlResources(
                                     string.Format(
                                         targetHost, InsideResources.GetTTargetRank(item))))
@@ -120,6 +128,15 @@ namespace DQD.Net.Pages {
 
             public static string GetTTargetRank(string str) { return TargetUrlMaps.ContainsKey(str) ? TargetUrlMaps[str] : "team_rank"; }
 
+            static private Dictionary<string, NavigateEventHandler> EventHandlerMaps = new Dictionary<string, NavigateEventHandler> {
+                { "IntergralPItem", new NavigateEventHandler(path=> { return DataProcess.GetLeagueTeamsContent(path).ToArray(); })},
+                { "ShootPItem", new NavigateEventHandler(path=> { return DataProcess.GetSoccerMemberContent(path).ToArray(); })},
+                { "HelpPItem", new NavigateEventHandler(path=> { return DataProcess.GetSoccerMemberContent(path).ToArray(); })},
+                { "SchedulePItem", new NavigateEventHandler(path=> { return DataProcess.GetLeagueTeamsContent(path).ToArray(); })},
+            };
+
+            public static NavigateEventHandler GetEventHandler(string str) { return EventHandlerMaps.ContainsKey(str) ? EventHandlerMaps[str] : null; }
+
         }
         #endregion
 
@@ -154,8 +171,9 @@ namespace DQD.Net.Pages {
         #region Properties and State
 
         public static DataContentPage Current;
-        private Dictionary<Uri, Dictionary<string,List<TeamLeagueModel>>> cacheDicList;
-        private Dictionary<string, List<TeamLeagueModel>> targetDicList;
+        private Dictionary<Uri, Dictionary<string,IList<object>>> cacheDicList;
+        private Dictionary<string, IList<object>> targetDicList;
+        private delegate IList<object> NavigateEventHandler(string path);
         private string targetHost =default(string);
         private Uri HostSource;
         private int HostNumber;

@@ -109,6 +109,18 @@ namespace DQD.Net.Pages {
             PopupBackBorder.Visibility = Visibility.Collapsed;
         }
 
+        private void BackToTopBtn_Click(object sender, RoutedEventArgs e) {
+            ContentScroll.ChangeView(0, 0, 1);
+        }
+
+        private async void RefreshBtn_Click(object sender, RoutedEventArgs e) {
+            LoadingAnimation.IsActive = true;
+            ContentStack.Children.Clear();
+            CommentsStack.Children.Clear();
+            await HandleHtmlResources();
+            LoadingAnimation.IsActive = false;
+        }
+
         #endregion
 
         #region Methods
@@ -276,16 +288,5 @@ namespace DQD.Net.Pages {
 
         #endregion
 
-        private void BackToTopBtn_Click(object sender, RoutedEventArgs e) {
-
-        }
-
-        private async void RefreshBtn_Click(object sender, RoutedEventArgs e) {
-            LoadingAnimation.IsActive = true;
-            ContentStack.Children.Clear();
-            CommentsStack.Children.Clear();
-            await HandleHtmlResources();
-            LoadingAnimation.IsActive = false;
-        }
     }
 }

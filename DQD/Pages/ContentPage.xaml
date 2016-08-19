@@ -99,7 +99,7 @@
 
         <Border Background="{ThemeResource AppPersonalExtraBackground}"
                 Margin="0,60,0,0">
-            <ScrollViewer>
+            <ScrollViewer Name="ContentScroll">
                 <StackPanel >
                     <StackPanel Orientation="Horizontal">
                         <TextBlock x:Name="ContentAuthor" 
