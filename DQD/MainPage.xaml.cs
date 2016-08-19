@@ -30,6 +30,11 @@ namespace DQD.Net {
         public MainPage() {
             Current=this;
             this.InitializeComponent();
+            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
+                ApplicationView.GetForCurrentView().VisibleBoundsChanged += (s, e) => { ChangeViewWhenNavigationBarChanged(); };
+                ChangeViewWhenNavigationBarChanged();
+            }
+            LoadingProgress = this.LoadingAnimation;
             contentFrame = this.ContentFrame;
             SideGrid = this.sideGrid;
             VersionText.Text = "版本号：" + Utils.GetAppVersion();
@@ -91,25 +96,30 @@ namespace DQD.Net {
 
         private void Switch_Toggled(object sender, RoutedEventArgs e) {
             var isColorfulOrNot = (sender as ToggleSwitch).IsOn;
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsColorfulOrNot, isColorfulOrNot);
             var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
-            SettingsHelper.SaveSettingsValue(SettingsConstants.IsColorfulOrNot, (sender as ToggleSwitch).IsOn);
+            var wholeHeight = Window.Current.Bounds.Height;
             if (isColorfulOrNot) {
                 StatusBarInit.InitDesktopStatusBar(isLightOrNot);
                 StatusBarInit.InitInnerDesktopStatusBar(true);
                 Window.Current.SetTitleBar(TitleBarRec);
-                if (StatusBarInit.IsTargetMobile()) {
+                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(true);
+                    this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
                     BaseGrid.Margin = new Thickness(0, 16, 0, 0);
                     sideGrid.Margin = new Thickness(0, 16, 0, 0);
+                    this.Margin = this.Height + 24 - wholeHeight > -0.1 ? new Thickness(0, -0, 0, 0) : new Thickness(0, -48, 0, 0);
                 }
             } else {
                 StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
                 StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
                 StatusBarInit.InitInnerDesktopStatusBar(false);
-                if (StatusBarInit.IsTargetMobile()) {
-                    StatusBarInit.InitInnerMobileStatusBar(false);
+                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
+                    this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
                     BaseGrid.Margin = new Thickness(0, 0, 0, 0);
                     sideGrid.Margin = new Thickness(0, 0, 0, 0);
+                    StatusBarInit.InitInnerMobileStatusBar(false);
+                    this.Margin = this.Height + 24 - wholeHeight > -0.1 ? new Thickness(0, 24, 0, 0) : new Thickness(0, -24, 0, 0);
                 }
             }
         }
@@ -182,7 +192,7 @@ namespace DQD.Net {
             /// <summary>
             /// The dictionary map of Popup collection. 
             /// </summary>
-            static private Dictionary<string, StackPanel> PopupInnerMaps = new Dictionary<string, StackPanel> {
+            static private Dictionary<string, ScrollViewer> PopupInnerMaps = new Dictionary<string, ScrollViewer> {
             {"SettBtn",Current.SettMenu},
             {"AboutBtn",Current.AboutMenu},
             {"AboutDongQDBtn",Current.AboutDongQDMenu},
@@ -202,14 +212,14 @@ namespace DQD.Net {
             /// <returns></returns>
             public static Frame GetTFrameype(string str) { return FramesMaps.ContainsKey(str) ? FramesMaps[str] : null; }
 
-            public static Dictionary<string, StackPanel> GetPopupPanelColl() { return PopupInnerMaps; }
+            public static Dictionary<string, ScrollViewer> GetPopupPanelColl() { return PopupInnerMaps; }
 
             /// <summary>
             /// Get target StackPanel by item name.
             /// </summary>
             /// <param name="str">item name</param>
             /// <returns></returns>
-            public static StackPanel GetPanelInstance(string str) { return PopupInnerMaps.ContainsKey(str) ? PopupInnerMaps[str] : null; }
+            public static ScrollViewer GetPanelInstance(string str) { return PopupInnerMaps.ContainsKey(str) ? PopupInnerMaps[str] : null; }
 
             /// <summary>
             /// Collapsed All StackPanel
@@ -223,6 +233,7 @@ namespace DQD.Net {
         public static MainPage Current;
         public Frame contentFrame;
         public Grid SideGrid;
+        public ProgressRing LoadingProgress;
         public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
         public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri ,int num, string content);
         private NavigateEventHandler SelectionChanged = (sender, type, frame) => { frame.Navigate(type); };
@@ -241,7 +252,7 @@ namespace DQD.Net {
             if (isColorfulOrNot) {
                 StatusBarInit.InitDesktopStatusBar(isLightOrNot);
                 Window.Current.SetTitleBar(TitleBarRec);
-                if (StatusBarInit.IsTargetMobile()) {
+                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(true);
                     BaseGrid.Margin = new Thickness(0, 16, 0, 0);
                     sideGrid.Margin = new Thickness(0, 16, 0, 0);
@@ -249,7 +260,7 @@ namespace DQD.Net {
             } else {
                 StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
                 StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
-                if (StatusBarInit.IsTargetMobile()) {
+                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(false);
                     BaseGrid.Margin = new Thickness(0, 0, 0, 0);
                     sideGrid.Margin = new Thickness(0, 0, 0, 0);
@@ -288,6 +299,25 @@ namespace DQD.Net {
             await Tasks.OpenEmailComposeAsync(to, subject, body);
         }
 
+        private void ChangeViewWhenNavigationBarChanged() {
+            this.Width = ApplicationView.GetForCurrentView().VisibleBounds.Width;
+            var wholeHeight = Window.Current.Bounds.Height;
+            var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
+            if (isColorfulOrNot) {
+                this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
+                this.Margin =
+                    this.Height - wholeHeight > -0.1 ?
+                    new Thickness(0, 0, 0, 0) :
+                    new Thickness(0, -48, 0, 0);
+            } else {
+                this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
+                this.Margin = 
+                    this.Height + 24 - wholeHeight > -0.1 ? 
+                    new Thickness(0, 24, 0, 0) : 
+                    new Thickness(0, -24, 0, 0);
+            }
+        }
         #endregion
+
     }
 }
