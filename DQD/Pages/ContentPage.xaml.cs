@@ -42,6 +42,8 @@ namespace DQD.Net.Pages {
         public ContentPage() {
             transToSideGrid = this.RenderTransform as TranslateTransform;
             if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
+            LoadingAnimation = MainPage.Current.LoadingProgress;
+            LoadingAnimation.IsActive = true;
             this.Opacity = 0;
             this.InitializeComponent();
             InitImageLoader();
@@ -56,16 +58,22 @@ namespace DQD.Net.Pages {
         /// </summary>
         /// <param name="e">navigate args</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
-            //YoukuView.Visibility = Visibility.Collapsed;
             var parameter = e.Parameter as ParameterNavigate;
             HostSource = parameter.Uri;
             HostNumber = parameter.Number;
             if (HostSource == null)
                 return;
+            await HandleHtmlResources();
+            if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
+            LoadingAnimation.IsActive = false;
+            this.Opacity = 1;
+            InitStoryBoard();
+        }
+
+        private async Task HandleHtmlResources() {
             var urlString = await WebProcess.GetHtmlResources(HostSource.ToString());
             AddChildrenToStackPanel(urlString.ToString());
             AddChildrenToCommentsStack(urlString.ToString());
-            if (StatusBarInit.IsTargetMobile()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15,0,0,0); }
         }
 
         private void MoreCommentsBtn_Click(object sender, RoutedEventArgs e) {
@@ -129,7 +137,6 @@ namespace DQD.Net.Pages {
             ContentTitle.Text = PConModel.Title;
             ContentAuthor.Text = "来源：" + PConModel.Author;
             ContentDate.Text = PConModel.Date;
-            ContentStack.Children.Clear();
             int num = PConModel.ContentImage.Count + 
                 PConModel.ContentString.Count + 
                 PConModel.ContentGif.Count + 
@@ -219,7 +226,6 @@ namespace DQD.Net.Pages {
         /// <returns></returns>
         private void AddChildrenToCommentsStack(string value) {
             var PConModel = DataProcess.GetPageTopComments(value);
-            CommentsStack.Children.Clear();
             foreach (var item in PConModel) {
                 CommentsStack.Children.Add(new CommentPanel {
                     ComContent = item.Content,
@@ -228,8 +234,6 @@ namespace DQD.Net.Pages {
                     ComTime = item.Time,
                 });
             }
-            this.Opacity = 1;
-            InitStoryBoard();
         }
 
         #endregion
@@ -268,6 +272,7 @@ namespace DQD.Net.Pages {
         private enum ContentType { None = 0, String = 1, Image = 2, Gif = 3 , Video = 4, Flash = 5}
         private Uri HostSource;
         private int HostNumber;
+        private ProgressRing LoadingAnimation;
 
         #endregion
 
@@ -275,8 +280,12 @@ namespace DQD.Net.Pages {
 
         }
 
-        private void RefreshBtn_Click(object sender, RoutedEventArgs e) {
-            
+        private async void RefreshBtn_Click(object sender, RoutedEventArgs e) {
+            LoadingAnimation.IsActive = true;
+            ContentStack.Children.Clear();
+            CommentsStack.Children.Clear();
+            await HandleHtmlResources();
+            LoadingAnimation.IsActive = false;
         }
     }
 }

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DQD.Net", "DQD\DQD.Net.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DQD.Core", "DQD.Core\DQD.Core.csproj", "{5607D571-B077-41DC-A02B-0DFED98E13B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPShadow", "XPShadow\XPShadow.csproj", "{ED346D43-316A-43F2-9C1A-7CAF467F9ED8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DQD.Shadow", "XPShadow\DQD.Shadow.csproj", "{ED346D43-316A-43F2-9C1A-7CAF467F9ED8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

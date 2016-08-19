@@ -23,10 +23,12 @@ namespace DQD.Core. Tools {
     /// </summary>
     public static class StatusBarInit {
         /// <summary>
-        /// 判断当前设备的平台是否为Mobile
+        /// 判断当前为Mobile增加拓展
         /// </summary>
         /// <returns></returns>
-        public static bool IsTargetMobile() { return Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"); }
+        public static bool HaveAddMobileExtensions() { return Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"); }
+
+        public static bool IsMobile => Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons") ? true : false;
 
         /// <summary>
         /// 为准备画面初始化Desktop任务栏

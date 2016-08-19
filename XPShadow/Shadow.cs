@@ -30,8 +30,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace XP
-{
+namespace DQD.Shadow {
     public sealed class Shadow : ContentControl
     {
         const int MAX_Z_DEPTH = 5;

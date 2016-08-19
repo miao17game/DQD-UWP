@@ -199,9 +199,9 @@
       <Project>{5607d571-b077-41dc-a02b-0dfed98e13b0}</Project>
       <Name>DQD.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XPShadow\XPShadow.csproj">
+    <ProjectReference Include="..\XPShadow\DQD.Shadow.csproj">
       <Project>{ed346d43-316a-43f2-9c1a-7caf467f9ed8}</Project>
-      <Name>XPShadow</Name>
+      <Name>DQD.Shadow</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

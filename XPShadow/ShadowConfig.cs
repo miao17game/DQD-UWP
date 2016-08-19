@@ -18,8 +18,7 @@ using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
 
-namespace XP
-{
+namespace DQD.Shadow {
     public class EffectKey
     {
         public EffectKey(int width, int height, int zDepth, double cornerRadius)

@@ -9,7 +9,8 @@
     xmlns:control="using:DQD.Core.Controls"
     xmlns:Converters="using:DQD.Core.Tools"
     x:Class="DQD.Net.Pages.ContentPage"
-    xmlns:Shadow="using:XP"
+    xmlns:Shadow="using:DQD.Shadow"
+    xmlns:xp="using:XP"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -289,63 +290,57 @@
             </Grid>
         </Popup>
 
-        <StackPanel Width="150" 
+        <StackPanel Name="ButtonStack" 
+                    Width="150" 
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
-                    Orientation="Vertical">
-            <Shadow:Shadow Margin="0"
-                           CornerRadius="0.5"
-                           Z_Depth="4">
-                <Shadow:XPButton Width="50"
-                                     Height="50"
-                                     Background="#55ACEE"
-                                     BorderThickness="0"
-                                     CornerRadius="35"
-                                     Foreground="White"
-                                     IconForeground="White"
-                                     IconPosition="OnlyIcon"
-                                     IconSize="30"
-                                     PointerOverBackground="#2599EE"
-                                     PressedBackground="#2099EE">
-                    <Shadow:XPButton.Icon>
+                    Orientation="Vertical"
+                    FlowDirection="RightToLeft">
+            <Shadow:Shadow 
+                Margin="0"
+                CornerRadius="0.5"
+                Z_Depth="4">
+                <xp:XPButton  
+                    Name="RefreshBtn"
+                    Width="60"
+                    Height="60"
+                    Background="{ThemeResource DQDBackground2}"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="{ThemeResource DQDBackground3}"
+                    PressedBackground="{ThemeResource DQDBackground3}"
+                    Click="RefreshBtn_Click">
+                    <xp:XPButton.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE117;"/>
-                    </Shadow:XPButton.Icon>
-                </Shadow:XPButton>
+                    </xp:XPButton.Icon>
+                </xp:XPButton>
             </Shadow:Shadow>
-            <Shadow:Shadow Margin="0"
-                           CornerRadius="0.5"
-                           Z_Depth="4">
-                <Shadow:XPButton Width="50"
-                                     Height="50"
-                                     Background="#55ACEE"
-                                     BorderThickness="0"
-                                     CornerRadius="25"
-                                     Foreground="White"
-                                     IconForeground="White"
-                                     IconPosition="OnlyIcon"
-                                     IconSize="30"
-                                     PointerOverBackground="#2599EE"
-                                     PressedBackground="#2099EE">
-                    <Shadow:XPButton.Icon>
+            <Shadow:Shadow 
+                Margin="0"
+                CornerRadius="0.5"
+                Z_Depth="4">
+                <xp:XPButton  
+                    Name="BackToTopBtn"
+                    Width="60"
+                    Height="60"
+                    Background="Orange"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="DarkOrange"
+                    PressedBackground="DarkOrange"
+                    Click="BackToTopBtn_Click">
+                    <xp:XPButton.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE11C;"/>
-                    </Shadow:XPButton.Icon>
-                </Shadow:XPButton>
-            </Shadow:Shadow>
-            <Shadow:Shadow Margin="0"
-                               CornerRadius="0.5"
-                               Z_Depth="4">
-                <Shadow:XPButton Width="50"
-                                     Height="50"
-                                     Background="Orange"
-                                     BorderThickness="0"
-                                     CornerRadius="25"
-                                     Foreground="White"
-                                     Icon="Contact"
-                                     IconForeground="White"
-                                     IconPosition="OnlyIcon"
-                                     IconSize="20"
-                                     PointerOverBackground="DarkOrange"
-                                     PressedBackground="DarkOrange" />
+                    </xp:XPButton.Icon>
+                </xp:XPButton>
             </Shadow:Shadow>
         </StackPanel>
 

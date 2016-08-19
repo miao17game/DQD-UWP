@@ -56,7 +56,7 @@ namespace DQD.Net.Pages {
                 cacheDicList[HostSource] :
                 new Dictionary<string, List<TeamLeagueModel>>();
             await InsertListResources("IntergralPItem");
-            if (StatusBarInit.IsTargetMobile()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
+            if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
             this.Opacity = 1;
             InitStoryBoard();
         }

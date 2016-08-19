@@ -33,7 +33,7 @@ namespace DQD.Net.Pages {
             this . InitializeComponent ( );
             isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
             isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
-            if (StatusBarInit.IsTargetMobile()) { StatusBarInit.InitInnerMobileStatusBar(true);}
+            if (StatusBarInit.HaveAddMobileExtensions()) { StatusBarInit.InitInnerMobileStatusBar(true);}
             StatusBarInit.InitDesktopStatusBar(false);
             StatusBarInit.InitMobileStatusBar(false);
             InitSliderTimer ( );

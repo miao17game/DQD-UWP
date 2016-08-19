@@ -58,6 +58,10 @@
             <SolidColorBrush x:Key="DQDBackground" Color="#33BB73"/>
             <!--DQDBackground-->
             <SolidColorBrush x:Key="DQDBackground2" Color="#34BB83"/>
+            <!--DQDBackground-->
+            <SolidColorBrush x:Key="DQDBackground3" Color="#37BBA3"/>
+            <!--DQDForeground-->
+            <SolidColorBrush x:Key="DQDForeground" Color="#FF5252"/>
             <!--DQDSummTextColor-->
             <SolidColorBrush x:Key="DQDSummTextColor" Color="#909090"/>
             <!--DQDPopupBackColor-->
@@ -137,6 +141,10 @@
             <SolidColorBrush x:Key="DQDBackground" Color="#33BB55"/>
             <!--DQDBackground-->
             <SolidColorBrush x:Key="DQDBackground2" Color="#30BB45"/>
+            <!--DQDBackground-->
+            <SolidColorBrush x:Key="DQDBackground3" Color="#40BB95"/>
+            <!--DQDForeground-->
+            <SolidColorBrush x:Key="DQDForeground" Color="#2599EE"/>
             <!--DQDSummTextColor-->
             <SolidColorBrush x:Key="DQDSummTextColor" Color="#909090"/>
             <!--DQDPopupBackColor-->
