@@ -153,7 +153,8 @@ namespace DQD.Net.Pages {
                 PConModel.ContentString.Count + 
                 PConModel.ContentGif.Count + 
                 PConModel.ContentVideo.Count + 
-                PConModel.ContentFlash.Count ;
+                PConModel.ContentFlash.Count +
+                PConModel.ContentSelfUri.Count;
             for (int index = 1; index <= num; index++) {
                 object item = default(object);
                 ContentType type =
@@ -162,6 +163,7 @@ namespace DQD.Net.Pages {
                     (item = PConModel.ContentGif.Find(i => i.Index == index)) != null ? ContentType.Gif :
                     (item = PConModel.ContentVideo.Find(i => i.Index == index)) != null ? ContentType.Video :
                     (item = PConModel.ContentFlash.Find(i => i.Index == index)) != null ? ContentType.Flash :
+                    (item = PConModel.ContentSelfUri.Find(i => i.Index == index)) != null ?ContentType.SelfUri:
                     ContentType.None;
                 switch (type) {
                     case ContentType.String:
@@ -226,6 +228,25 @@ namespace DQD.Net.Pages {
                             FontSize = 12,
                         });
                         break;
+                    case ContentType.SelfUri:
+                        var button = new Button {
+                            Margin = new Thickness(5),
+                            Content = (item as ContentSelfUris).Title,
+                            Foreground = (Brush)Application.Current.Resources["DQDBackground"],
+                            Background = null,
+                        };
+                        button.Click += (obj, args) => {
+                            MainPage.Current.ItemClick?.Invoke(
+                                this, 
+                                typeof(ContentPage), 
+                                MainPage.Current.contentFrame, 
+                                (item as ContentSelfUris).Uri, 
+                                (item as ContentSelfUris).Number, 
+                                null);
+                            MainPage.Current.SideGrid.Visibility = Visibility.Visible;
+                        };
+                        ContentStack.Children.Add(button);
+                        break;
                     case ContentType.None: break;
                 }
             }
@@ -281,7 +302,7 @@ namespace DQD.Net.Pages {
         #region Properties and State
 
         private string targetHost = "http://dongqiudi.com/article/{0}?page={1}#comment_anchor"; 
-        private enum ContentType { None = 0, String = 1, Image = 2, Gif = 3 , Video = 4, Flash = 5}
+        private enum ContentType { None = 0, String = 1, Image = 2, Gif = 3 , Video = 4, Flash = 5 , SelfUri = 6}
         private Uri HostSource;
         private int HostNumber;
         private ProgressRing LoadingAnimation;

@@ -129,6 +129,7 @@
     <Compile Include="Models\PageContentModels\ContentFlashs.cs" />
     <Compile Include="Models\PageContentModels\ContentGifs.cs" />
     <Compile Include="Models\PageContentModels\ContentImages.cs" />
+    <Compile Include="Models\PageContentModels\ContentSelfUris.cs" />
     <Compile Include="Models\PageContentModels\ContentStrings.cs" />
     <Compile Include="Models\DataHandler.cs" />
     <Compile Include="Helpers\CacheConstants.cs" />
@@ -144,10 +145,12 @@
     <Compile Include="Models\PageContentModels\PageContentModel.cs" />
     <Compile Include="Models\ParameterNavigate.cs" />
     <Compile Include="Models\TeamModels\LeagueModel.cs" />
+    <Compile Include="Models\TeamModels\LeagueScheduleModel.cs" />
     <Compile Include="Models\TeamModels\SoccerMemberModel.cs" />
     <Compile Include="Models\TeamModels\TeamLeagueModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\AlphaKeyGroup.cs" />
+    <Compile Include="Tools\Converters\SelfVisibilityConverter.cs" />
     <Compile Include="Tools\Converters\TeamModelConverter.cs" />
     <Compile Include="Tools\Converters\TopOrBottomConverter.cs" />
     <Compile Include="Tools\DataProcess.cs" />

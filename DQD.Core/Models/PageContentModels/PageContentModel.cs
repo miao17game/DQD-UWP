@@ -14,5 +14,6 @@ namespace DQD.Core.Models.PageContentModels {
         public List<ContentGifs> ContentGif { get; set; }
         public List<ContentVideos> ContentVideo { get; set; }
         public List<ContentFlashs> ContentFlash { get; set; }
+        public List<ContentSelfUris> ContentSelfUri { get; set; }
     }
 }

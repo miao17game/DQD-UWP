@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -34,6 +35,8 @@ namespace DQD.Net.Pages {
             if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
+            LoadingAnimation = MainPage.Current.LoadingProgress;
+            LoadingAnimation.IsActive = true;
             cacheDicList = new Dictionary<Uri, Dictionary<string, IList<object>>>();
         }
 
@@ -47,22 +50,22 @@ namespace DQD.Net.Pages {
         /// <param name="e">navigate args</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
             this.Opacity = 0;
+            NavigatedToOrNot = true;
             var parameter = e.Parameter as ParameterNavigate;
             HostSource = parameter.Uri;
             ContentTitle.Text = parameter.Summary;
             if (HostSource == null)
                 return;
             targetHost = HostSource.ToString() + "&type={0}";
-            Debug.WriteLine(targetHost);
             targetDicList =
                 cacheDicList[HostSource] =
                 cacheDicList.ContainsKey(HostSource) ?
                 cacheDicList[HostSource] :
                 new Dictionary<string, IList<object>>();
-            await InsertListResources("IntergralPItem");
+            if (RootPivot.SelectedIndex == 0)
+                await InsertListResources("IntergralPItem");
+            RootPivot.SelectedIndex = 0;
             if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
-            this.Opacity = 1;
-            InitStoryBoard();
         }
 
         private void BackBtn_Click(object sender, RoutedEventArgs e) {
@@ -71,7 +74,29 @@ namespace DQD.Net.Pages {
 
         private async void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             var item = ((sender as PersonalPivot).SelectedItem as PivotItem).Name;
+            LoadingAnimation.IsActive = true;
             await InsertListResources(item);
+        }
+
+        private async void BoudListBtnClick(object sender, RoutedEventArgs e) {
+            scheduleDicList = scheduleDicList == null ? new Dictionary<string, IList<object>>() : scheduleDicList;
+            var item = ((sender as Button).CommandParameter as Uri).ToString();
+            LoadingAnimation.IsActive = true;
+            await InsertScheduleResources(item);
+        }
+
+        private async void RefreshBtn_Click(object sender, RoutedEventArgs e) {
+            InsideResources.FlushAllResources();
+            LoadingAnimation.IsActive = true;
+            cacheDicList.Clear();
+            targetDicList =
+               cacheDicList[HostSource] =
+               cacheDicList.ContainsKey(HostSource) ?
+               cacheDicList[HostSource] :
+               new Dictionary<string, IList<object>>();
+            if (RootPivot.SelectedIndex == 0)
+                await InsertListResources("IntergralPItem");
+            RootPivot.SelectedIndex = 0;
         }
 
         #endregion
@@ -79,6 +104,7 @@ namespace DQD.Net.Pages {
         #region Methods
 
         private async System.Threading.Tasks.Task InsertListResources(string item) {
+            InsideResources.FlushAllResources();
             InsideResources.GetTListSource(item).Source =
                             targetDicList[item] =
                             targetDicList.ContainsKey(item) ?
@@ -88,10 +114,23 @@ namespace DQD.Net.Pages {
                                     string.Format(
                                         targetHost, InsideResources.GetTTargetRank(item))))
                                         .ToString());
+            LoadingAnimation.IsActive = false;
+            if (NavigatedToOrNot) {
+                this.Opacity = 1;
+                InitStoryBoard();
+                NavigatedToOrNot = false;
+            }
         }
 
-        private void BaseGrid_SizeChanged(object sender, SizeChangedEventArgs e) {
-            
+        private async System.Threading.Tasks.Task InsertScheduleResources(string item) {
+            ScheduleListResources.Source =
+                            scheduleDicList[item] =
+                            scheduleDicList.ContainsKey(item) ?
+                            scheduleDicList[item] :
+                            InsideResources.GetEventHandler("SchedulePItem").Invoke(
+                                (await WebProcess.GetHtmlResources(item))
+                                .ToString());
+            LoadingAnimation.IsActive = false;
         }
 
         #endregion
@@ -111,6 +150,8 @@ namespace DQD.Net.Pages {
             {"HelpPItem",Current.HelpListResources},
             {"SchedulePItem",Current.ScheduleListResources},
         };
+
+            public static void FlushAllResources() { foreach (var item in ListViewResourcesMaps) { item.Value.Source = new List<object>(); } }
 
             /// <summary>
             /// Get target frame by item name.
@@ -132,7 +173,7 @@ namespace DQD.Net.Pages {
                 { "IntergralPItem", new NavigateEventHandler(path=> { return DataProcess.GetLeagueTeamsContent(path).ToArray(); })},
                 { "ShootPItem", new NavigateEventHandler(path=> { return DataProcess.GetSoccerMemberContent(path).ToArray(); })},
                 { "HelpPItem", new NavigateEventHandler(path=> { return DataProcess.GetSoccerMemberContent(path).ToArray(); })},
-                { "SchedulePItem", new NavigateEventHandler(path=> { return DataProcess.GetLeagueTeamsContent(path).ToArray(); })},
+                { "SchedulePItem", new NavigateEventHandler(path=> { return DataProcess.GetScheduleTeamsContent(path).ToArray(); })},
             };
 
             public static NavigateEventHandler GetEventHandler(string str) { return EventHandlerMaps.ContainsKey(str) ? EventHandlerMaps[str] : null; }
@@ -173,11 +214,15 @@ namespace DQD.Net.Pages {
         public static DataContentPage Current;
         private Dictionary<Uri, Dictionary<string,IList<object>>> cacheDicList;
         private Dictionary<string, IList<object>> targetDicList;
+        private Dictionary<string, IList<object>> scheduleDicList;
         private delegate IList<object> NavigateEventHandler(string path);
         private string targetHost =default(string);
         private Uri HostSource;
         private int HostNumber;
+        private ProgressRing LoadingAnimation;
+        private bool NavigatedToOrNot = false;
 
         #endregion
+
     }
 }

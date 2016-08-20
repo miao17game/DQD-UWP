@@ -21,7 +21,9 @@ namespace DQD.Core. Tools {
         #region Properties and State
 
         private const string HomeHost = "http://www.dongqiudi.com/";
+        private const string HomeHostInsert = "http://www.dongqiudi.com";
         private const string MatchHost = "http://www.dongqiudi.com/match";
+        private const string ArticleHost = "http://dongqiudi.com/article/";
         private const string DefaultImageFlagHost = "http://static1.dongqiudi.com/web-new/web/images/defaultTeam.png";
         private const string DefaultMenberHost = "http://static1.dongqiudi.com/web-new/web/images/defaultPlayer.png";
         private enum TableItemType { Round = 0, Away = 1, Home = 2, Link = 3, Vs = 4, Stat = 5, Live = 6 ,Times = 7 }
@@ -56,29 +58,36 @@ namespace DQD.Core. Tools {
                 model.ContentGif = new List<ContentGifs>();
                 model.ContentVideo = new List<ContentVideos>();
                 model.ContentFlash = new List<ContentFlashs>();
+                model.ContentSelfUri = new List<ContentSelfUris>();
                 foreach (var item in contents) {
-                    index++;
-                    if (item.SelectSingleNode("img") != null) {
-                        string Rstring = ".+.gif";
-                        Regex reg = new Regex(Rstring);
-                        var targetStr = item.SelectSingleNode("img").Attributes["src"].Value;
-                        var coll = reg.Matches(targetStr);
-                        if (coll.Count == 0) { model.ContentImage.Add(new ContentImages { Image = new BitmapImage(new Uri(targetStr)), Index = index });
-                        } else { model.ContentGif.Add(new ContentGifs { ImageUri = new Uri(targetStr), Index = index }); }
-                    } else if (item.SelectSingleNode("video") != null) { model.ContentVideo.Add(new ContentVideos { VideoUri = new Uri(item.SelectSingleNode("video").Attributes["src"].Value), Index = index });
-                    } else if (item.SelectSingleNode("embed") != null) { model.ContentFlash.Add(new ContentFlashs { FlashUri = new Uri(item.SelectSingleNode("embed").Attributes["src"].Value), Index = index });
-                    } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
+                    try {
+                        index++;
+                        if (item.SelectSingleNode("img") != null) {
+                            var targetStr = item.SelectSingleNode("img").Attributes["src"].Value;
+                            var coll = new Regex(".+.gif").Matches(targetStr);
+                            if (coll.Count == 0) {
+                                model.ContentImage.Add(new ContentImages { Image = new BitmapImage(new Uri(targetStr)), Index = index });
+                            } else { model.ContentGif.Add(new ContentGifs { ImageUri = new Uri(targetStr), Index = index }); }
+                        } else if (item.SelectSingleNode("video") != null) {
+                            model.ContentVideo.Add(new ContentVideos { VideoUri = new Uri(item.SelectSingleNode("video").Attributes["src"].Value), Index = index });
+                        } else if (item.SelectSingleNode("embed") != null) {
+                            model.ContentFlash.Add(new ContentFlashs { FlashUri = new Uri(item.SelectSingleNode("embed").Attributes["src"].Value), Index = index });
+                        } else if ((item.SelectSingleNode("a") != null)) {
+                            var targetStr = item.SelectSingleNode("a").Attributes["href"].Value;
+                            var match = new Regex(@"dongqiudi.+\d{6,}").Match(targetStr);
+                            if (!string.IsNullOrEmpty(match.Value)) {
+                                var contentNumber = new Regex(@"\d{6,}").Match(match.Value).Value;
+                                model.ContentSelfUri.Add(new ContentSelfUris { Uri = new Uri(ArticleHost + contentNumber), Number = Convert.ToInt32(contentNumber), Title = item.SelectSingleNode("a").InnerText, Index = index });
+                            }
+                        } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
+                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (FormatException FE) { ReportError(FE.Message.ToString());
+                    } catch (Exception E) { ReportError(E.Message.ToString());
+                    }
                 }
-            } catch (NullReferenceException NRE) {
-                ReportError(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) {
-                ReportError(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) {
-                ReportError(ANE.Message.ToString());
-            } catch (FormatException FE) {
-                ReportError(FE.Message.ToString());
-            } catch (Exception E) {
-                ReportError(E.Message.ToString());
+            } catch (Exception E) { ReportError(E.Message.ToString());
             } return model;
         }
 
@@ -92,22 +101,20 @@ namespace DQD.Core. Tools {
                 HtmlNodeCollection consDiv = rootnode.SelectNodes(XPathString);
                 var wholeContentColl = consDiv.ElementAt(0).SelectNodes("li");
                 foreach (var eachLi in wholeContentColl) {
-                    var model = new CommentModel();
-                    model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("img").Attributes["src"].Value));
-                    model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
-                    model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
-                    var targetStr = eachLi.SelectSingleNode("p[@class='comCon']").InnerText;
-                    model.Content = targetStr.Substring(9, targetStr.Length-13);
-                    list.Add(model);
+                    try {
+                        var model = new CommentModel();
+                        model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("img").Attributes["src"].Value));
+                        model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
+                        model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
+                        var targetStr = eachLi.SelectSingleNode("p[@class='comCon']").InnerText;
+                        model.Content = targetStr.Substring(9, targetStr.Length - 13);
+                        list.Add(model);
+                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (FormatException FE) { ReportError(FE.Message.ToString());
+                    }
                 }
-            } catch (NullReferenceException NRE) {
-                ReportError(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) {
-                ReportError(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) {
-                ReportError(ANE.Message.ToString());
-            } catch (FormatException FE) {
-                ReportError(FE.Message.ToString());
             } catch (Exception E) {
                 ReportError(E.Message.ToString());
             }
@@ -126,29 +133,26 @@ namespace DQD.Core. Tools {
                 HtmlNodeCollection consDiv = rootnode.SelectNodes(XPathString);
                 var wholeContentColl = consDiv.ElementAt(0).SelectNodes("li");
                 foreach (var eachLi in wholeContentColl) {
-                    var model = new AllCommentModel();
-                    model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("img").Attributes["src"].Value));
-                    model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
-                    model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
-                    var targetStr = eachLi.SelectSingleNode("p[@class='comCon']").InnerText;
-                    model.Content = targetStr.Substring(9, targetStr.Length - 13);
-                    var ReDiv = eachLi.SelectSingleNode("div[@class='recomm']");
-                    if (ReDiv != null) {
-                        model.ReName = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='name']").InnerText;
-                        model.ReTime = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='time']").InnerText;
-                        var targetStr2 = ReDiv.SelectNodes("p").ElementAt(1).InnerText;
-                        model.ReContent = targetStr2.Substring(17, targetStr2.Length - 17);
+                    try {
+                        var model = new AllCommentModel();
+                        model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("img").Attributes["src"].Value));
+                        model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
+                        model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
+                        var targetStr = eachLi.SelectSingleNode("p[@class='comCon']").InnerText;
+                        model.Content = targetStr.Substring(9, targetStr.Length - 13);
+                        var ReDiv = eachLi.SelectSingleNode("div[@class='recomm']");
+                        if (ReDiv != null) {
+                            model.ReName = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='name']").InnerText;
+                            model.ReTime = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='time']").InnerText;
+                            var targetStr2 = ReDiv.SelectNodes("p").ElementAt(1).InnerText;
+                            model.ReContent = targetStr2.Substring(17, targetStr2.Length - 17);
+                        } list.Add(model);
+                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (FormatException FE) { ReportError(FE.Message.ToString());
                     }
-                    list.Add(model);
                 }
-            } catch (NullReferenceException NRE) {
-                ReportError(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) {
-                ReportError(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) {
-                ReportError(ANE.Message.ToString());
-            } catch (FormatException FE) {
-                ReportError(FE.Message.ToString());
             } catch (Exception E) {
                 ReportError(E.Message.ToString());
             }
@@ -174,65 +178,62 @@ namespace DQD.Core. Tools {
                         model.ID = TrItem.Attributes["id"].Value;
                         var TdItems = TrItem.SelectNodes("td");
                         foreach (var item in TdItems) {
-                            TableItemType type =
-                                item.Attributes["class"].Value.Equals("times") ? TableItemType.Times :
-                                item.Attributes["class"].Value.Equals("round") ? TableItemType.Round :
-                                item.Attributes["class"].Value.Equals("away") ? TableItemType.Away :
-                                item.Attributes["class"].Value.Equals("home") ? TableItemType.Home :
-                                item.Attributes["class"].Value.Equals("vs") ? TableItemType.Vs :
-                                item.Attributes["class"].Value.Equals("stat") ? TableItemType.Stat :
-                                item.Attributes["class"].Value.Equals("stat live") ? TableItemType.Live :
-                                item.Attributes["class"].Value.Equals("link") ? TableItemType.Link :
-                                default(TableItemType);
-                            switch (type) {
-                                case TableItemType.Times:
-                                    model.Time = item.SelectSingleNode("p")==null? item.InnerText:"直播中";
-                                    break;
-                                case TableItemType.Round:
-                                    model.MatchRound = item.InnerText.Substring(21, item.InnerText.Length - 38);
-                                    break;
-                                case TableItemType.Away:
-                                    model.AwayTeam = item.InnerText.Substring(50, item.InnerText.Length-67);
-                                    model.AwayImage = string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("img").Attributes["src"].Value).Value) ? 
-                                        new Uri(item.SelectSingleNode("img").Attributes["src"].Value) : 
-                                        new Uri(DefaultImageFlagHost);
-                                    break;
-                                case TableItemType.Home:
-                                    model.HomeTeam = item.InnerText.Substring(25, item.InnerText.Length - 67);
-                                    model.HomeImage = string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("img").Attributes["src"].Value).Value) ?
-                                        new Uri(item.SelectSingleNode("img").Attributes["src"].Value) : 
-                                        new Uri(DefaultImageFlagHost);
-                                    break;
-                                case TableItemType.Vs:
-                                    model.IsOverOrNot = false;
-                                    model.Score = "VS";
-                                    break;
-                                case TableItemType.Stat:
-                                    model.IsOverOrNot = true;
-                                    model.Score = item.InnerText;
-                                    break;
-                                case TableItemType.Live:
-                                    model.IsOverOrNot = true;
-                                    model.Score = item.InnerText;
-                                    break;
-                                case TableItemType.Link:
-                                    var linkContent = item.SelectSingleNode("a");
-                                    model.ArticleLink = linkContent == null ? null : new Uri(MatchHost+linkContent.Attributes["href"].Value);
-                                    break;
-                                default:break;
+                            try {
+                                TableItemType type =
+                              item.Attributes["class"].Value.Equals("times") ? TableItemType.Times :
+                              item.Attributes["class"].Value.Equals("round") ? TableItemType.Round :
+                              item.Attributes["class"].Value.Equals("away") ? TableItemType.Away :
+                              item.Attributes["class"].Value.Equals("home") ? TableItemType.Home :
+                              item.Attributes["class"].Value.Equals("vs") ? TableItemType.Vs :
+                              item.Attributes["class"].Value.Equals("stat") ? TableItemType.Stat :
+                              item.Attributes["class"].Value.Equals("stat live") ? TableItemType.Live :
+                              item.Attributes["class"].Value.Equals("link") ? TableItemType.Link :
+                              default(TableItemType);
+                                switch (type) {
+                                    case TableItemType.Times:
+                                        model.Time = item.SelectSingleNode("p") == null ? item.InnerText : "直播中";
+                                        break;
+                                    case TableItemType.Round:
+                                        model.MatchRound = item.InnerText.Substring(21, item.InnerText.Length - 38);
+                                        break;
+                                    case TableItemType.Away:
+                                        model.AwayTeam = item.InnerText.Substring(50, item.InnerText.Length - 67);
+                                        model.AwayImage = string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("img").Attributes["src"].Value).Value) ?
+                                            new Uri(item.SelectSingleNode("img").Attributes["src"].Value) :
+                                            new Uri(DefaultImageFlagHost);
+                                        break;
+                                    case TableItemType.Home:
+                                        model.HomeTeam = item.InnerText.Substring(25, item.InnerText.Length - 67);
+                                        model.HomeImage = string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("img").Attributes["src"].Value).Value) ?
+                                            new Uri(item.SelectSingleNode("img").Attributes["src"].Value) :
+                                            new Uri(DefaultImageFlagHost);
+                                        break;
+                                    case TableItemType.Vs:
+                                        model.IsOverOrNot = false;
+                                        model.Score = "VS";
+                                        break;
+                                    case TableItemType.Stat:
+                                        model.IsOverOrNot = true;
+                                        model.Score = item.InnerText;
+                                        break;
+                                    case TableItemType.Live:
+                                        model.IsOverOrNot = true;
+                                        model.Score = item.InnerText;
+                                        break;
+                                    case TableItemType.Link:
+                                        var linkContent = item.SelectSingleNode("a");
+                                        model.ArticleLink = linkContent == null ? null : new Uri(MatchHost + linkContent.Attributes["href"].Value);
+                                        break;
+                                    default: break;
+                                }
+                            } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                            } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                            } catch (FormatException FE) { ReportError(FE.Message.ToString());
                             }
-                        }
-                        list.Add(model);
+                        } list.Add(model);
                     }
                 }
-            } catch (NullReferenceException NRE) {
-                ReportError(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) {
-                ReportError(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) {
-                ReportError(ANE.Message.ToString());
-            } catch (FormatException FE) {
-                ReportError(FE.Message.ToString());
             } catch (Exception E) {
                 ReportError(E.Message.ToString());
             }
@@ -248,22 +249,20 @@ namespace DQD.Core. Tools {
                 string XPathString = "//div[@id='stat_list']";
                 HtmlNodeCollection startListA = rootnode.SelectNodes(XPathString).ElementAt(0).SelectNodes("a");
                 foreach (var listItemA in startListA) {
-                    var model = new LeagueModel();
-                    model.Href = new Uri(HomeHost + listItemA.Attributes["href"].Value);
-                    model.LeagueName = 
-                        listItemA.Attributes["rel"] != null?
-                        listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25): 
-                        listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25);
-                    list.Add(model);
+                    try {
+                        var model = new LeagueModel();
+                        model.Href = new Uri(HomeHost + listItemA.Attributes["href"].Value);
+                        model.LeagueName =
+                            listItemA.Attributes["rel"] != null ?
+                            listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25) :
+                            listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25);
+                        list.Add(model);
+                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (FormatException FE) { ReportError(FE.Message.ToString());
+                    }
                 }
-            } catch (NullReferenceException NRE) {
-                ReportError(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) {
-                ReportError(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) {
-                ReportError(ANE.Message.ToString());
-            } catch (FormatException FE) {
-                ReportError(FE.Message.ToString());
             } catch (Exception E) {
                 ReportError(E.Message.ToString());
             }
@@ -279,41 +278,42 @@ namespace DQD.Core. Tools {
                 string XPathString = "//table[@class='list_1']";
                 HtmlNodeCollection startListTrs = rootnode.SelectNodes(XPathString);
                 foreach (var table in startListTrs) {
-                    var trs = table.SelectNodes("tr");
-                    foreach (var listItem in trs) {
-                        var model = new TeamLeagueModel();
-                        var ths = listItem.SelectNodes("th");
-                        var tds = listItem.SelectNodes("td");
-                        TeamLeagueModel.TeamModelType type =
-                            tds != null && ( tds.ElementAt(0).Attributes["class"] == null && tds.Count==10) ? TeamLeagueModel.TeamModelType.LeagueTeam :
-                            tds != null && ( tds.ElementAt(0).Attributes["class"] != null || tds.Count != 10) ? TeamLeagueModel.TeamModelType.CupModel :
-                            ths.Count == 1 ? TeamLeagueModel.TeamModelType.ListTitle :
-                            TeamLeagueModel.TeamModelType.LeaTeamHeader;
-                        switch (type) {
-                            case TeamLeagueModel.TeamModelType.ListTitle:
-                                model.ModelType = TeamLeagueModel.TeamModelType.ListTitle;
-                                model.ListTitle = listItem.SelectSingleNode("th").InnerText;
-                                break;
-                            case TeamLeagueModel.TeamModelType.LeagueTeam:
-                                model.ModelType = TeamLeagueModel.TeamModelType.LeagueTeam;
-                                InsertLeagueTeamModel(listItem, model);
-                                break;
-                            case TeamLeagueModel.TeamModelType.LeaTeamHeader:
-                                model.ModelType = TeamLeagueModel.TeamModelType.LeaTeamHeader;
-                                InsertLeaTeamHeader(model, ths);
-                                break;
-                            case TeamLeagueModel.TeamModelType.CupModel:
-                                model.ModelType = TeamLeagueModel.TeamModelType.CupModel;
-                                InsertCupTeamModel(listItem, model);
-                                break;
+                    try {
+                        var trs = table.SelectNodes("tr");
+                        foreach (var listItem in trs) {
+                            var model = new TeamLeagueModel();
+                            var ths = listItem.SelectNodes("th");
+                            var tds = listItem.SelectNodes("td");
+                            TeamLeagueModel.TeamModelType type =
+                                tds != null && (tds.ElementAt(0).Attributes["class"] == null && tds.Count == 10) ? TeamLeagueModel.TeamModelType.LeagueTeam :
+                                tds != null && (tds.ElementAt(0).Attributes["class"] != null || tds.Count != 10) ? TeamLeagueModel.TeamModelType.CupModel :
+                                ths.Count == 1 ? TeamLeagueModel.TeamModelType.ListTitle :
+                                TeamLeagueModel.TeamModelType.LeaTeamHeader;
+                            switch (type) {
+                                case TeamLeagueModel.TeamModelType.ListTitle:
+                                    model.ModelType = TeamLeagueModel.TeamModelType.ListTitle;
+                                    model.ListTitle = listItem.SelectSingleNode("th").InnerText;
+                                    break;
+                                case TeamLeagueModel.TeamModelType.LeagueTeam:
+                                    model.ModelType = TeamLeagueModel.TeamModelType.LeagueTeam;
+                                    InsertLeagueTeamModel(listItem, model);
+                                    break;
+                                case TeamLeagueModel.TeamModelType.LeaTeamHeader:
+                                    model.ModelType = TeamLeagueModel.TeamModelType.LeaTeamHeader;
+                                    InsertLeaTeamHeader(model, ths);
+                                    break;
+                                case TeamLeagueModel.TeamModelType.CupModel:
+                                    model.ModelType = TeamLeagueModel.TeamModelType.CupModel;
+                                    InsertCupTeamModel(listItem, model);
+                                    break;
+                            } list.Add(model);
                         }
-                        list.Add(model);
+                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (FormatException FE) { ReportError(FE.Message.ToString());
                     }
                 }
-            } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) {ReportError(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) {ReportError(ANE.Message.ToString());
-            } catch (FormatException FE) {ReportError(FE.Message.ToString());
             } catch (Exception E) {ReportError(E.Message.ToString());
             }
             return list;
@@ -330,35 +330,82 @@ namespace DQD.Core. Tools {
                 foreach (var table in startListTrs) {
                     var trs = table.SelectNodes("tr");
                     foreach (var listItem in trs) {
-                        var model = new SoccerMemberModel();
-                        var ths = listItem.SelectNodes("th");
-                        var tds = listItem.SelectNodes("td");
-                        SoccerMemberModel.SocMenType type =
-                            ths==null || ths.Count == 0 ? SoccerMemberModel.SocMenType.Content:
-                            SoccerMemberModel.SocMenType.Header;
-                        switch (type) {
-                            case SoccerMemberModel.SocMenType.Content:
-                                model.ModelType = SoccerMemberModel.SocMenType.Content;
-                                InsertSoccerMemberModel(listItem, model);
-                                break;
-                            case SoccerMemberModel.SocMenType.Header:
-                                model.ModelType = SoccerMemberModel.SocMenType.Header;
-                                InsertSocMemHeaderModel(model, ths);
-                                break;
+                        try {
+                            var model = new SoccerMemberModel();
+                            var ths = listItem.SelectNodes("th");
+                            var tds = listItem.SelectNodes("td");
+                            SoccerMemberModel.SocMenType type =
+                                ths == null || ths.Count == 0 ? SoccerMemberModel.SocMenType.Content :
+                                SoccerMemberModel.SocMenType.Header;
+                            switch (type) {
+                                case SoccerMemberModel.SocMenType.Content:
+                                    model.ModelType = SoccerMemberModel.SocMenType.Content;
+                                    InsertSoccerMemberModel(listItem, model);
+                                    break;
+                                case SoccerMemberModel.SocMenType.Header:
+                                    model.ModelType = SoccerMemberModel.SocMenType.Header;
+                                    InsertSocMemHeaderModel(model, ths);
+                                    break;
+                            } list.Add(model);
+                        } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                        } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                        } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                        } catch (FormatException FE) { ReportError(FE.Message.ToString());
                         }
-                        list.Add(model);
                     }
                 }
-            } catch (NullReferenceException NRE) {
-                ReportError(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) {
-                ReportError(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) {
-                ReportError(ANE.Message.ToString());
-            } catch (FormatException FE) {
-                ReportError(FE.Message.ToString());
-            } catch (Exception E) {
-                ReportError(E.Message.ToString());
+            } catch (Exception E) { ReportError(E.Message.ToString());
+            }
+            return list;
+        }
+
+        public static List<LeagueScheduleModel> GetScheduleTeamsContent(string stringBUD) {
+            var list = new List<LeagueScheduleModel>();
+            try {
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(stringBUD);
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//table[@class='list_2']";
+                HtmlNodeCollection startListTrs = rootnode.SelectNodes(XPathString);
+                var theadTrs = startListTrs.ElementAt(0).SelectSingleNode("thead/tr");
+                var titleModel = new LeagueScheduleModel();
+                titleModel.ModelType = LeagueScheduleModel.ScheduleType.Title;
+                if (theadTrs.SelectSingleNode("th[@class='prev']/a") != null) {
+                    titleModel.PreTitleUri = new Uri(HomeHostInsert + theadTrs.SelectSingleNode("th[@class='prev']/a").Attributes["href"].Value);
+                    titleModel.PreTitle = theadTrs.SelectSingleNode("th[@class='prev']/a").InnerText.Substring(5, theadTrs.SelectSingleNode("th[@class='prev']/a").InnerText.Length - 5);}
+                if (theadTrs.SelectSingleNode("th[@class='next']/a") != null) {
+                    titleModel.NextTitleUri = new Uri(HomeHostInsert + theadTrs.SelectSingleNode("th[@class='next']/a").Attributes["href"].Value);
+                    titleModel.NextTitle = theadTrs.SelectSingleNode("th[@class='next']/a").InnerText.Substring(0, theadTrs.SelectSingleNode("th[@class='next']/a").InnerText.Length - 5);}
+                titleModel.ScheduleTitle = theadTrs.SelectSingleNode("th[@id='schedule_title']").InnerText;
+                list.Add(titleModel);
+                var insideTds = startListTrs.ElementAt(0).SelectSingleNode("tbody[@id='schduleContent']").SelectNodes("tr");
+                foreach (var item in insideTds) {
+                    try {
+                        var model = new LeagueScheduleModel();
+                        model.ModelType = LeagueScheduleModel.ScheduleType.Content;
+                        model.Time = item.SelectSingleNode("td[@class='time']").Attributes["utc"] != null && !item.SelectSingleNode("td[@class='time']").Attributes["utc"].Value.Equals("0") ?
+                            new DateTime(1970, 1, 1, 8, 0, 0).AddSeconds(Convert.ToInt64(item.SelectSingleNode("td[@class='time']").Attributes["utc"].Value)).ToString("yy-MM-dd HH:mm") :
+                            item.SelectSingleNode("td[@class='time']").Attributes["utc"] != null && item.SelectSingleNode("td[@class='time']").Attributes["utc"].Value.Equals("0") ?
+                            "待定" : "待定";
+                        model.AwayTeam = item.SelectSingleNode("td[@class='away']").InnerText;
+                        model.HomeTeam = item.SelectSingleNode("td[@class='home']").InnerText;
+                        model.AwayTeamIcon =
+                            string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("td[@class='away']/img").Attributes["src"].Value).Value) ?
+                            new Uri(item.SelectSingleNode("td[@class='away']/img").Attributes["src"].Value) :
+                            new Uri(DefaultImageFlagHost);
+                        model.HomeTeamIcon =
+                            string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("td[@class='home']/img").Attributes["src"].Value).Value) ?
+                            new Uri(item.SelectSingleNode("td[@class='home']/img").Attributes["src"].Value) :
+                            new Uri(DefaultImageFlagHost);
+                        model.Score= item.SelectSingleNode("td[@class='status']").InnerText;
+                        list.Add(model);
+                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (FormatException FE) { ReportError(FE.Message.ToString());
+                    }
+                } 
+            } catch (Exception E) { ReportError(E.Message.ToString());
             }
             return list;
         }

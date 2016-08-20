@@ -40,6 +40,7 @@ namespace DQD.Net.Pages {
             var item = e.ClickedItem as LeagueModel;
             MainPage.Current.ItemClick?.Invoke(this, typeof(DataContentPage), MainPage.Current.contentFrame, item.Href, 0,item.LeagueName);
             MainPage.Current.SideGrid.Visibility = Visibility.Visible;
+            MainPage.Current.LoadingProgress.IsActive = true;
         }
     }
 }

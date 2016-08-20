@@ -6,6 +6,8 @@
     xmlns:MPV="using:DQD.Core.Controls"
     xmlns:model="using:DQD.Core.Models.TeamModels"
     xmlns:Converters="using:DQD.Core.Tools.Converters"
+    xmlns:Shadow="using:DQD.Shadow"
+    xmlns:xp="using:XP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -17,6 +19,7 @@
         <CollectionViewSource x:Name="ScheduleListResources"/>
         <Converters:TeamModelConverter x:Key="VisibilityConverter"/>
         <Converters:TopOrBottomConverter x:Key="UpOrDownConverter"/>
+        <Converters:SelfVisibilityConverter x:Key="SelfVisibilityConverter"/>
         <Storyboard x:Name="EnterPopupBorder">
             <FadeInThemeAnimation Storyboard.TargetName="PopupBackBorder" />
         </Storyboard>
@@ -403,9 +406,7 @@
         </Style>
     </Page.Resources>
     
-    <Grid Name="BaseGrid" 
-          Background="{ThemeResource AppPersonalExtraBackground02}"
-          SizeChanged="BaseGrid_SizeChanged">
+    <Grid Name="BaseGrid"  Background="{ThemeResource AppPersonalExtraBackground02}">
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
@@ -937,9 +938,153 @@
             <PivotItem Name="SchedulePItem" 
                            Header="赛程表"
                            Background="Pink">
-                <ListView Name="ScheduleList"/>
+                <ListView Name="ScheduleList"
+                          SelectionMode="None"
+                          Background="{ThemeResource AppPersonalExtraBackground02}"
+                          ItemContainerStyle="{ThemeResource SpecialListViewItemData}"
+                          ItemsSource="{Binding Source={StaticResource ScheduleListResources}}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="model:LeagueScheduleModel">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Name="ModelType"
+                                           Text="{Binding ModelType}"
+                                           Visibility="Collapsed"/>
+                                
+                                <!--#region ListTitle-->
+                                <Grid Background="{ThemeResource DQDListTitleColor}"
+                                        Height="50"
+                                        Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='Title'}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.1*" />
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="0.1*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="{Binding PreTitle}"
+                                            CommandParameter="{Binding PreTitleUri}"
+                                            Grid.Column="1"
+                                            Click="BoudListBtnClick"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Stretch"
+                                            Background="Transparent"
+                                            Foreground="#EFEFEF"
+                                            Style="{StaticResource MainPagePopupButtonStyle}"
+                                            Visibility="{
+                                        Binding Content, 
+                                        Converter={StaticResource SelfVisibilityConverter}, 
+                                        RelativeSource={RelativeSource Mode=Self}}"/>
+                                    <TextBlock Text="{Binding ScheduleTitle}" 
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="20"/>
+                                    <Button Content="{Binding NextTitle}"
+                                            CommandParameter="{Binding NextTitleUri}"
+                                            Grid.Column="3"
+                                            Click="BoudListBtnClick"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Background="Transparent"
+                                            Foreground="#EFEFEF"
+                                            Style="{StaticResource MainPagePopupButtonStyle}"
+                                            Visibility="{
+                                        Binding Content, 
+                                        Converter={StaticResource SelfVisibilityConverter}, 
+                                        RelativeSource={RelativeSource Mode=Self}}"/>
+                                </Grid>
+                                <!--#endregion-->
+
+                                <!--#region CupTeam-->
+                                <Grid Height="50"
+                                      Grid.Row="1" 
+                                      Visibility="{
+                                    Binding ElementName=ModelType, 
+                                    Path=Text, 
+                                    Converter={StaticResource VisibilityConverter} ,
+                                    ConverterParameter='Content'}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.2*" />
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="0.5*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="0.5*" />
+                                        <ColumnDefinition Width="0.2*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Time}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Margin=" 2,0,0,0"
+                                               Grid.Column="1"/>
+                                    <Image Source="{Binding AwayTeamIcon}"
+                                           Margin="5"
+                                           Grid.Column="2"/>
+                                    <TextBlock Text="{Binding AwayTeam}" 
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="3"/>
+                                    <TextBlock Text="{Binding Score}" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="4"/>
+                                    <TextBlock Text="{Binding HomeTeam}" 
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="5"/>
+                                    <Image Source="{Binding HomeTeamIcon}"
+                                           Margin="5"
+                                           Grid.Column="6"/>
+                                </Grid>
+                                <!--#endregion-->
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </PivotItem>
         </MPV:PersonalPivot>
+
+        <StackPanel Name="ButtonStack" 
+                    Width="150" 
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+                    FlowDirection="RightToLeft">
+            <Shadow:Shadow 
+                Margin="0"
+                CornerRadius="0.5"
+                Z_Depth="4"
+                IsCached="True">
+                <xp:XPButton  
+                    Name="RefreshBtn"
+                    Width="60"
+                    Height="60"
+                    Background="{ThemeResource DQDBackground2}"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="{ThemeResource DQDBackground3}"
+                    PressedBackground="{ThemeResource DQDBackground3}"
+                    Click="RefreshBtn_Click">
+                    <xp:XPButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE117;"/>
+                    </xp:XPButton.Icon>
+                </xp:XPButton>
+            </Shadow:Shadow>
+        </StackPanel>
 
     </Grid>
 </Page>
