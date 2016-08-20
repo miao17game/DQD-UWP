@@ -42,47 +42,48 @@ namespace DQD.Net.Pages {
         private async void InitView() {
             ObservableCollection<HeaderModel> headerList = new ObservableCollection<HeaderModel>();
             headerList = await DataHandler.SetHeaderGroupResources();
-            foreach (var item in headerList) { cacheDic.Add(item.Title, new DQDDataContext<ContentListModel>(FetchMoreResources, item.Number, 15, HomeHost, InitSelector.Special)); }
+            foreach (var item in headerList) {
+                cacheDic.Add(
+                    item.Title, 
+                    new DQDDataContext<ContentListModel>(
+                        FetchMoreResources,
+                        item.Number, 
+                        15, 
+                        HomeHost, 
+                        InitSelector.Special));}
             HeaderResources.Source = headerList;
         }
 
         private async Task<ObservableCollection<ContentListModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
             var Host = "http://www.dongqiudi.com?tab={0}&page={1}";
-            Host = string.Format(Host, number, nowWholeCountX / 15);
+            Host = string.Format(
+                Host, 
+                number,
+                nowWholeCountX / 15);
             return await DataHandler.SetHomeListResources(Host);
         }
 
-        #endregion
-
-        #region Events
-
-        private void ListView_ItemClick(object sender,ItemClickEventArgs e) {
-            var itemUri = (e.ClickedItem as ContentListModel).Path;
-            var itemNum = (e.ClickedItem as ContentListModel).ID;
-            MainPage.Current.ItemClick?.Invoke(this, typeof(ContentPage), MainPage.Current.contentFrame, itemUri, itemNum,null);
-            MainPage.Current.SideGrid.Visibility = Visibility.Visible;
+        private void RefreshBtn_Click(object sender, RoutedEventArgs e) {
+            ListResources.Source =
+                cacheDic[NowItem] =
+                new DQDDataContext<ContentListModel>(
+                    FetchMoreResources,
+                    itemNumber,
+                    15,
+                    HomeHost,
+                    InitSelector.Special);
         }
 
-        private void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            var item = (sender as Pivot).SelectedItem as HeaderModel;
-            NowItem = item.Title;
-            if (!cacheDic.ContainsKey(item.Title)) {
-                HomeLlistResources = new DQDDataContext<ContentListModel>(FetchMoreResources, item.Number, 15, HomeHost, InitSelector.Special);
-                cacheDic.Add(item.Title, HomeLlistResources);
-            }
-            ListResources.Source = cacheDic[NowItem];
+        private void BackToTopBtn_Click(object sender, RoutedEventArgs e) {
+            int num = MyPivot.SelectedIndex;
+            GetScrollViewer(
+                GetPVItemViewer(
+                    MyPivot, ref num))
+                    .ChangeView(0, 0, 1);
         }
 
-        private void grid_SizeChanged(object sender, SizeChangedEventArgs e) { MyPivot.Width = (sender as Grid).ActualWidth; }
+        #region Handler of ListView Scroll 
 
-        #endregion
-
-        #region Save the position of listview scroll (Dropped)
-        /// <summary>
-        /// Get scrollviewer from the target listview
-        /// </summary>
-        /// <param name="depObj">dependencyObject of Listview or is the target scrollviewer</param>
-        /// <returns></returns>
         public ScrollViewer GetScrollViewer(DependencyObject depObj) {
             if (depObj is ScrollViewer)
                 return depObj as ScrollViewer;
@@ -95,18 +96,69 @@ namespace DQD.Net.Pages {
             return null;
         }
 
+        public PivotItem GetPVItemViewer(DependencyObject depObj, ref int num) {
+            if (depObj is PivotItem) {
+                if (num == 0)
+                    return depObj as PivotItem;
+                else
+                    num--;
+                return null;
+            }
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+                var result = GetPVItemViewer(child, ref num);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e) {
             try {
                 ListViewOffset[NowItem] = (sender as ScrollViewer).VerticalOffset;
                 Debug.WriteLine(ListViewOffset[NowItem]);
-            }
-            catch { Debug.WriteLine("Save scroll positions error."); }
+            } catch { Debug.WriteLine("Save scroll positions error."); }
         }
 
+        #endregion
+
+        #endregion
+
+        #region Events
+
+        private void ListView_ItemClick(object sender,ItemClickEventArgs e) {
+            var itemUri = (e.ClickedItem as ContentListModel).Path;
+            var itemNum = (e.ClickedItem as ContentListModel).ID;
+            MainPage.Current.ItemClick?.Invoke(
+                this, 
+                typeof(ContentPage), 
+                MainPage.Current.contentFrame, 
+                itemUri, 
+                itemNum,
+                null);
+            MainPage.Current.SideGrid.Visibility = Visibility.Visible;
+        }
+
+        private void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            var item = (sender as Pivot).SelectedItem as HeaderModel;
+            NowItem = item.Title;
+            itemNumber = item.Number;
+            if (!cacheDic.ContainsKey(item.Title)) {
+                HomeLlistResources = 
+                    new DQDDataContext<ContentListModel>(
+                        FetchMoreResources, 
+                        item.Number, 
+                        15, 
+                        HomeHost,
+                        InitSelector.Special);
+                cacheDic.Add(item.Title, HomeLlistResources); }
+            ListResources.Source = cacheDic[NowItem];
+        }
+
+        private void grid_SizeChanged(object sender, SizeChangedEventArgs e) { MyPivot.Width = (sender as Grid).ActualWidth; }
+
         private void LocalPageListView_Loaded(object sender, RoutedEventArgs e) {
-            //thisList = sender as ListView;
-            //var vierew = GetScrollViewer(thisList);
-            //vierew.ViewChanged += ScrollViewer_ViewChanged;
+
         }
 
         #endregion
@@ -116,6 +168,7 @@ namespace DQD.Net.Pages {
         public static HomePage Current;
         //private ListView thisList;
         private string NowItem;
+        private int itemNumber;
         private Dictionary<string, DQDDataContext<ContentListModel>> cacheDic;
         private Dictionary<string, double> ListViewOffset;
         private DQDDataContext<ContentListModel> HomeLlistResources;

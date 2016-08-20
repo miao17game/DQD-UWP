@@ -5,6 +5,8 @@
     xmlns:local="using:DQD.Net.Pages"
     xmlns:model="using:DQD.Core.Models"
     xmlns:MPV="using:DQD.Core.Controls"
+    xmlns:Shadow="using:DQD.Shadow"
+    xmlns:xp="using:XP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -60,7 +62,7 @@
             </Pivot.HeaderTemplate>
             <Pivot.ItemTemplate>
                 <DataTemplate x:DataType="model:HeaderModel" >
-                    <ListView x:Name="ContentListView" 
+                    <ListView Name="ContentListView" 
                               ItemsSource="{Binding Source={StaticResource ListResources}}"
                               ItemContainerStyle="{ThemeResource SpecialListViewItemExpanded}"
                               SelectionMode="None" 
@@ -107,6 +109,60 @@
                 </DataTemplate>
             </Pivot.ItemTemplate>
         </Pivot>
-        
+
+        <StackPanel Name="ButtonStack" 
+              Width="150" 
+              Height=" 200"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+              FlowDirection="RightToLeft">
+            <Shadow:Shadow 
+                Margin="0"
+                CornerRadius="0.5"
+                Z_Depth="4">
+                <xp:XPButton  
+                    Name="RefreshBtn"
+                    Width="55"
+                    Height="55"
+                    Background="{ThemeResource DQDBackground2}"
+                    BorderThickness="0"
+                    CornerRadius="28"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="23"
+                    PointerOverBackground="{ThemeResource DQDBackground3}"
+                    PressedBackground="{ThemeResource DQDBackground3}"
+                    Click="RefreshBtn_Click">
+                    <xp:XPButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE117;"/>
+                    </xp:XPButton.Icon>
+                </xp:XPButton>
+            </Shadow:Shadow>
+            <Shadow:Shadow 
+                CornerRadius="0.5"
+                Z_Depth="4">
+                <xp:XPButton  
+                    Name="BackToTopBtn"
+                    Width="55"
+                    Height="55"
+                    Background="Orange"
+                    BorderThickness="0"
+                    CornerRadius="28"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="23"
+                    PointerOverBackground="DarkOrange"
+                    PressedBackground="DarkOrange"
+                    Click="BackToTopBtn_Click">
+                    <xp:XPButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE11C;"/>
+                    </xp:XPButton.Icon>
+                </xp:XPButton>
+            </Shadow:Shadow>
+        </StackPanel>
+
     </Grid>
 </Page>

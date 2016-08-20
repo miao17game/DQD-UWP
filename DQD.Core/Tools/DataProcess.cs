@@ -199,8 +199,8 @@ namespace DQD.Core. Tools {
                                     case TableItemType.Away:
                                         model.AwayTeam = item.InnerText.Substring(50, item.InnerText.Length - 67);
                                         model.AwayImage = string.IsNullOrEmpty(new Regex(@"\/.png").Match(item.SelectSingleNode("img").Attributes["src"].Value).Value) ?
-                                            new Uri(item.SelectSingleNode("img").Attributes["src"].Value) :
-                                            new Uri(DefaultImageFlagHost);
+                                        new Uri(item.SelectSingleNode("img").Attributes["src"].Value) :
+                                        new Uri(DefaultImageFlagHost);
                                         break;
                                     case TableItemType.Home:
                                         model.HomeTeam = item.InnerText.Substring(25, item.InnerText.Length - 67);

@@ -64,8 +64,9 @@ namespace DQD.Net.Pages {
                 new Dictionary<string, IList<object>>();
             if (RootPivot.SelectedIndex == 0)
                 await InsertListResources("IntergralPItem");
-            RootPivot.SelectedIndex = 0;
+            else RootPivot.SelectedIndex = 0;
             if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
+            LoadingAnimation.IsActive = false;
         }
 
         private void BackBtn_Click(object sender, RoutedEventArgs e) {
@@ -96,7 +97,7 @@ namespace DQD.Net.Pages {
                new Dictionary<string, IList<object>>();
             if (RootPivot.SelectedIndex == 0)
                 await InsertListResources("IntergralPItem");
-            RootPivot.SelectedIndex = 0;
+            else RootPivot.SelectedIndex = 0;
         }
 
         #endregion
