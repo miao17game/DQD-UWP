@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <!--#region Page.Resources-->
     <Page.Resources>
         <Style x:Key="SummaryTextStyle" TargetType="TextBlock" >
             <Setter Property="FontSize" Value="12"/>
@@ -28,11 +29,13 @@
             <FadeOutThemeAnimation Storyboard.TargetName="PopupBorder" />
         </Storyboard>
     </Page.Resources>
+    <!--#endregion-->
 
     <Grid x:Name="grid" 
           Background="{ThemeResource DQDSummTextColor}"
           SizeChanged="grid_SizeChanged">
 
+        <!--#region  AdaptiveTriggers and Grid settigs-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 
@@ -122,7 +125,10 @@
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-
+        <!--#endregion-->
+        
+        <!--#region Page BaseGrid-->
+        
         <Border Name="BaseBorder" 
                 Margin="0,0,1,0"
                 Background="{ThemeResource DQDBackground}">
@@ -196,6 +202,11 @@
                         <Frame Name="DataPFrame"/>
                     </PivotItem>
                 </MPV:PersonalPivot>
+                <ProgressRing Name="BaseLoadingAnimation"
+                      IsActive="False"
+                      Width="50"
+                      Height="50"
+                      Foreground="{ThemeResource DQDBackground}"/>
             </Grid>
         </Border>
 
@@ -235,7 +246,11 @@
                       Height="50"
                       Foreground="{ThemeResource DQDBackground}"/>
         </Grid>
+        
+        <!--#endregion-->
 
+        <!--#region Page Popup-->
+        
         <Border Name="PopupBorder" 
                 Background="{ThemeResource DQDPopupBackColor}"
                 Grid.ColumnSpan="2"
@@ -343,10 +358,18 @@
                             RelativePanel.AlignRightWithPanel="True"
                             Margin="0.25,53,0,0"
                             Padding="15,12,5,5"
-                            Visibility="Collapsed">
+                            Visibility="Visible">
                     <StackPanel>
                         <TextBlock Text="设置" FontSize="20"/>
-                        <Grid Margin="0,10,0,0">
+                        <StackPanel Orientation="Vertical" 
+                                    Margin=" 0,10,0,0">
+                            <TextBlock Text="面板选项" FontWeight="Bold"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                            <Rectangle Height="1"
+                                       Margin=" 0,5,0,0"
+                                       Fill="{ThemeResource DQDSummTextColor}"/>
+                        </StackPanel>
+                        <Grid Margin="0,10,0,0" >
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="沉浸式状态栏"
                                    Style="{StaticResource TitleTextStyle}"/>
@@ -354,6 +377,59 @@
                                    Style="{StaticResource SummaryTextStyle}"/>
                             </StackPanel>
                             <ToggleSwitch Name="ColorSwitch" 
+                                      Style="{ThemeResource ThemeModeSwitch}" 
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,-100,0"
+                                      OnContent=" " 
+                                      OffContent=" " 
+                                      Toggled="Switch_Toggled" />
+                        </Grid>
+                        <StackPanel Orientation="Vertical" 
+                                    Margin=" 0,10,0,0">
+                            <TextBlock Text="按钮选项" FontWeight="Bold"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                            <Rectangle Height="1"
+                                       Margin=" 0,5,0,0"
+                                       Fill="{ThemeResource DQDSummTextColor}"/>
+                        </StackPanel>
+                        <Grid Margin="0,10,0,0" >
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="页面浮动按钮"
+                                   Style="{StaticResource TitleTextStyle}"/>
+                                <TextBlock Text="现实或隐藏浮动操作钮"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                            </StackPanel>
+                            <ToggleSwitch Name="ButtonSwitch" 
+                                      Style="{ThemeResource ThemeModeSwitch}" 
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,-100,0"
+                                      OnContent=" " 
+                                      OffContent=" " 
+                                      Toggled="Switch_Toggled" />
+                        </Grid>
+                        <Grid Margin="0,10,0,0" >
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="浮动按钮阴影"
+                                   Style="{StaticResource TitleTextStyle}"/>
+                                <TextBlock Text="启用阴影会增加性能的压力"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                            </StackPanel>
+                            <ToggleSwitch Name="ShadowSwitch" 
+                                      Style="{ThemeResource ThemeModeSwitch}" 
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,-100,0"
+                                      OnContent=" " 
+                                      OffContent=" " 
+                                      Toggled="Switch_Toggled" />
+                        </Grid>
+                        <Grid Margin="0,10,0,0" >
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="自动隐藏按钮"
+                                   Style="{StaticResource TitleTextStyle}"/>
+                                <TextBlock Text="垂直滚动页面自动显示与消失"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                            </StackPanel>
+                            <ToggleSwitch Name="AnimationSwitch" 
                                       Style="{ThemeResource ThemeModeSwitch}" 
                                       HorizontalAlignment="Right"
                                       Margin="0,0,-100,0"
@@ -371,7 +447,7 @@
                             RelativePanel.AlignRightWithPanel="True"
                             Margin="0.25,53,0,0"
                             Padding="0,12,0,5"
-                            Visibility="Visible">
+                            Visibility="Collapsed">
                     <StackPanel Margin="15,0,10,0">
                         <Rectangle Height="1"
                                Fill="{ThemeResource DQDBackground}"
@@ -489,6 +565,8 @@
                 </ScrollViewer>
             </RelativePanel>
         </Popup>
+        
+        <!--#endregion-->
 
         <Frame Name="PrepareFrame" 
                Grid.ColumnSpan="2"/>

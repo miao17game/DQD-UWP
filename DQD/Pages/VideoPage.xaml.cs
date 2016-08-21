@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Threading.Tasks;
+using DQD.Core.Helpers;
 
 namespace DQD.Net.Pages {
     /// <summary>
@@ -28,6 +29,9 @@ namespace DQD.Net.Pages {
             cacheDic = new Dictionary<string, DQDDataContext<ContentListModel>>();
             this.NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
+            ButtonShadow = ButtonStack;
+            ButtonNoShadow = ButtonStackNoShadow;
+            InitFloatButtonView();
             InitView();
         }
 
@@ -49,6 +53,16 @@ namespace DQD.Net.Pages {
             return await DataHandler.SetHomeListResources(Host);
         }
 
+        private void InitFloatButtonView() {
+            if (MainPage.Current.IsFloatButtonEnable) {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
+            } else {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
+            }
+        }
+
         #endregion
 
         #region Events
@@ -62,12 +76,32 @@ namespace DQD.Net.Pages {
 
         private void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             var item = (sender as Pivot).SelectedItem as HeaderModel;
-            NowItem = item.Title;
+            nowItem = item.Title;
+            itemNumber = item.Number;
             if (!cacheDic.ContainsKey(item.Title)) {
-                HomeLlistResources = new DQDDataContext<ContentListModel>(FetchMoreResources, item.Number, 15, HomeHost, InitSelector.Special);
-                cacheDic.Add(item.Title, HomeLlistResources);
+                homeLlistResources = new DQDDataContext<ContentListModel>(FetchMoreResources, itemNumber, 15, HomeHost, InitSelector.Special);
+                cacheDic.Add(item.Title, homeLlistResources);
             }
-            ListResources.Source = cacheDic[NowItem];
+            ListResources.Source = cacheDic[nowItem];
+        }
+
+        private void RefreshBtn_Click(object sender, RoutedEventArgs e) {
+            ListResources.Source =
+                cacheDic[nowItem] =
+                new DQDDataContext<ContentListModel>(
+                    FetchMoreResources,
+                    itemNumber,
+                    15,
+                    HomeHost,
+                    InitSelector.Special);
+        }
+
+        private void BackToTopBtn_Click(object sender, RoutedEventArgs e) {
+            int num = MyPivot.SelectedIndex;
+            MainPage.GetScrollViewer(
+                MainPage.GetPVItemViewer(
+                    MyPivot, ref num))
+                    .ChangeView(0, 0, 1);
         }
 
         private void grid_SizeChanged(object sender, SizeChangedEventArgs e) { MyPivot.Width = (sender as Grid).ActualWidth; }
@@ -76,10 +110,13 @@ namespace DQD.Net.Pages {
 
         #region Properties and States
 
-        public static VideoPage Current;
-        private string NowItem;
+        public static VideoPage Current { get; private set; }
+        public StackPanel ButtonShadow { get; private set; }
+        public StackPanel ButtonNoShadow { get; private set; }
         private Dictionary<string, DQDDataContext<ContentListModel>> cacheDic;
-        private DQDDataContext<ContentListModel> HomeLlistResources;
+        private DQDDataContext<ContentListModel> homeLlistResources;
+        private string nowItem;
+        private int itemNumber;
         private const string HomeHost = "http://www.dongqiudi.com/video/";
         private const string HomeHostInsert = "http://www.dongqiudi.com/video";
 

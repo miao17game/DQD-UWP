@@ -495,6 +495,8 @@
             </MPV:PersonalPivot.HeaderTemplate>
             <PivotItem Name="IntergralPItem" 
                            Header="积分榜" >
+                
+                <!--#region IntergralList -->
                 <ListView Name="IntergralList"
                           SelectionMode="None"
                           Background="{ThemeResource AppPersonalExtraBackground02}"
@@ -722,10 +724,14 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <!--#endregion-->
+                
             </PivotItem>
             <PivotItem Name="ShootPItem" 
                            Header="射手榜"
                            Background="SteelBlue">
+                
+                <!--#region ShootList -->
                 <ListView Name="ShootList"
                           SelectionMode="None"
                           Background="{ThemeResource AppPersonalExtraBackground02}"
@@ -828,10 +834,14 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <!--#endregion-->
+                
             </PivotItem>
             <PivotItem Name="HelpPItem" 
                            Header="助攻榜"
                            Background="Black">
+                
+                <!--#region HelpList-->
                 <ListView Name="HelpList"
                           SelectionMode="None"
                           Background="{ThemeResource AppPersonalExtraBackground02}"
@@ -934,10 +944,14 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <!--#endregion-->
+                
             </PivotItem>
             <PivotItem Name="SchedulePItem" 
                            Header="赛程表"
                            Background="Pink">
+                
+                <!--#region ScheduleList-->
                 <ListView Name="ScheduleList"
                           SelectionMode="None"
                           Background="{ThemeResource AppPersonalExtraBackground02}"
@@ -1051,9 +1065,12 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <!--#endregion-->
+                
             </PivotItem>
         </MPV:PersonalPivot>
 
+        <!--#region FloatButton-->
         <StackPanel Name="ButtonStack" 
                     Width="150" 
                     HorizontalAlignment="Right"
@@ -1085,6 +1102,34 @@
                 </xp:XPButton>
             </Shadow:Shadow>
         </StackPanel>
+
+        <StackPanel Name="ButtonStackNoShadow" 
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+                    FlowDirection="RightToLeft"
+                    Margin=" 0,0,25,30"
+                    Visibility="Collapsed">
+            <xp:XPButton  
+                    Name="RefreshBtnNoSHdow"
+                    Width="60"
+                    Height="60"
+                    Background="{ThemeResource DQDBackground2}"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="{ThemeResource DQDBackground3}"
+                    PressedBackground="{ThemeResource DQDBackground3}"
+                    Click="RefreshBtn_Click">
+                <xp:XPButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE117;"/>
+                </xp:XPButton.Icon>
+            </xp:XPButton>
+        </StackPanel>
+        <!--#endregion-->
 
     </Grid>
 </Page>

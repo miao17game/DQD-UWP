@@ -1,4 +1,5 @@
 ﻿using DQD.Core.Controls;
+using DQD.Core.Helpers;
 using DQD.Core.Models;
 using DQD.Core.Models.MatchModels;
 using DQD.Core.Tools;
@@ -27,19 +28,17 @@ namespace DQD.Net.Pages {
     /// MatchPage Code Page
     /// </summary>
     public sealed partial class MatchPage:Page {
-        #region Properties and State
-        private string NowItem;
-        private string TargetUrl = "http://dongqiudi.com/match/fetch?tab={0}&date={1}&scroll_times={2}&tz={3}";
-        private List<AlphaKeyGroup<MatchListModel>> Resources;
-        private Dictionary<string, List<AlphaKeyGroup<MatchListModel>>> cacheDic;
-        #endregion
-
+       
         #region Constructor
         public MatchPage() {
+            Current = this;
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
             cacheDic = new Dictionary<string, List<AlphaKeyGroup<MatchListModel>>>();
-            Resources = new List<AlphaKeyGroup<MatchListModel>>();
+            resources = new List<AlphaKeyGroup<MatchListModel>>();
+            ButtonShadow = ButtonStack;
+            ButtonNoShadow = ButtonStackNoShadow;
+            InitFloatButtonView();
             InitHeaderGroup();
         }
         #endregion
@@ -71,21 +70,47 @@ namespace DQD.Net.Pages {
                             .ToString()));
         }
 
+        private void InitFloatButtonView() {
+            if (MainPage.Current.IsFloatButtonEnable) {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
+            } else {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
+            }
+        }
+
         #endregion
 
         #region Events
         private async void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             ItemsGrouped.Source = null;
             var item = (sender as Pivot).SelectedItem as HeaderModel;
-            NowItem = item.Title;
-            var rel = item.Number.ToString();
+            nowItem = item.Title;
+            itemNumber = item.Number.ToString();
             if (!cacheDic.ContainsKey(item.Title)) {
-                Resources = await FetchHtml(rel,"0","-8");
-                if(Resources.Count == 0) { new ToastSmooth("近期没有比赛").Show(); }
-                cacheDic.Add(item.Title, Resources);
+                resources = await FetchHtml(itemNumber, "0", "-8");
+                if (resources.Count == 0) { new ToastSmooth("近期没有比赛").Show(); }
+                cacheDic.Add(item.Title, resources);
             }
-            ItemsGrouped.Source = cacheDic[NowItem];
+            ItemsGrouped.Source = cacheDic[nowItem];
         }
+
+        private async void RefreshBtn_Click(object sender, RoutedEventArgs e) {
+            ListResources.Source = cacheDic[nowItem] = await FetchHtml(itemNumber, "0", "-8");
+        }
+
+        #endregion
+
+        #region Properties and State
+        public static MatchPage Current { get; private set; }
+        public StackPanel ButtonShadow { get; private set; }
+        public StackPanel ButtonNoShadow { get; private set; }
+        private string nowItem;
+        private string itemNumber;
+        private string TargetUrl = "http://dongqiudi.com/match/fetch?tab={0}&date={1}&scroll_times={2}&tz={3}";
+        private List<AlphaKeyGroup<MatchListModel>> resources;
+        private Dictionary<string, List<AlphaKeyGroup<MatchListModel>>> cacheDic;
         #endregion
     }
 }

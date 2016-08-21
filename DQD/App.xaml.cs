@@ -57,6 +57,14 @@ namespace DQD.Net {
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e) {
+
+//#if DEBUG
+//            if (System.Diagnostics.Debugger.IsAttached) {
+//                this.DebugSettings.EnableFrameRateCounter = true;
+//            }
+//#endif
+
+
             RegisterExceptionHandlingSynchronizationContext();
 
             Frame rootFrame = Window.Current.Content as Frame;

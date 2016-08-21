@@ -122,6 +122,7 @@
     <Compile Include="DataVirtualization\DQDDataContext.cs" />
     <Compile Include="DataVirtualization\DQDDataContextBase.cs" />
     <Compile Include="DataVirtualization\InitSelector.cs" />
+    <Compile Include="Helpers\VisiEnumHelper.cs" />
     <Compile Include="Models\CommentModels\AllCommentModel.cs" />
     <Compile Include="Models\CommentModels\CommentModel.cs" />
     <Compile Include="Models\MatchModels\MatchGroup.cs" />

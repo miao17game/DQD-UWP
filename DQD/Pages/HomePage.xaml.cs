@@ -16,6 +16,7 @@ using Windows.System.Profile;
 using Windows.UI.Xaml.Media.Animation;
 using System.Threading.Tasks;
 using DQD.Core.Controls;
+using DQD.Core.Helpers;
 
 namespace DQD.Net.Pages {
     /// <summary>
@@ -26,10 +27,15 @@ namespace DQD.Net.Pages {
         #region Constructor
         public HomePage() {
             Current = this;
-            cacheDic = new Dictionary<string, DQDDataContext<ContentListModel>>();
-            ListViewOffset = new Dictionary<string, double>();
-            this.NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
+            cacheDic = new Dictionary<string, DQDDataContext<ContentListModel>>();
+            listViewOffset = new Dictionary<string, double>();
+            this.NavigationCacheMode = NavigationCacheMode.Required;
+            loadingAnimation = MainPage.Current.BaseLoadingProgress;
+            loadingAnimation.IsActive = true;
+            ButtonShadow = ButtonStack;
+            ButtonNoShadow = ButtonStackNoShadow;
+            InitFloatButtonView();
             InitView();
         }
         #endregion
@@ -63,60 +69,22 @@ namespace DQD.Net.Pages {
             return await DataHandler.SetHomeListResources(Host);
         }
 
-        private void RefreshBtn_Click(object sender, RoutedEventArgs e) {
-            ListResources.Source =
-                cacheDic[NowItem] =
-                new DQDDataContext<ContentListModel>(
-                    FetchMoreResources,
-                    itemNumber,
-                    15,
-                    HomeHost,
-                    InitSelector.Special);
-        }
-
-        private void BackToTopBtn_Click(object sender, RoutedEventArgs e) {
-            int num = MyPivot.SelectedIndex;
-            GetScrollViewer(
-                GetPVItemViewer(
-                    MyPivot, ref num))
-                    .ChangeView(0, 0, 1);
+        private void InitFloatButtonView() {
+            if (MainPage.Current.IsFloatButtonEnable) {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
+            } else {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
+            }
         }
 
         #region Handler of ListView Scroll 
 
-        public ScrollViewer GetScrollViewer(DependencyObject depObj) {
-            if (depObj is ScrollViewer)
-                return depObj as ScrollViewer;
-            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
-                var child = VisualTreeHelper.GetChild(depObj, i);
-                var result = GetScrollViewer(child);
-                if (result != null)
-                    return result;
-            }
-            return null;
-        }
-
-        public PivotItem GetPVItemViewer(DependencyObject depObj, ref int num) {
-            if (depObj is PivotItem) {
-                if (num == 0)
-                    return depObj as PivotItem;
-                else
-                    num--;
-                return null;
-            }
-            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
-                var child = VisualTreeHelper.GetChild(depObj, i);
-                var result = GetPVItemViewer(child, ref num);
-                if (result != null)
-                    return result;
-            }
-            return null;
-        }
-
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e) {
             try {
-                ListViewOffset[NowItem] = (sender as ScrollViewer).VerticalOffset;
-                Debug.WriteLine(ListViewOffset[NowItem]);
+                listViewOffset[nowItem] = (sender as ScrollViewer).VerticalOffset;
+                Debug.WriteLine(listViewOffset[nowItem]);
             } catch { Debug.WriteLine("Save scroll positions error."); }
         }
 
@@ -140,40 +108,62 @@ namespace DQD.Net.Pages {
         }
 
         private void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            loadingAnimation.IsActive = true;
             var item = (sender as Pivot).SelectedItem as HeaderModel;
-            NowItem = item.Title;
+            nowItem = item.Title;
             itemNumber = item.Number;
             if (!cacheDic.ContainsKey(item.Title)) {
-                HomeLlistResources = 
+                homeLlistResources = 
                     new DQDDataContext<ContentListModel>(
                         FetchMoreResources, 
                         item.Number, 
                         15, 
                         HomeHost,
                         InitSelector.Special);
-                cacheDic.Add(item.Title, HomeLlistResources); }
-            ListResources.Source = cacheDic[NowItem];
+                cacheDic.Add(item.Title, homeLlistResources); }
+            ListResources.Source = cacheDic[nowItem];
+        }
+
+        private void RefreshBtn_Click(object sender, RoutedEventArgs e) {
+            ListResources.Source =
+                cacheDic[nowItem] =
+                new DQDDataContext<ContentListModel>(
+                    FetchMoreResources,
+                    itemNumber,
+                    15,
+                    HomeHost,
+                    InitSelector.Special);
+        }
+
+        private void BackToTopBtn_Click(object sender, RoutedEventArgs e) {
+            int num = MyPivot.SelectedIndex;
+            MainPage.GetScrollViewer(
+                MainPage.GetPVItemViewer(
+                    MyPivot, ref num))
+                    .ChangeView(0, 0, 1);
         }
 
         private void grid_SizeChanged(object sender, SizeChangedEventArgs e) { MyPivot.Width = (sender as Grid).ActualWidth; }
 
         private void LocalPageListView_Loaded(object sender, RoutedEventArgs e) {
-
+            loadingAnimation.IsActive = false;
         }
 
         #endregion
 
         #region Properties and States
 
-        public static HomePage Current;
-        //private ListView thisList;
-        private string NowItem;
-        private int itemNumber;
+        public static HomePage Current { get; private set; }
+        public StackPanel ButtonShadow { get; private set; }
+        public StackPanel ButtonNoShadow { get; private set; }
+        private ProgressRing loadingAnimation;
         private Dictionary<string, DQDDataContext<ContentListModel>> cacheDic;
-        private Dictionary<string, double> ListViewOffset;
-        private DQDDataContext<ContentListModel> HomeLlistResources;
+        private Dictionary<string, double> listViewOffset;
+        private DQDDataContext<ContentListModel> homeLlistResources;
         private const string HomeHost = "http://www.dongqiudi.com/";
         private const string HomeHostInsert = "http://www.dongqiudi.com";
+        private string nowItem;
+        private int itemNumber;
 
         #endregion
     }

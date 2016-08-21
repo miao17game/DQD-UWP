@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region Using
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -19,32 +20,30 @@ using Windows.UI.Xaml.Media;
 using DQD.Core.Models;
 using Edi.UWP.Helpers;
 using Windows.Security.ExchangeActiveSyncProvisioning;
-
+#endregion
 namespace DQD.Net {
     /// <summary>
     /// MainPage Code Page
     /// </summary>
     public sealed partial class MainPage:Page {
+
         #region Constructor
 
         public MainPage() {
-            Current=this;
+            Current = this;
             this.InitializeComponent();
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+            BaseLoadingProgress = this.BaseLoadingAnimation;
+            LoadingProgress = this.LoadingAnimation;
+            contentFrame = this.ContentFrame;
+            SideGrid = this.sideGrid;
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                 ApplicationView.GetForCurrentView().VisibleBoundsChanged += (s, e) => { ChangeViewWhenNavigationBarChanged(); };
                 ChangeViewWhenNavigationBarChanged();
             }
-            LoadingProgress = this.LoadingAnimation;
-            contentFrame = this.ContentFrame;
-            SideGrid = this.sideGrid;
-            VersionText.Text = "版本号：" + Utils.GetAppVersion();
-            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
-            var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
-            var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
-            RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
-            ThemeModeBtn.Content = isLightOrNot ? char.ConvertFromUtf32(0xEC46) : char.ConvertFromUtf32(0xEC8A);
-            ColorSwitch.IsOn = isColorfulOrNot;
             PrepareFrame.Navigate(typeof(PreparePage));
+            VersionText.Text = "版本号：" + Utils.GetAppVersion();
+            InitSwitchState();
         }
 
         #endregion
@@ -58,21 +57,24 @@ namespace DQD.Net {
         /// <param name="e">changedArgs</param>
         private void RootPivot_SelectionChanged(object sender,SelectionChangedEventArgs e) {
             var item = ((sender as Pivot).SelectedItem as PivotItem).Name;
-            SelectionChanged?.Invoke(this,InsideResources.GetTPageype(item),InsideResources.GetTFrameype(item));
+            SelectionChanged?.Invoke(
+                this,
+                InsideResources.GetTPageype(item),
+                InsideResources.GetTFrameype(item));
         }
 
-        /// <summary>
-        /// OnBackRequested
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnBackRequested(object sender, BackRequestedEventArgs e) {
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") ) { sideGrid.Visibility = Visibility.Collapsed; }
             e.Handled = true;
         }
 
         private void grid_SizeChanged(object sender, SizeChangedEventArgs e) {
-            sideGrid.Visibility = (sender as Grid).ActualWidth > 800? Visibility.Visible:ContentFrame.Content == null ? Visibility.Collapsed : Visibility.Visible;
+            sideGrid.Visibility = 
+                (sender as Grid).ActualWidth > 800? 
+                Visibility.Visible:
+                ContentFrame.Content == null ? 
+                Visibility.Collapsed : 
+                Visibility.Visible;
         }
 
         private void BaseGrid_SizeChanged(object sender,SizeChangedEventArgs e) {
@@ -95,33 +97,8 @@ namespace DQD.Net {
         }
 
         private void Switch_Toggled(object sender, RoutedEventArgs e) {
-            var isColorfulOrNot = (sender as ToggleSwitch).IsOn;
-            SettingsHelper.SaveSettingsValue(SettingsConstants.IsColorfulOrNot, isColorfulOrNot);
-            var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
-            var wholeHeight = Window.Current.Bounds.Height;
-            if (isColorfulOrNot) {
-                StatusBarInit.InitDesktopStatusBar(isLightOrNot);
-                StatusBarInit.InitInnerDesktopStatusBar(true);
-                Window.Current.SetTitleBar(TitleBarRec);
-                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
-                    StatusBarInit.InitInnerMobileStatusBar(true);
-                    this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
-                    BaseGrid.Margin = new Thickness(0, 16, 0, 0);
-                    sideGrid.Margin = new Thickness(0, 16, 0, 0);
-                    this.Margin = this.Height + 24 - wholeHeight > -0.1 ? new Thickness(0, -0, 0, 0) : new Thickness(0, -48, 0, 0);
-                }
-            } else {
-                StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
-                StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
-                StatusBarInit.InitInnerDesktopStatusBar(false);
-                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
-                    this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
-                    BaseGrid.Margin = new Thickness(0, 0, 0, 0);
-                    sideGrid.Margin = new Thickness(0, 0, 0, 0);
-                    StatusBarInit.InitInnerMobileStatusBar(false);
-                    this.Margin = this.Height + 24 - wholeHeight > -0.1 ? new Thickness(0, 24, 0, 0) : new Thickness(0, -24, 0, 0);
-                }
-            }
+            InsideResources.GetSwitchHandler((sender as ToggleSwitch).Name)
+                .Invoke((sender as ToggleSwitch).Name);
         }
 
         private void SettingsBtn_Click(object sender, RoutedEventArgs e) {
@@ -136,16 +113,14 @@ namespace DQD.Net {
         }
 
         private void PopupBackButton_Click(object sender, RoutedEventArgs e) {
-            foreach (var item in InsideResources.GetPopupPanelColl()) {
+            foreach (var item in InsideResources.GetPopupPanelColl()) 
                 if (item.Value.Visibility == Visibility.Visible){item.Value.Visibility = Visibility.Collapsed; return;}
-            }
             SettingsPopup.IsOpen = false;
         }
 
         private void PopupInnerClick(object sender, RoutedEventArgs e) {
-            var button = sender as Button;
             InsideResources.CollapsedAllPanel();
-            InsideResources.GetPanelInstance(button.Name).Visibility = Visibility.Visible;
+            InsideResources.GetPanelInstance((sender as Button).Name).Visibility = Visibility.Visible;
         }
 
         private void SettingsPopup_Closed(object sender, object e) {
@@ -165,13 +140,13 @@ namespace DQD.Net {
         #endregion
 
         #region Static Inside Class
+
         /// <summary>
         /// Page inside resources of navigating and choosing frames.
         /// </summary>
         static class InsideResources {
-            /// <summary>
-            /// The dictionary map of pivotItems names collection. 
-            /// </summary>
+
+            public static Type GetTPageype(string str) { return PagesMaps.ContainsKey(str) ? PagesMaps[str] : null; }
             static public Dictionary<string, Type> PagesMaps = new Dictionary<string, Type> {
             {"HomePItem",typeof(HomePage)},
             {"MatchPItem",typeof(MatchPage)},
@@ -179,9 +154,7 @@ namespace DQD.Net {
             {"DataPItem",typeof(DataPage)},
         };
 
-            /// <summary>
-            /// The dictionary map of frames collection. 
-            /// </summary>
+            public static Frame GetTFrameype(string str) { return FramesMaps.ContainsKey(str) ? FramesMaps[str] : null; }
             static private Dictionary<string, Frame> FramesMaps = new Dictionary<string, Frame> {
             {"HomePItem",Current.HomePFrame},
             {"MatchPItem",Current.MatchPFrame},
@@ -189,52 +162,46 @@ namespace DQD.Net {
             {"DataPItem",Current.DataPFrame},
         };
 
-            /// <summary>
-            /// The dictionary map of Popup collection. 
-            /// </summary>
+            public static Dictionary<string, ScrollViewer> GetPopupPanelColl() { return PopupInnerMaps; }
+            public static ScrollViewer GetPanelInstance(string str) { return PopupInnerMaps.ContainsKey(str) ? PopupInnerMaps[str] : null; }
+            public static void CollapsedAllPanel() { foreach (var item in PopupInnerMaps) { item.Value.Visibility = Visibility.Collapsed; } }
             static private Dictionary<string, ScrollViewer> PopupInnerMaps = new Dictionary<string, ScrollViewer> {
             {"SettBtn",Current.SettMenu},
             {"AboutBtn",Current.AboutMenu},
             {"AboutDongQDBtn",Current.AboutDongQDMenu},
         };
 
-            /// <summary>
-            /// Get target page type by typeof.
-            /// </summary>
-            /// <param name="str">item name</param>
-            /// <returns></returns>
-            public static Type GetTPageype(string str) { return PagesMaps.ContainsKey(str) ? PagesMaps[str] : null; }
+            public static ToggleSwitch GetSwitchInstance(string str) { return SwitchSettingsMaps.ContainsKey(str) ? SwitchSettingsMaps[str] : null; }
+            static private Dictionary<string, ToggleSwitch> SwitchSettingsMaps = new Dictionary<string, ToggleSwitch> {
+            {"ColorSwitch",Current.ColorSwitch},
+            {"ButtonSwitch",Current.ButtonSwitch},
+            {"ShadowSwitch",Current.ShadowSwitch},
+            {"AnimationSwitch",Current.AnimationSwitch},
+        };
 
-            /// <summary>
-            /// Get target frame by item name.
-            /// </summary>
-            /// <param name="str">item name</param>
-            /// <returns></returns>
-            public static Frame GetTFrameype(string str) { return FramesMaps.ContainsKey(str) ? FramesMaps[str] : null; }
+            public static SwitchEventHandler GetSwitchHandler(string str) { return SwitchHandlerMaps.ContainsKey(str) ? SwitchHandlerMaps[str] : null; }
+            static private Dictionary<string, SwitchEventHandler> SwitchHandlerMaps = new Dictionary<string, SwitchEventHandler> {
+            {"ColorSwitch", new SwitchEventHandler(instance=> { Current.OnStatusBarSwitchToggled(GetSwitchInstance(instance)); }) },
+            {"ButtonSwitch", new SwitchEventHandler(instance=> { Current .OnFloatButtonSwitchToggled(GetSwitchInstance(instance)); }) },
+            {"ShadowSwitch", new SwitchEventHandler(instance=> { Current .OnButtonShadowSwitchToggled(GetSwitchInstance(instance)); }) },
+            {"AnimationSwitch", new SwitchEventHandler(instance=> { Current .OnButtonAutoAnimaSwitchToggled(GetSwitchInstance(instance)); }) },
+        };
 
-            public static Dictionary<string, ScrollViewer> GetPopupPanelColl() { return PopupInnerMaps; }
-
-            /// <summary>
-            /// Get target StackPanel by item name.
-            /// </summary>
-            /// <param name="str">item name</param>
-            /// <returns></returns>
-            public static ScrollViewer GetPanelInstance(string str) { return PopupInnerMaps.ContainsKey(str) ? PopupInnerMaps[str] : null; }
-
-            /// <summary>
-            /// Collapsed All StackPanel
-            /// </summary>
-            public static void CollapsedAllPanel() { foreach(var item in PopupInnerMaps) { item.Value.Visibility = Visibility.Collapsed; } }
         }
         #endregion
 
         #region Properties and States
 
-        public static MainPage Current;
-        public Frame contentFrame;
-        public Grid SideGrid;
-        public ProgressRing LoadingProgress;
+        public static MainPage Current { get; private set; }
+        public Frame contentFrame { get; private set; }
+        public Grid SideGrid { get; private set; }
+        public ProgressRing BaseLoadingProgress { get; private set; }
+        public ProgressRing LoadingProgress { get; private set; }
+        public bool IsFloatButtonEnable { get; private set; }
+        public bool IsButtonShadowVisible { get; private set; }
+        public bool IsButtonAnimationEnable { get; private set; }
         public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
+        public delegate void SwitchEventHandler(string instance);
         public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri ,int num, string content);
         private NavigateEventHandler SelectionChanged = (sender, type, frame) => { frame.Navigate(type); };
         public ClickEventHandler ItemClick = (sender, type, frame, uri ,num ,content) => { frame.Navigate(type, new ParameterNavigate { Number=num,Uri=uri,Summary= content }); };
@@ -317,6 +284,112 @@ namespace DQD.Net {
                     new Thickness(0, -24, 0, 0);
             }
         }
+
+        private void InitSwitchState() {
+            IsFloatButtonEnable = 
+                AnimationSwitch.IsEnabled = 
+                ShadowSwitch.IsEnabled = 
+                ButtonSwitch.IsOn = 
+                (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonEnabled) ?? false;
+            IsButtonAnimationEnable = 
+                AnimationSwitch.IsOn = 
+                (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonAnimation) ?? false;
+            IsButtonShadowVisible = 
+                ShadowSwitch.IsOn = 
+                (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonShadow) ?? false;
+            ColorSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
+            var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
+            RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
+            ThemeModeBtn.Content = isLightOrNot ? char.ConvertFromUtf32(0xEC46) : char.ConvertFromUtf32(0xEC8A);
+        }
+
+        private void OnStatusBarSwitchToggled(ToggleSwitch sender) {
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsColorfulOrNot, sender.IsOn);
+            var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
+            var wholeHeight = Window.Current.Bounds.Height;
+            if (sender.IsOn) {
+                StatusBarInit.InitDesktopStatusBar(isLightOrNot);
+                StatusBarInit.InitInnerDesktopStatusBar(true);
+                Window.Current.SetTitleBar(TitleBarRec);
+                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
+                    StatusBarInit.InitInnerMobileStatusBar(true);
+                    this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
+                    BaseGrid.Margin = new Thickness(0, 16, 0, 0);
+                    sideGrid.Margin = new Thickness(0, 16, 0, 0);
+                    this.Margin = this.Height + 24 - wholeHeight > -0.1 ? new Thickness(0, -0, 0, 0) : new Thickness(0, -48, 0, 0);
+                }
+            } else {
+                StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
+                StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
+                StatusBarInit.InitInnerDesktopStatusBar(false);
+                if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
+                    this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
+                    BaseGrid.Margin = new Thickness(0, 0, 0, 0);
+                    sideGrid.Margin = new Thickness(0, 0, 0, 0);
+                    StatusBarInit.InitInnerMobileStatusBar(false);
+                    this.Margin = this.Height + 24 - wholeHeight > -0.1 ? new Thickness(0, 24, 0, 0) : new Thickness(0, -24, 0, 0);
+                }
+            }
+        }
+
+        private void OnFloatButtonSwitchToggled(ToggleSwitch sender) {
+            IsFloatButtonEnable = sender.IsOn;
+            AnimationSwitch.IsEnabled = ShadowSwitch.IsEnabled = IsFloatButtonEnable;
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsFloatButtonEnabled, IsFloatButtonEnable);
+        }
+
+        private void OnButtonShadowSwitchToggled(ToggleSwitch sender) {
+            IsButtonShadowVisible = sender.IsOn;
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsFloatButtonShadow, IsButtonShadowVisible);
+            if (DataContentPage.Current != null) 
+                DivideVisibility(IsButtonShadowVisible, DataContentPage.Current.ButtonShadow, DataContentPage.Current.ButtonNoShadow);
+            if (ContentPage.Current != null) 
+                DivideVisibility(IsButtonShadowVisible, ContentPage.Current.ButtonShadow, ContentPage.Current.ButtonNoShadow);
+
+        }
+
+        private void OnButtonAutoAnimaSwitchToggled(ToggleSwitch sender) {
+            IsButtonAnimationEnable = sender.IsOn;
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsFloatButtonAnimation, IsButtonAnimationEnable);
+        }
+
+        private void DivideVisibility(bool isVisible, StackPanel sp1,StackPanel sp2) { sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); sp2.Visibility = VisiEnumHelper.GetVisibility(!isVisible); }
+
+        private void SyncVisibility(bool isVisible, StackPanel sp1, StackPanel sp2) { sp2.Visibility = sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); }
+
+        #region Handler of ListView Scroll 
+
+        public static ScrollViewer GetScrollViewer(DependencyObject depObj) {
+            if (depObj is ScrollViewer)
+                return depObj as ScrollViewer;
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+                var result = GetScrollViewer(child);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
+        public static PivotItem GetPVItemViewer(DependencyObject depObj, ref int num) {
+            if (depObj is PivotItem) {
+                if (num == 0)
+                    return depObj as PivotItem;
+                else
+                    num--;
+                return null;
+            }
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+                var result = GetPVItemViewer(child, ref num);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
+        #endregion
+
         #endregion
 
     }

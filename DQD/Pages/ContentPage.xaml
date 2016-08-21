@@ -13,6 +13,7 @@
     xmlns:xp="using:XP"
     mc:Ignorable="d">
 
+    <!--#region Page Resources-->
     <Page.Resources>
         <Converters:ItemConverter x:Key="VisibilityConverter"/>
         <CollectionViewSource x:Name="CommentsResources"/>
@@ -23,9 +24,11 @@
             <FadeOutThemeAnimation Storyboard.TargetName="PopupBackBorder" />
         </Storyboard>
     </Page.Resources>
+    <!--#endregion-->
 
     <Grid Name="BaseGrid" Background="{ThemeResource AppPersonalExtraBackground}">
 
+        <!--#region Adaptive Triggers-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="Mobile360">
@@ -71,7 +74,9 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <!--#endregion-->
 
+        <!--#region Content-->
         <Grid Background="{ThemeResource DQDBackground}"
                 Height="60"
                 VerticalAlignment="Top">
@@ -144,7 +149,9 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
+        <!--#endregion-->
 
+        <!--#region Comments popup-->
         <Border x:Name="PopupBackBorder"
                 Background="{ThemeResource DQDPopupBackColor}"
                 Visibility="Collapsed"
@@ -289,7 +296,9 @@
                 <!--#endregion-->
             </Grid>
         </Popup>
+        <!--#endregion-->
 
+        <!--#region Float Button-->
         <StackPanel Name="ButtonStack" 
                     Width="150" 
                     HorizontalAlignment="Right"
@@ -343,6 +352,53 @@
                 </xp:XPButton>
             </Shadow:Shadow>
         </StackPanel>
+
+        <StackPanel Name="ButtonStackNoShadow" 
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+                    FlowDirection="RightToLeft"
+                    Margin=" 0,0,25,30"
+                    Visibility="Collapsed">
+            <xp:XPButton  
+                    Name="RefreshBtnNoSHdow"
+                    Width="60"
+                    Height="60"
+                    Background="{ThemeResource DQDBackground2}"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="{ThemeResource DQDBackground3}"
+                    PressedBackground="{ThemeResource DQDBackground3}"
+                    Click="RefreshBtn_Click">
+                <xp:XPButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE117;"/>
+                </xp:XPButton.Icon>
+            </xp:XPButton>
+            <xp:XPButton  
+                Name="BackToTopBtnNoShadow"
+                Width="60"
+                Height="60"
+                Background="Orange"
+                BorderThickness="0"
+                CornerRadius="30"
+                Foreground="White"
+                IconForeground="White"
+                IconPosition="OnlyIcon"
+                IconSize="24"
+                PointerOverBackground="DarkOrange"
+                PressedBackground="DarkOrange"
+                Click="BackToTopBtn_Click"
+                Margin="0,50,0,0">
+                <xp:XPButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE11C;"/>
+                </xp:XPButton.Icon>
+            </xp:XPButton>
+        </StackPanel>
+        <!--#endregion-->
 
     </Grid>
 </Page>

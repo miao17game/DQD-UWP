@@ -1,4 +1,5 @@
 ﻿using DQD.Core.Controls;
+using DQD.Core.Helpers;
 using DQD.Core.Models;
 using DQD.Core.Models.TeamModels;
 using DQD.Core.Tools;
@@ -27,6 +28,7 @@ namespace DQD.Net.Pages {
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class DataContentPage : Page {
+
         #region Constructor
 
         public DataContentPage() {
@@ -34,9 +36,10 @@ namespace DQD.Net.Pages {
             transToSideGrid = this.RenderTransform as TranslateTransform;
             if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
             this.InitializeComponent();
+            ButtonShadow = ButtonStack;
+            ButtonNoShadow = ButtonStackNoShadow;
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            LoadingAnimation = MainPage.Current.LoadingProgress;
-            LoadingAnimation.IsActive = true;
+            loadingAnimation = MainPage.Current.LoadingProgress;
             cacheDicList = new Dictionary<Uri, Dictionary<string, IList<object>>>();
         }
 
@@ -50,23 +53,24 @@ namespace DQD.Net.Pages {
         /// <param name="e">navigate args</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
             this.Opacity = 0;
-            NavigatedToOrNot = true;
+            navigatedToOrNot = true;
+            InitFloatButtonView();
             var parameter = e.Parameter as ParameterNavigate;
-            HostSource = parameter.Uri;
+            hostSource = parameter.Uri;
             ContentTitle.Text = parameter.Summary;
-            if (HostSource == null)
+            if (hostSource == null)
                 return;
-            targetHost = HostSource.ToString() + "&type={0}";
+            targetHost = hostSource.ToString() + "&type={0}";
             targetDicList =
-                cacheDicList[HostSource] =
-                cacheDicList.ContainsKey(HostSource) ?
-                cacheDicList[HostSource] :
+                cacheDicList[hostSource] =
+                cacheDicList.ContainsKey(hostSource) ?
+                cacheDicList[hostSource] :
                 new Dictionary<string, IList<object>>();
             if (RootPivot.SelectedIndex == 0)
                 await InsertListResources("IntergralPItem");
             else RootPivot.SelectedIndex = 0;
             if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
-            LoadingAnimation.IsActive = false;
+            loadingAnimation.IsActive = false;
         }
 
         private void BackBtn_Click(object sender, RoutedEventArgs e) {
@@ -75,25 +79,25 @@ namespace DQD.Net.Pages {
 
         private async void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             var item = ((sender as PersonalPivot).SelectedItem as PivotItem).Name;
-            LoadingAnimation.IsActive = true;
+            loadingAnimation.IsActive = true;
             await InsertListResources(item);
         }
 
         private async void BoudListBtnClick(object sender, RoutedEventArgs e) {
             scheduleDicList = scheduleDicList == null ? new Dictionary<string, IList<object>>() : scheduleDicList;
             var item = ((sender as Button).CommandParameter as Uri).ToString();
-            LoadingAnimation.IsActive = true;
+            loadingAnimation.IsActive = true;
             await InsertScheduleResources(item);
         }
 
         private async void RefreshBtn_Click(object sender, RoutedEventArgs e) {
             InsideResources.FlushAllResources();
-            LoadingAnimation.IsActive = true;
+            loadingAnimation.IsActive = true;
             cacheDicList.Clear();
             targetDicList =
-               cacheDicList[HostSource] =
-               cacheDicList.ContainsKey(HostSource) ?
-               cacheDicList[HostSource] :
+               cacheDicList[hostSource] =
+               cacheDicList.ContainsKey(hostSource) ?
+               cacheDicList[hostSource] :
                new Dictionary<string, IList<object>>();
             if (RootPivot.SelectedIndex == 0)
                 await InsertListResources("IntergralPItem");
@@ -115,11 +119,11 @@ namespace DQD.Net.Pages {
                                     string.Format(
                                         targetHost, InsideResources.GetTTargetRank(item))))
                                         .ToString());
-            LoadingAnimation.IsActive = false;
-            if (NavigatedToOrNot) {
+            loadingAnimation.IsActive = false;
+            if (navigatedToOrNot) {
                 this.Opacity = 1;
                 InitStoryBoard();
-                NavigatedToOrNot = false;
+                navigatedToOrNot = false;
             }
         }
 
@@ -131,7 +135,17 @@ namespace DQD.Net.Pages {
                             InsideResources.GetEventHandler("SchedulePItem").Invoke(
                                 (await WebProcess.GetHtmlResources(item))
                                 .ToString());
-            LoadingAnimation.IsActive = false;
+            loadingAnimation.IsActive = false;
+        }
+
+        private void InitFloatButtonView() {
+            if (MainPage.Current.IsFloatButtonEnable) {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
+            } else {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
+            }
         }
 
         #endregion
@@ -212,16 +226,18 @@ namespace DQD.Net.Pages {
 
         #region Properties and State
 
-        public static DataContentPage Current;
+        public static DataContentPage Current { get; private set; }
+        public StackPanel ButtonShadow { get; private set; }
+        public StackPanel ButtonNoShadow { get; private set; }
         private Dictionary<Uri, Dictionary<string,IList<object>>> cacheDicList;
         private Dictionary<string, IList<object>> targetDicList;
         private Dictionary<string, IList<object>> scheduleDicList;
         private delegate IList<object> NavigateEventHandler(string path);
         private string targetHost =default(string);
-        private Uri HostSource;
-        private int HostNumber;
-        private ProgressRing LoadingAnimation;
-        private bool NavigatedToOrNot = false;
+        private Uri hostSource;
+        private int hostNumber;
+        private ProgressRing loadingAnimation;
+        private bool navigatedToOrNot = false;
 
         #endregion
 

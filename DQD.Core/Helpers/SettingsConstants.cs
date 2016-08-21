@@ -9,5 +9,8 @@
         public const string PasswordDisqus = "PASSWORD_DISQUS";
         public const string IsLigheOrNot = "THEME_MODE";
         public const string IsColorfulOrNot = "Color_MODE";
+        public const string IsFloatButtonEnabled = "BUTTON_ENABLED_MODE";
+        public const string IsFloatButtonShadow = "BUTTON_SHADOW_MODE";
+        public const string IsFloatButtonAnimation = "BUTTON_AUTOANIMATION_MODE";
     }
 }

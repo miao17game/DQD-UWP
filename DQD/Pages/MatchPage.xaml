@@ -6,6 +6,8 @@
     xmlns:model="using:DQD.Core.Models.MatchModels"
     xmlns:BaseModel="using:DQD.Core.Models"
     xmlns:MPV="using:DQD.Core.Controls"
+    xmlns:Shadow="using:DQD.Shadow"
+    xmlns:xp="using:XP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -183,6 +185,67 @@
                 </DataTemplate>
             </Pivot.ItemTemplate>
         </Pivot>
+
+        <!--#region FloatButton-->
+        <StackPanel Name="ButtonStack" 
+                    Width="150" 
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+                    FlowDirection="RightToLeft">
+            <Shadow:Shadow 
+                Margin="0"
+                CornerRadius="0.5"
+                Z_Depth="4"
+                IsCached="True">
+                <xp:XPButton  
+                    Name="RefreshBtn"
+                    Width="60"
+                    Height="60"
+                    Background="{ThemeResource DQDBackground2}"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="{ThemeResource DQDBackground3}"
+                    PressedBackground="{ThemeResource DQDBackground3}"
+                    Click="RefreshBtn_Click">
+                    <xp:XPButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE117;"/>
+                    </xp:XPButton.Icon>
+                </xp:XPButton>
+            </Shadow:Shadow>
+        </StackPanel>
+
+        <StackPanel Name="ButtonStackNoShadow" 
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+                    FlowDirection="RightToLeft"
+                    Margin=" 0,0,25,30"
+                    Visibility="Collapsed">
+            <xp:XPButton  
+                    Name="RefreshBtnNoSHdow"
+                    Width="60"
+                    Height="60"
+                    Background="{ThemeResource DQDBackground2}"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="{ThemeResource DQDBackground3}"
+                    PressedBackground="{ThemeResource DQDBackground3}"
+                    Click="RefreshBtn_Click">
+                <xp:XPButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE117;"/>
+                </xp:XPButton.Icon>
+            </xp:XPButton>
+        </StackPanel>
+        <!--#endregion-->
 
     </Grid>
 </Page>

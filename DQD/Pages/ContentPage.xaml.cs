@@ -1,5 +1,6 @@
 ﻿using DQD.Core.Controls;
 using DQD.Core.DataVirtualization;
+using DQD.Core.Helpers;
 using DQD.Core.Models;
 using DQD.Core.Models.CommentModels;
 using DQD.Core.Models.PageContentModels;
@@ -40,12 +41,15 @@ namespace DQD.Net.Pages {
         #region Constructor
 
         public ContentPage() {
+            Current = this;
             transToSideGrid = this.RenderTransform as TranslateTransform;
             if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
             LoadingAnimation = MainPage.Current.LoadingProgress;
             LoadingAnimation.IsActive = true;
             this.Opacity = 0;
             this.InitializeComponent();
+            ButtonShadow = ButtonStack;
+            ButtonNoShadow = ButtonStackNoShadow;
             InitImageLoader();
         }
 
@@ -58,11 +62,11 @@ namespace DQD.Net.Pages {
         /// </summary>
         /// <param name="e">navigate args</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
+            InitFloatButtonView();
             var parameter = e.Parameter as ParameterNavigate;
             HostSource = parameter.Uri;
             HostNumber = parameter.Number;
-            if (HostSource == null)
-                return;
+            if (HostSource == null) return;
             await HandleHtmlResources();
             if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
             LoadingAnimation.IsActive = false;
@@ -79,8 +83,7 @@ namespace DQD.Net.Pages {
         private void MoreCommentsBtn_Click(object sender, RoutedEventArgs e) {
             if (CommentsResources.Source == null) {
                 var sources = new DQDDataContext<AllCommentModel>(FetchMoreResources, HostNumber, 30, targetHost, InitSelector.Default);
-                CommentsResources.Source = sources;
-            }
+                CommentsResources.Source = sources; }
             PopupAllComments.IsOpen = true;
             PopupBackBorder.Visibility = Visibility.Visible;
             EnterPopupBorder.Begin();
@@ -137,6 +140,16 @@ namespace DQD.Net.Pages {
         private async Task<ObservableCollection<AllCommentModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
             targetHost = string.Format(targetHost, number, nowWholeCountX / rollNum);
             return await DataProcess.GetPageAllComments(targetHost);
+        }
+
+        private void InitFloatButtonView() {
+            if (MainPage.Current.IsFloatButtonEnable) {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
+            } else {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
+            }
         }
 
         /// <summary>
@@ -301,6 +314,9 @@ namespace DQD.Net.Pages {
 
         #region Properties and State
 
+        public static ContentPage Current { get; private set; }
+        public StackPanel ButtonShadow { get; private set; }
+        public StackPanel ButtonNoShadow { get; private set; }
         private string targetHost = "http://dongqiudi.com/article/{0}?page={1}#comment_anchor"; 
         private enum ContentType { None = 0, String = 1, Image = 2, Gif = 3 , Video = 4, Flash = 5 , SelfUri = 6}
         private Uri HostSource;

@@ -20,6 +20,7 @@
           SizeChanged="grid_SizeChanged"
           Background="{ThemeResource AppPersonalExtraBackground02}">
 
+        <!--#region Adaptive Triggers-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="Mobile360">
@@ -45,7 +46,9 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <!--#endregion-->
 
+        <!--#region ContentPivot-->
         <Pivot Name="MyPivot" 
                            Width="{Binding Width, ElementName=grid ,Mode=OneWay}"
                            ItemsSource="{Binding Source={StaticResource HeaderResources}}"
@@ -109,7 +112,9 @@
                 </DataTemplate>
             </Pivot.ItemTemplate>
         </Pivot>
+        <!--#endregion-->
 
+        <!--#region FloatButton-->
         <StackPanel Name="ButtonStack" 
               Width="150" 
               Height=" 200"
@@ -163,6 +168,53 @@
                 </xp:XPButton>
             </Shadow:Shadow>
         </StackPanel>
+
+        <StackPanel Name="ButtonStackNoShadow" 
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+                    FlowDirection="RightToLeft"
+                    Margin=" 0,0,25,20"
+                    Visibility="Collapsed">
+            <xp:XPButton  
+                    Name="RefreshBtnNoSHdow"
+                    Width="55"
+                    Height="55"
+                    Background="{ThemeResource DQDBackground2}"
+                    BorderThickness="0"
+                    CornerRadius="28"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="23"
+                    PointerOverBackground="{ThemeResource DQDBackground3}"
+                    PressedBackground="{ThemeResource DQDBackground3}"
+                    Click="RefreshBtn_Click">
+                <xp:XPButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE117;"/>
+                </xp:XPButton.Icon>
+            </xp:XPButton>
+            <xp:XPButton  
+                Name="BackToTopBtnNoShadow"
+                Width="55"
+                Height="55"
+                Background="Orange"
+                BorderThickness="0"
+                CornerRadius="28"
+                Foreground="White"
+                IconForeground="White"
+                IconPosition="OnlyIcon"
+                IconSize="23"
+                PointerOverBackground="DarkOrange"
+                PressedBackground="DarkOrange"
+                Click="BackToTopBtn_Click"
+                Margin="0,50,0,0">
+                <xp:XPButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE11C;"/>
+                </xp:XPButton.Icon>
+            </xp:XPButton>
+        </StackPanel>
+        <!--#endregion-->
 
     </Grid>
 </Page>
