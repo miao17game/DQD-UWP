@@ -79,6 +79,7 @@ namespace DQD.Net.Pages {
 
         private async void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             var item = ((sender as PersonalPivot).SelectedItem as PivotItem).Name;
+            InsideResources.GetTListSource(item).Source = new List<object>();
             loadingAnimation.IsActive = true;
             await InsertListResources(item);
         }
@@ -109,7 +110,6 @@ namespace DQD.Net.Pages {
         #region Methods
 
         private async System.Threading.Tasks.Task InsertListResources(string item) {
-            InsideResources.FlushAllResources();
             InsideResources.GetTListSource(item).Source =
                             targetDicList[item] =
                             targetDicList.ContainsKey(item) ?
@@ -156,9 +156,8 @@ namespace DQD.Net.Pages {
         /// </summary>
         static class InsideResources {
 
-            /// <summary>
-            /// The dictionary map of frames collection. 
-            /// </summary>
+            public static void FlushAllResources() { foreach (var item in ListViewResourcesMaps) { item.Value.Source = new List<object>(); } }
+            public static CollectionViewSource GetTListSource(string str) { return ListViewResourcesMaps.ContainsKey(str) ? ListViewResourcesMaps[str] : null; }
             static private Dictionary<string, CollectionViewSource> ListViewResourcesMaps = new Dictionary<string, CollectionViewSource> {
             {"IntergralPItem",Current.IntergralListResources},
             {"ShootPItem",Current.ShootListResources},
@@ -166,15 +165,7 @@ namespace DQD.Net.Pages {
             {"SchedulePItem",Current.ScheduleListResources},
         };
 
-            public static void FlushAllResources() { foreach (var item in ListViewResourcesMaps) { item.Value.Source = new List<object>(); } }
-
-            /// <summary>
-            /// Get target frame by item name.
-            /// </summary>
-            /// <param name="str">item name</param>
-            /// <returns></returns>
-            public static CollectionViewSource GetTListSource(string str) { return ListViewResourcesMaps.ContainsKey(str) ? ListViewResourcesMaps[str] : null; }
-
+            public static string GetTTargetRank(string str) { return TargetUrlMaps.ContainsKey(str) ? TargetUrlMaps[str] : "team_rank"; }
             static private Dictionary<string, string> TargetUrlMaps = new Dictionary<string, string> {
             {"IntergralPItem","team_rank"},
             {"ShootPItem","goal_rank"},
@@ -182,16 +173,13 @@ namespace DQD.Net.Pages {
             {"SchedulePItem","schedule"},
         };
 
-            public static string GetTTargetRank(string str) { return TargetUrlMaps.ContainsKey(str) ? TargetUrlMaps[str] : "team_rank"; }
-
+            public static NavigateEventHandler GetEventHandler(string str) { return EventHandlerMaps.ContainsKey(str) ? EventHandlerMaps[str] : null; }
             static private Dictionary<string, NavigateEventHandler> EventHandlerMaps = new Dictionary<string, NavigateEventHandler> {
                 { "IntergralPItem", new NavigateEventHandler(path=> { return DataProcess.GetLeagueTeamsContent(path).ToArray(); })},
                 { "ShootPItem", new NavigateEventHandler(path=> { return DataProcess.GetSoccerMemberContent(path).ToArray(); })},
                 { "HelpPItem", new NavigateEventHandler(path=> { return DataProcess.GetSoccerMemberContent(path).ToArray(); })},
                 { "SchedulePItem", new NavigateEventHandler(path=> { return DataProcess.GetScheduleTeamsContent(path).ToArray(); })},
             };
-
-            public static NavigateEventHandler GetEventHandler(string str) { return EventHandlerMaps.ContainsKey(str) ? EventHandlerMaps[str] : null; }
 
         }
         #endregion

@@ -31,16 +31,15 @@ namespace DQD.Net {
 
         public MainPage() {
             Current = this;
-            this.InitializeComponent();
+            InitializeComponent();
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
-            BaseLoadingProgress = this.BaseLoadingAnimation;
-            LoadingProgress = this.LoadingAnimation;
-            contentFrame = this.ContentFrame;
-            SideGrid = this.sideGrid;
+            BaseLoadingProgress = BaseLoadingAnimation;
+            LoadingProgress = LoadingAnimation;
+            contentFrame = ContentFrame;
+            SideGrid = sideGrid;
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                 ApplicationView.GetForCurrentView().VisibleBoundsChanged += (s, e) => { ChangeViewWhenNavigationBarChanged(); };
-                ChangeViewWhenNavigationBarChanged();
-            }
+                ChangeViewWhenNavigationBarChanged(); }
             PrepareFrame.Navigate(typeof(PreparePage));
             VersionText.Text = "版本号：" + Utils.GetAppVersion();
             InitSwitchState();
@@ -267,19 +266,19 @@ namespace DQD.Net {
         }
 
         private void ChangeViewWhenNavigationBarChanged() {
-            this.Width = ApplicationView.GetForCurrentView().VisibleBounds.Width;
+            Width = ApplicationView.GetForCurrentView().VisibleBounds.Width;
             var wholeHeight = Window.Current.Bounds.Height;
             var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
             if (isColorfulOrNot) {
-                this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
-                this.Margin =
-                    this.Height - wholeHeight > -0.1 ?
+                Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
+                Margin =
+                    Height - wholeHeight > -0.1 ?
                     new Thickness(0, 0, 0, 0) :
                     new Thickness(0, -48, 0, 0);
             } else {
-                this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
-                this.Margin = 
-                    this.Height + 24 - wholeHeight > -0.1 ? 
+                Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
+                Margin =
+                    Height + 24 - wholeHeight > -0.1 ? 
                     new Thickness(0, 24, 0, 0) : 
                     new Thickness(0, -24, 0, 0);
             }
@@ -313,21 +312,21 @@ namespace DQD.Net {
                 Window.Current.SetTitleBar(TitleBarRec);
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(true);
-                    this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
+                    Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
                     BaseGrid.Margin = new Thickness(0, 16, 0, 0);
                     sideGrid.Margin = new Thickness(0, 16, 0, 0);
-                    this.Margin = this.Height + 24 - wholeHeight > -0.1 ? new Thickness(0, -0, 0, 0) : new Thickness(0, -48, 0, 0);
+                    Margin = Height + 24 - wholeHeight > -0.1 ? new Thickness(0, -0, 0, 0) : new Thickness(0, -48, 0, 0);
                 }
             } else {
                 StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
                 StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
                 StatusBarInit.InitInnerDesktopStatusBar(false);
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
-                    this.Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
+                    Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
                     BaseGrid.Margin = new Thickness(0, 0, 0, 0);
                     sideGrid.Margin = new Thickness(0, 0, 0, 0);
                     StatusBarInit.InitInnerMobileStatusBar(false);
-                    this.Margin = this.Height + 24 - wholeHeight > -0.1 ? new Thickness(0, 24, 0, 0) : new Thickness(0, -24, 0, 0);
+                    Margin = Height + 24 - wholeHeight > -0.1 ? new Thickness(0, 24, 0, 0) : new Thickness(0, -24, 0, 0);
                 }
             }
         }
