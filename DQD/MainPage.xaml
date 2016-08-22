@@ -428,6 +428,8 @@
                                    Style="{StaticResource TitleTextStyle}"/>
                                 <TextBlock Text="垂直滚动页面自动显示与消失"
                                    Style="{StaticResource SummaryTextStyle}"/>
+                                <TextBlock Text="修改阴影后，动画更改需重启后生效"
+                                   Style="{StaticResource SummaryTextStyle}"/>
                             </StackPanel>
                             <ToggleSwitch Name="AnimationSwitch" 
                                       Style="{ThemeResource ThemeModeSwitch}" 

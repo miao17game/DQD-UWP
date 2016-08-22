@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace DQD.Net.Pages {
@@ -30,6 +31,7 @@ namespace DQD.Net.Pages {
     public sealed partial class MatchPage:Page {
        
         #region Constructor
+
         public MatchPage() {
             Current = this;
             this.InitializeComponent();
@@ -38,16 +40,18 @@ namespace DQD.Net.Pages {
             resources = new List<AlphaKeyGroup<MatchListModel>>();
             ButtonShadow = ButtonStack;
             ButtonNoShadow = ButtonStackNoShadow;
-            InitFloatButtonView();
             InitHeaderGroup();
         }
+
         #endregion
 
         #region Methods
+
         private async void InitHeaderGroup() {
             ObservableCollection<HeaderModel> headerList = new ObservableCollection<HeaderModel>();
             headerList = await DataHandler.SetMatchGroupResources();
             HeaderResources.Source = headerList;
+            InitFloatButtonView();
         }
 
         private string GetFormatDateNow() {
@@ -83,6 +87,7 @@ namespace DQD.Net.Pages {
         #endregion
 
         #region Events
+
         private async void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             ItemsGrouped.Source = null;
             var item = (sender as Pivot).SelectedItem as HeaderModel;

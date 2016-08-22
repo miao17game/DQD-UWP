@@ -29,13 +29,11 @@ namespace DQD.Net.Pages {
             Current = this;
             this.InitializeComponent();
             cacheDic = new Dictionary<string, DQDDataContext<ContentListModel>>();
-            listViewOffset = new Dictionary<string, double>();
             this.NavigationCacheMode = NavigationCacheMode.Required;
             loadingAnimation = MainPage.Current.BaseLoadingProgress;
             loadingAnimation.IsActive = true;
             ButtonShadow = ButtonStack;
             ButtonNoShadow = ButtonStackNoShadow;
-            InitFloatButtonView();
             InitView();
         }
         #endregion
@@ -58,6 +56,7 @@ namespace DQD.Net.Pages {
                         HomeHost, 
                         InitSelector.Special));}
             HeaderResources.Source = headerList;
+            InitFloatButtonView();
         }
 
         private async Task<ObservableCollection<ContentListModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
@@ -68,27 +67,6 @@ namespace DQD.Net.Pages {
                 nowWholeCountX / 15);
             return await DataHandler.SetHomeListResources(Host);
         }
-
-        private void InitFloatButtonView() {
-            if (MainPage.Current.IsFloatButtonEnable) {
-                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
-                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
-            } else {
-                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
-                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
-            }
-        }
-
-        #region Handler of ListView Scroll 
-
-        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e) {
-            try {
-                listViewOffset[nowItem] = (sender as ScrollViewer).VerticalOffset;
-                Debug.WriteLine(listViewOffset[nowItem]);
-            } catch { Debug.WriteLine("Save scroll positions error."); }
-        }
-
-        #endregion
 
         #endregion
 
@@ -108,19 +86,19 @@ namespace DQD.Net.Pages {
         }
 
         private void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            loadingAnimation.IsActive = true;
             var item = (sender as Pivot).SelectedItem as HeaderModel;
+            var num = MyPivot.SelectedIndex;
             nowItem = item.Title;
             itemNumber = item.Number;
             if (!cacheDic.ContainsKey(item.Title)) {
-                homeLlistResources = 
+                homeLlistResources =
                     new DQDDataContext<ContentListModel>(
-                        FetchMoreResources, 
-                        item.Number, 
-                        15, 
+                        FetchMoreResources,
+                        item.Number,
+                        15,
                         HomeHost,
                         InitSelector.Special);
-                cacheDic.Add(item.Title, homeLlistResources); }
+                cacheDic.Add(item.Title, homeLlistResources); } 
             ListResources.Source = cacheDic[nowItem];
         }
 
@@ -146,8 +124,116 @@ namespace DQD.Net.Pages {
         private void grid_SizeChanged(object sender, SizeChangedEventArgs e) { MyPivot.Width = (sender as Grid).ActualWidth; }
 
         private void LocalPageListView_Loaded(object sender, RoutedEventArgs e) {
+            var num = MyPivot.SelectedIndex;
+            scroll = MainPage.GetScrollViewer(MainPage.GetPVItemViewer(MyPivot, ref num));
+            scroll.ViewChanged += ScrollViewer_ViewChanged;
             loadingAnimation.IsActive = false;
         }
+
+        #endregion
+
+        #region Animations
+
+        #region Animations Properties
+        public StackPanel ButtonThisPage { get; private set; }
+        private ScrollViewer scroll;
+        private Dictionary<string, double> listViewOffset = new Dictionary<string, double>();
+        Storyboard BtnStackSlideIn = new Storyboard();
+        Storyboard BtnStackSlideOut = new Storyboard();
+        TranslateTransform transToButtonThisPage;
+        DoubleAnimation doubleAnimation;
+        bool IsAnimaEnabled;
+        #endregion
+
+        #region Handler of ListView Scroll 
+
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e) {
+            try {
+                if (!listViewOffset.ContainsKey(nowItem)) {
+                    listViewOffset[nowItem] = (sender as ScrollViewer).VerticalOffset;
+                    return; }
+                if (listViewOffset[nowItem] - (sender as ScrollViewer).VerticalOffset < -10
+                    && ButtonThisPage.Visibility == Visibility.Visible
+                    && IsAnimaEnabled) {
+                    scroll.ViewChanged -= ScrollViewer_ViewChanged;
+                    BtnStackSlideOut.Begin(); }
+                if (listViewOffset[nowItem] - (sender as ScrollViewer).VerticalOffset > 10
+                    && ButtonThisPage.Visibility == Visibility.Collapsed
+                    && IsAnimaEnabled) {
+                    scroll.ViewChanged -= ScrollViewer_ViewChanged;
+                    ButtonThisPage.Visibility = Visibility.Visible;
+                    BtnStackSlideIn.Begin(); }
+                listViewOffset[nowItem] = (sender as ScrollViewer).VerticalOffset;
+            } catch { Debug.WriteLine("Save scroll positions error."); }
+        }
+
+        #endregion
+
+        #region Animation Methods
+
+        private void InitFloatButtonView() {
+            ButtonThisPage = MainPage.Current.IsButtonShadowVisible ? ButtonStack : ButtonStackNoShadow;
+            int num = MyPivot.SelectedIndex;
+            scroll = MainPage.GetScrollViewer(MainPage.GetPVItemViewer(MyPivot, ref num));
+            if (MainPage.Current.IsFloatButtonEnable) {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
+                if (MainPage.Current.IsButtonAnimationEnable) {
+                    scroll.ViewChanged += ScrollViewer_ViewChanged;
+                    InitStoryBoard();
+                }
+            } else {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
+                transToButtonThisPage = null;
+            }
+        }
+
+        public void HandleAnimation(bool isAnima) { if (isAnima) { InitStoryBoard(); } else { DestoryAnimation(); }}
+
+        private  void DestoryAnimation() { IsAnimaEnabled = false; }
+
+        private void InitStoryBoard() {
+            IsAnimaEnabled = true;
+            transToButtonThisPage = ButtonThisPage.RenderTransform as TranslateTransform;
+            if (transToButtonThisPage == null) ButtonThisPage.RenderTransform = transToButtonThisPage = new TranslateTransform();
+            doubleAnimation = new DoubleAnimation() {
+                Duration = new Duration(TimeSpan.FromMilliseconds(520)),
+                From = -100,
+                To = 0,
+            };
+            doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
+            doubleAnimation.Completed += DoublAnimationIn_Completed;
+            BtnStackSlideIn = new Storyboard();
+
+            Storyboard.SetTarget(doubleAnimation, transToButtonThisPage);
+            Storyboard.SetTargetProperty(doubleAnimation, "X");
+            BtnStackSlideIn.Children.Add(doubleAnimation);
+            doubleAnimation = new DoubleAnimation() {
+                Duration = new Duration(TimeSpan.FromMilliseconds(520)),
+                From = 0,
+                To = -100,
+            };
+            doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
+            doubleAnimation.Completed += DoublAnimationOut_Completed;
+            BtnStackSlideOut = new Storyboard();
+            Storyboard.SetTarget(doubleAnimation, transToButtonThisPage);
+            Storyboard.SetTargetProperty(doubleAnimation, "X");
+            BtnStackSlideOut.Children.Add(doubleAnimation);
+        }
+
+        #endregion
+
+        #region Animation Events
+        private void DoublAnimationIn_Completed(object sender, object e) {
+            scroll.ViewChanged += ScrollViewer_ViewChanged;
+        }
+
+        private void DoublAnimationOut_Completed(object sender, object e) {
+            ButtonThisPage.Visibility = Visibility.Collapsed;
+            scroll.ViewChanged += ScrollViewer_ViewChanged;
+        }
+        #endregion
 
         #endregion
 
@@ -158,7 +244,6 @@ namespace DQD.Net.Pages {
         public StackPanel ButtonNoShadow { get; private set; }
         private ProgressRing loadingAnimation;
         private Dictionary<string, DQDDataContext<ContentListModel>> cacheDic;
-        private Dictionary<string, double> listViewOffset;
         private DQDDataContext<ContentListModel> homeLlistResources;
         private const string HomeHost = "http://www.dongqiudi.com/";
         private const string HomeHostInsert = "http://www.dongqiudi.com";

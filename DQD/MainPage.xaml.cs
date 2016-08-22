@@ -64,6 +64,7 @@ namespace DQD.Net {
 
         private void OnBackRequested(object sender, BackRequestedEventArgs e) {
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") ) { sideGrid.Visibility = Visibility.Collapsed; }
+            contentFrame.Content = null;
             e.Handled = true;
         }
 
@@ -335,6 +336,16 @@ namespace DQD.Net {
             IsFloatButtonEnable = sender.IsOn;
             AnimationSwitch.IsEnabled = ShadowSwitch.IsEnabled = IsFloatButtonEnable;
             SettingsHelper.SaveSettingsValue(SettingsConstants.IsFloatButtonEnabled, IsFloatButtonEnable);
+            if (DataContentPage.Current != null)
+                SyncVisibility(IsFloatButtonEnable, DataContentPage.Current.ButtonShadow, DataContentPage.Current.ButtonNoShadow);
+            if (ContentPage.Current != null)
+                SyncVisibility(IsFloatButtonEnable, ContentPage.Current.ButtonShadow, ContentPage.Current.ButtonNoShadow);
+            if (HomePage.Current != null)
+                SyncVisibility(IsFloatButtonEnable, HomePage.Current.ButtonShadow, HomePage.Current.ButtonNoShadow);
+            if (MatchPage.Current != null)
+                SyncVisibility(IsFloatButtonEnable, MatchPage.Current.ButtonShadow, MatchPage.Current.ButtonNoShadow);
+            if (VideoPage.Current != null)
+                SyncVisibility(IsFloatButtonEnable, VideoPage.Current.ButtonShadow, VideoPage.Current.ButtonNoShadow);
         }
 
         private void OnButtonShadowSwitchToggled(ToggleSwitch sender) {
@@ -344,12 +355,23 @@ namespace DQD.Net {
                 DivideVisibility(IsButtonShadowVisible, DataContentPage.Current.ButtonShadow, DataContentPage.Current.ButtonNoShadow);
             if (ContentPage.Current != null) 
                 DivideVisibility(IsButtonShadowVisible, ContentPage.Current.ButtonShadow, ContentPage.Current.ButtonNoShadow);
-
+            if (HomePage.Current != null)
+                DivideVisibility(IsButtonShadowVisible, HomePage.Current.ButtonShadow, HomePage.Current.ButtonNoShadow);
+            if (MatchPage.Current != null)
+                DivideVisibility(IsButtonShadowVisible, MatchPage.Current.ButtonShadow, MatchPage.Current.ButtonNoShadow);
+            if (VideoPage.Current != null)
+                DivideVisibility(IsButtonShadowVisible, VideoPage.Current.ButtonShadow, VideoPage.Current.ButtonNoShadow);
         }
 
         private void OnButtonAutoAnimaSwitchToggled(ToggleSwitch sender) {
             IsButtonAnimationEnable = sender.IsOn;
             SettingsHelper.SaveSettingsValue(SettingsConstants.IsFloatButtonAnimation, IsButtonAnimationEnable);
+            if (HomePage.Current != null)
+                HomePage.Current.HandleAnimation(IsButtonAnimationEnable);
+            if (VideoPage.Current != null)
+                VideoPage.Current.HandleAnimation(IsButtonAnimationEnable);
+            if (ContentPage.Current != null)
+                ContentPage.Current.HandleAnimation(IsButtonAnimationEnable);
         }
 
         private void DivideVisibility(bool isVisible, StackPanel sp1,StackPanel sp2) { sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); sp2.Visibility = VisiEnumHelper.GetVisibility(!isVisible); }

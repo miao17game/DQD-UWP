@@ -44,8 +44,8 @@ namespace DQD.Net.Pages {
             Current = this;
             transToSideGrid = this.RenderTransform as TranslateTransform;
             if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
-            LoadingAnimation = MainPage.Current.LoadingProgress;
-            LoadingAnimation.IsActive = true;
+            loadingAnimation = MainPage.Current.LoadingProgress;
+            loadingAnimation.IsActive = true;
             this.Opacity = 0;
             this.InitializeComponent();
             ButtonShadow = ButtonStack;
@@ -62,16 +62,16 @@ namespace DQD.Net.Pages {
         /// </summary>
         /// <param name="e">navigate args</param>
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
-            InitFloatButtonView();
             var parameter = e.Parameter as ParameterNavigate;
             HostSource = parameter.Uri;
             HostNumber = parameter.Number;
             if (HostSource == null) return;
             await HandleHtmlResources();
             if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
-            LoadingAnimation.IsActive = false;
+            loadingAnimation.IsActive = false;
             this.Opacity = 1;
             InitStoryBoard();
+            InitFloatButtonView();
         }
 
         private async Task HandleHtmlResources() {
@@ -91,6 +91,7 @@ namespace DQD.Net.Pages {
 
         private void BackBtn_Click(object sender, RoutedEventArgs e) {
             MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
+            Current.Content = null;
         }
 
         private void PopupAllComments_SizeChanged(object sender, SizeChangedEventArgs e) {
@@ -117,11 +118,11 @@ namespace DQD.Net.Pages {
         }
 
         private async void RefreshBtn_Click(object sender, RoutedEventArgs e) {
-            LoadingAnimation.IsActive = true;
+            loadingAnimation.IsActive = true;
             ContentStack.Children.Clear();
             CommentsStack.Children.Clear();
             await HandleHtmlResources();
-            LoadingAnimation.IsActive = false;
+            loadingAnimation.IsActive = false;
         }
 
         #endregion
@@ -140,16 +141,6 @@ namespace DQD.Net.Pages {
         private async Task<ObservableCollection<AllCommentModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
             targetHost = string.Format(targetHost, number, nowWholeCountX / rollNum);
             return await DataProcess.GetPageAllComments(targetHost);
-        }
-
-        private void InitFloatButtonView() {
-            if (MainPage.Current.IsFloatButtonEnable) {
-                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
-                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
-            } else {
-                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
-                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
-            }
         }
 
         /// <summary>
@@ -285,6 +276,9 @@ namespace DQD.Net.Pages {
         #endregion
 
         #region Animations
+
+        #region Page Animation
+
         #region Animations Properties
         Storyboard storyToSideGrid = new Storyboard();
         TranslateTransform transToSideGrid;
@@ -312,18 +306,120 @@ namespace DQD.Net.Pages {
         }
         #endregion
 
+        #region Button Animations
+
+        #region Animations Properties
+        public StackPanel ButtonThisPage { get; private set; }
+        private double listViewOffset = default(double);
+        Storyboard BtnStackSlideIn = new Storyboard();
+        Storyboard BtnStackSlideOut = new Storyboard();
+        TranslateTransform transToButtonThisPage;
+        DoubleAnimation doubleAnimationBtn;
+        bool IsAnimaEnabled;
+        #endregion
+
+        #region Handler of ListView Scroll 
+
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e) {
+            try {
+                if (listViewOffset - (sender as ScrollViewer).VerticalOffset < -10
+                    && ButtonThisPage.Visibility == Visibility.Visible
+                    && IsAnimaEnabled) {
+                    ContentScroll.ViewChanged -= ScrollViewer_ViewChanged;
+                    BtnStackSlideOut.Begin();
+                }
+                if (listViewOffset - (sender as ScrollViewer).VerticalOffset > 10
+                    && ButtonThisPage.Visibility == Visibility.Collapsed
+                    && IsAnimaEnabled) {
+                    ContentScroll.ViewChanged -= ScrollViewer_ViewChanged;
+                    ButtonThisPage.Visibility = Visibility.Visible;
+                    BtnStackSlideIn.Begin();
+                }
+                listViewOffset = (sender as ScrollViewer).VerticalOffset;
+            } catch { Debug.WriteLine("Save scroll positions error."); }
+        }
+
+        #endregion
+
+        #region Animation Methods
+
+        private void InitFloatButtonView() {
+            ButtonThisPage = MainPage.Current.IsButtonShadowVisible ? ButtonStack : ButtonStackNoShadow;
+            if (MainPage.Current.IsFloatButtonEnable) {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
+                if (MainPage.Current.IsButtonAnimationEnable) {
+                    ContentScroll.ViewChanged += ScrollViewer_ViewChanged;
+                    InitStoryBoardBtn();
+                }
+            } else {
+                ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
+                ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
+                transToButtonThisPage = null;
+            }
+        }
+
+        public void HandleAnimation(bool isAnima) { if (isAnima) { InitStoryBoardBtn(); } else { DestoryAnimation(); } }
+
+        private void DestoryAnimation() { IsAnimaEnabled = false; }
+
+        private void InitStoryBoardBtn() {
+            IsAnimaEnabled = true;
+            transToButtonThisPage = ButtonThisPage.RenderTransform as TranslateTransform;
+            if (transToButtonThisPage == null) ButtonThisPage.RenderTransform = transToButtonThisPage = new TranslateTransform();
+            doubleAnimationBtn = new DoubleAnimation() {
+                Duration = new Duration(TimeSpan.FromMilliseconds(520)),
+                From = -100,
+                To = 0,
+            };
+            doubleAnimationBtn.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
+            doubleAnimationBtn.Completed += DoublAnimationIn_Completed;
+            BtnStackSlideIn = new Storyboard();
+
+            Storyboard.SetTarget(doubleAnimationBtn, transToButtonThisPage);
+            Storyboard.SetTargetProperty(doubleAnimationBtn, "X");
+            BtnStackSlideIn.Children.Add(doubleAnimationBtn);
+            doubleAnimationBtn = new DoubleAnimation() {
+                Duration = new Duration(TimeSpan.FromMilliseconds(520)),
+                From = 0,
+                To = -100,
+            };
+            doubleAnimationBtn.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
+            doubleAnimationBtn.Completed += DoublAnimationOut_Completed;
+            BtnStackSlideOut = new Storyboard();
+            Storyboard.SetTarget(doubleAnimationBtn, transToButtonThisPage);
+            Storyboard.SetTargetProperty(doubleAnimationBtn, "X");
+            BtnStackSlideOut.Children.Add(doubleAnimationBtn);
+        }
+
+        #endregion
+
+        #region Animation Events
+        private void DoublAnimationIn_Completed(object sender, object e) {
+            ContentScroll.ViewChanged += ScrollViewer_ViewChanged;
+        }
+
+        private void DoublAnimationOut_Completed(object sender, object e) {
+            ButtonThisPage.Visibility = Visibility.Collapsed;
+            ContentScroll.ViewChanged += ScrollViewer_ViewChanged;
+        }
+        #endregion
+
+        #endregion
+
+        #endregion
+
         #region Properties and State
 
         public static ContentPage Current { get; private set; }
         public StackPanel ButtonShadow { get; private set; }
         public StackPanel ButtonNoShadow { get; private set; }
-        private string targetHost = "http://dongqiudi.com/article/{0}?page={1}#comment_anchor"; 
-        private enum ContentType { None = 0, String = 1, Image = 2, Gif = 3 , Video = 4, Flash = 5 , SelfUri = 6}
+        private string targetHost = "http://dongqiudi.com/article/{0}?page={1}#comment_anchor";
+        private enum ContentType { None = 0, String = 1, Image = 2, Gif = 3, Video = 4, Flash = 5, SelfUri = 6 }
         private Uri HostSource;
         private int HostNumber;
-        private ProgressRing LoadingAnimation;
+        private ProgressRing loadingAnimation;
 
         #endregion
-
     }
 }

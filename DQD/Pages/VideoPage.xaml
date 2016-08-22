@@ -67,7 +67,8 @@
                               ItemContainerStyle="{ThemeResource SpecialListViewItemExpanded}"
                               SelectionMode="None" 
                               IsItemClickEnabled="True"
-                              ItemClick="ListView_ItemClick">
+                              ItemClick="ListView_ItemClick"
+                              Loaded="ContentListView_Loaded">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="model:ContentListModel">
                                 <Grid HorizontalAlignment="Stretch">

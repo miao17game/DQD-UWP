@@ -78,7 +78,7 @@ namespace DQD.Core. Tools {
                             if (!string.IsNullOrEmpty(match.Value)) {
                                 var contentNumber = new Regex(@"\d{6,}").Match(match.Value).Value;
                                 model.ContentSelfUri.Add(new ContentSelfUris { Uri = new Uri(ArticleHost + contentNumber), Number = Convert.ToInt32(contentNumber), Title = item.SelectSingleNode("a").InnerText, Index = index });
-                            }
+                            } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
                         } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
                     } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
