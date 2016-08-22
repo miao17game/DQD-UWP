@@ -1,4 +1,5 @@
 ﻿using DQD.Core.Controls;
+using DQD.Core.Models;
 using DQD.Core.Models.CommentModels;
 using DQD.Core.Models.MatchModels;
 using DQD.Core.Models.PageContentModels;
@@ -37,7 +38,33 @@ namespace DQD.Core. Tools {
         }
 
         public static Uri ConvertToUri(string str) { return !string.IsNullOrEmpty(str) ? new Uri(str) : null; }
-        
+
+        public static List<ContentListModel> GetFlipViewContent(string stringBUD) {
+            var list = new List<ContentListModel>();
+            try {
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(stringBUD);
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//div[@id='show']";
+                HtmlNodeCollection consDiv = rootnode.SelectNodes(XPathString);
+                var wholeContentColl = consDiv.ElementAt(0).SelectNodes("ul/li");
+                foreach (var eachLi in wholeContentColl) {
+                    try {
+                        var model = new ContentListModel();
+                        model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("a/img").Attributes["src"].Value));
+                        model.Title = eachLi.SelectSingleNode("a/h3").InnerText;
+                        model.Path = new Uri(HomeHostInsert + eachLi.SelectSingleNode("a").Attributes["href"].Value);
+                        list.Add(model);
+                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (FormatException FE) { ReportError(FE.Message.ToString());
+                    }
+                }
+            } catch (Exception E) { ReportError(E.Message.ToString()); }
+            return list;
+        }
+
         public static PageContentModel GetPageInnerContent(string stringBUD) {
             var model = new PageContentModel();
             try {

@@ -27,14 +27,12 @@ namespace DQD.Core.Models {
         /// Handle the html resources from DQD Header Group.
         /// </summary>
         /// <returns></returns>
-        public static async Task<ObservableCollection<HeaderModel>> SetHeaderGroupResources() {
+        public static ObservableCollection<HeaderModel> SetHeaderGroupResources(string stringDUB) {
             const string HomeHostInsert = "http://www.dongqiudi.com/";
             ObservableCollection<HeaderModel> HeaderGroup = new ObservableCollection<HeaderModel>();
             try {
-                StringBuilder urlString = new StringBuilder();
-                urlString = await WebProcess.GetHtmlResources(HomeHostInsert);
                 HtmlDocument doc = new HtmlDocument();
-                doc.LoadHtml(urlString.ToString());
+                doc.LoadHtml(stringDUB);
                 HtmlNode rootnode = doc.DocumentNode;
                 string XPathString = "//div[@id='tab']";
                 HtmlNodeCollection hrefsDiv = rootnode.SelectNodes(XPathString);
@@ -46,11 +44,16 @@ namespace DQD.Core.Models {
                     model.Number = Convert.ToInt32(item.Attributes["rel"].Value);
                     HeaderGroup.Add(model);
                 }
-            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
-            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
-            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
-            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
-            } catch (Exception E) { Debug.WriteLine(E.Message.ToString());
+            } catch (NullReferenceException NRE) {
+                Debug.WriteLine(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) {
+                Debug.WriteLine(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) {
+                Debug.WriteLine(ANE.Message.ToString());
+            } catch (FormatException FE) {
+                Debug.WriteLine(FE.Message.ToString());
+            } catch (Exception E) {
+                Debug.WriteLine(E.Message.ToString());
             }
             return HeaderGroup;
         }

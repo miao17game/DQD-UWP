@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media.Animation;
 using System.Threading.Tasks;
 using DQD.Core.Controls;
 using DQD.Core.Helpers;
+using DQD.Core.Tools;
 
 namespace DQD.Net.Pages {
     /// <summary>
@@ -44,19 +45,30 @@ namespace DQD.Net.Pages {
         /// Init the Page Initual databundle resources.
         /// </summary>
         private async void InitView() {
-            ObservableCollection<HeaderModel> headerList = new ObservableCollection<HeaderModel>();
-            headerList = await DataHandler.SetHeaderGroupResources();
+            StringBuilder urlString = await WebProcess.GetHtmlResources(HomeHost);
+            var headerList = DataHandler.SetHeaderGroupResources(urlString.ToString());
             foreach (var item in headerList) {
                 cacheDic.Add(
-                    item.Title, 
+                    item.Title,
                     new DQDDataContext<ContentListModel>(
                         FetchMoreResources,
-                        item.Number, 
-                        15, 
-                        HomeHost, 
-                        InitSelector.Special));}
+                        item.Number,
+                        15,
+                        HomeHost,
+                        InitSelector.Special));
+            }
             HeaderResources.Source = headerList;
+            var list = DataProcess.GetFlipViewContent(urlString.ToString());
+            FlipResouces.Source = list;
+            InitFlipTimer(list);
             InitFloatButtonView();
+        }
+
+        private void InitFlipTimer(List<ContentListModel> list) {
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 5);
+            timer.Tick += (obj, args) => { if (MyFlip.SelectedIndex < list.Count - 1) MyFlip.SelectedIndex++; else MyFlip.SelectedIndex = 0; };
+            timer.Start();
         }
 
         private async Task<ObservableCollection<ContentListModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
@@ -167,6 +179,15 @@ namespace DQD.Net.Pages {
             } catch { Debug.WriteLine("Save scroll positions error."); }
         }
 
+        private void ScrollViewerChangedForFlip(object sender, ScrollViewerViewChangedEventArgs e) {
+            try {
+                if ((sender as ScrollViewer).VerticalOffset <= 240)
+                    MyFlip.Margin = new Thickness(0, -(sender as ScrollViewer).VerticalOffset, 0, 0);
+                if ((sender as ScrollViewer).VerticalOffset > 240)
+                    MyFlip.Margin = new Thickness(0, -240, 0, 0);
+            } catch { Debug.WriteLine("Save scroll positions error."); }
+        }
+
         #endregion
 
         #region Animation Methods
@@ -175,6 +196,7 @@ namespace DQD.Net.Pages {
             ButtonThisPage = MainPage.Current.IsButtonShadowVisible ? ButtonStack : ButtonStackNoShadow;
             int num = MyPivot.SelectedIndex;
             scroll = MainPage.GetScrollViewer(MainPage.GetPVItemViewer(MyPivot, ref num));
+            scroll.ViewChanged += ScrollViewerChangedForFlip;
             if (MainPage.Current.IsFloatButtonEnable) {
                 ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
                 ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
@@ -251,5 +273,6 @@ namespace DQD.Net.Pages {
         private int itemNumber;
 
         #endregion
+        
     }
 }

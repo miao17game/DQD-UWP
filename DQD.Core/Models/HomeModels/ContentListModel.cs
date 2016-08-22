@@ -24,7 +24,5 @@ namespace DQD.Core.Models {
         [DataMember]
         public int ID { get; set; }
 
-        public ContentListModel() { }
-
     }
 }
