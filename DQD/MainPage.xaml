@@ -204,7 +204,7 @@
               Grid.Column="1"
               Background="{ThemeResource DQDPopupBackColor}">
             <Image Name="BackgroundImage" 
-                   Source="/Assets/38565-105.jpg"
+                   Source="/Assets/bg7.jpg"
                    Stretch="UniformToFill"/>
             <Rectangle Name="BackRec" 
                        Height="85"

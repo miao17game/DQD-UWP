@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Media;
 using DQD.Core.Models;
 using Edi.UWP.Helpers;
 using Windows.Security.ExchangeActiveSyncProvisioning;
+using Windows.UI.Xaml.Media.Imaging;
 #endregion
 namespace DQD.Net {
     /// <summary>
@@ -43,6 +44,7 @@ namespace DQD.Net {
             PrepareFrame.Navigate(typeof(PreparePage));
             VersionText.Text = "版本号：" + Utils.GetAppVersion();
             InitSwitchState();
+            InitFlipTimer();
         }
 
         #endregion
@@ -187,6 +189,18 @@ namespace DQD.Net {
             {"AnimationSwitch", new SwitchEventHandler(instance=> { Current .OnButtonAutoAnimaSwitchToggled(GetSwitchInstance(instance)); }) },
         };
 
+            public static List<Uri> GetBackground() { return BackgroundPicMaps; }
+            static private List<Uri> BackgroundPicMaps = new List < Uri > {
+            new Uri("ms-appx:///Assets/bg1.jpg"),
+            new Uri("ms-appx:///Assets/bg2.jpg"),
+            new Uri("ms-appx:///Assets/bg3.jpg"),
+            new Uri("ms-appx:///Assets/bg4.jpg"),
+            new Uri("ms-appx:///Assets/bg5.jpg"),
+            new Uri("ms-appx:///Assets/bg6.jpg"),
+            new Uri("ms-appx:///Assets/bg7.jpg"),
+            new Uri("ms-appx:///Assets/bg8.jpg"),
+        };
+
         }
         #endregion
 
@@ -200,6 +214,7 @@ namespace DQD.Net {
         public bool IsFloatButtonEnable { get; private set; }
         public bool IsButtonShadowVisible { get; private set; }
         public bool IsButtonAnimationEnable { get; private set; }
+        private int nowBackgroundPic = 0;
         public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
         public delegate void SwitchEventHandler(string instance);
         public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri ,int num, string content);
@@ -209,6 +224,20 @@ namespace DQD.Net {
         #endregion
 
         #region Methods
+
+        private void InitFlipTimer() {
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 10);
+            timer.Tick += (obj, args) => {
+                if (nowBackgroundPic < InsideResources.GetBackground().Count) {
+                    BackgroundImage.Source = new BitmapImage(InsideResources.GetBackground()[nowBackgroundPic]);
+                    nowBackgroundPic++;
+                } else {
+                    BackgroundImage.Source = new BitmapImage(InsideResources.GetBackground()[0]);
+                    nowBackgroundPic = 0;
+                } };
+            timer.Start();
+        }
 
         /// <summary>
         /// help to change style of statusbar

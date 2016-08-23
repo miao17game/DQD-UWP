@@ -6,8 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -18,6 +21,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace DQD.Net.Pages {
@@ -31,12 +35,16 @@ namespace DQD.Net.Pages {
         public PreparePage ( ) {
             translateT = this . RenderTransform as TranslateTransform;
             this . InitializeComponent ( );
+            this.Loaded += MainPage_Loaded;
+        }
+
+        private void MainPage_Loaded(object sender, RoutedEventArgs e) {
             isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
             isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
-            if (StatusBarInit.HaveAddMobileExtensions()) { StatusBarInit.InitInnerMobileStatusBar(true);}
+            if (StatusBarInit.HaveAddMobileExtensions()) { StatusBarInit.InitInnerMobileStatusBar(true); }
             StatusBarInit.InitDesktopStatusBar(false);
             StatusBarInit.InitMobileStatusBar(false);
-            InitSliderTimer ( );
+            InitSliderTimer();
             OutIMG.BeginTime = new TimeSpan(0, 0, 0, 0, 500);
             OutREC.BeginTime = new TimeSpan(0, 0, 0, 0, 500);
             OutIMG.SpeedRatio = 0.1;
