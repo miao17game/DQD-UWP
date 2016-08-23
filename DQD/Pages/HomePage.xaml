@@ -7,10 +7,12 @@
     xmlns:MPV="using:DQD.Core.Controls"
     xmlns:Shadow="using:DQD.Shadow"
     xmlns:xp="using:XP"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
+    
     <Page.Resources>
         <CollectionViewSource x:Name="FlipResouces"/>
         <CollectionViewSource x:Name="ListResources"/>
@@ -50,6 +52,8 @@
         <!--#endregion-->
 
         <RelativePanel>
+            
+            <!--#region FlipView Content-->
             <FlipView Name="MyFlip"
                       Margin="0,0,0,0"
                       Height="240"
@@ -69,10 +73,18 @@
                                            Foreground="#EFEFEF"
                                            Margin="5"/>
                             </Border>
+                            <Button Content="{Binding Path}" 
+                                    CommandParameter="{Binding ID}"
+                                    Background="Transparent"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Click="FlipInnerButton_Click"
+                                    Opacity="0"/>
                         </Grid>
                     </DataTemplate>
                 </FlipView.ItemTemplate>
             </FlipView>
+            <!--#endregion-->
 
             <!--#region ContentPivot-->
             <Pivot Name="MyPivot" 
@@ -141,6 +153,7 @@
                 </Pivot.ItemTemplate>
             </Pivot>
             <!--#endregion-->
+            
         </RelativePanel>
 
         <!--#region FloatButton-->

@@ -7,12 +7,14 @@
     xmlns:BaseModel="using:DQD.Core.Models"
     xmlns:MPV="using:DQD.Core.Controls"
     xmlns:Shadow="using:DQD.Shadow"
+     xmlns:Converters="using:DQD.Core.Tools.Converters"
     xmlns:xp="using:XP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Page.Resources>
+        <Converters:SelfVisibilityConverter x:Key="SelfVisibilityConverter"/>
         <CollectionViewSource x:Name="ListResources"/>
         <CollectionViewSource x:Name="HeaderResources"/>
         <CollectionViewSource x:Name="ItemsGrouped"
@@ -83,7 +85,8 @@
                                 <ListView x:Name="MatchListView" 
                                           ItemContainerStyle="{StaticResource SpecialListViewItemExpanded}" 
                                           ItemsSource="{Binding Source={StaticResource ItemsGrouped}}"
-                                          IsItemClickEnabled="True">
+                                          IsItemClickEnabled="True"
+                                          ItemClick="MatchListView_ItemClick">
                                     <ListView.ItemTemplate>
                                         <DataTemplate x:DataType="model:MatchListModel">
                                             <Grid HorizontalAlignment="Stretch">
@@ -99,7 +102,7 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="2*"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="auto"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="{Binding Time}" 
                                                Grid.Column="0"
@@ -147,13 +150,23 @@
                                                        Width="40"
                                                        Height="40"
                                                        Margin="2"/>
-                                                <TextBlock Text="" 
-                                               Grid.Column="7"
-                                               Grid.RowSpan="2"
-                                               Margin="3"
-                                               FontSize="14"
-                                               VerticalAlignment="Center"
-                                               Foreground="{ThemeResource DQDSummTextColor}"/>
+                                                <TextBlock Text="&#xE70A;" 
+                                                           Grid.Column="7"
+                                                           Grid.RowSpan="2"
+                                                           Margin="3"
+                                                           FontSize="20"
+                                                           FontWeight="Bold"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           Foreground="{ThemeResource DQDBackground}"
+                                                           Visibility="{
+                                                    Binding ElementName=LintText, 
+                                                    Path=Text, 
+                                                    Converter={StaticResource SelfVisibilityConverter}}"/>
+                                                <TextBlock  Name="LintText" 
+                                                            Text="{Binding ArticleLink}"
+                                                            Visibility="Collapsed"/>
                                             </Grid>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>

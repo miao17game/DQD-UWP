@@ -3361,18 +3361,16 @@
                                 </ScrollViewer>
                                 <Button x:Name="PreviousButtonHorizontal"
                                     Template="{ThemeResource HorizontalPreviousTemplate}"
-                                    Width="70"
-                                    Height="40"
+                                    Width="50"
                                     IsTabStop="False"
                                     HorizontalAlignment="Left"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Stretch" />
                                 <Button x:Name="NextButtonHorizontal"
                                     Template="{StaticResource HorizontalNextTemplate}"
-                                    Width="70"
-                                    Height="40"
+                                    Width="50"
                                     IsTabStop="False"
                                     HorizontalAlignment="Right"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Stretch" />
                                 <Button x:Name="PreviousButtonVertical"
                                     Template="{StaticResource VerticalPreviousTemplate}"
                                     Width="70"

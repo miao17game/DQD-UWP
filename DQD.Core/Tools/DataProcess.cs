@@ -54,6 +54,7 @@ namespace DQD.Core. Tools {
                         model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("a/img").Attributes["src"].Value));
                         model.Title = eachLi.SelectSingleNode("a/h3").InnerText;
                         model.Path = new Uri(HomeHostInsert + eachLi.SelectSingleNode("a").Attributes["href"].Value);
+                        model.ID = Convert.ToInt32( new Regex(@"\d{6,}").Match(eachLi.SelectSingleNode("a").Attributes["href"].Value).Value);
                         list.Add(model);
                     } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
@@ -249,7 +250,19 @@ namespace DQD.Core. Tools {
                                         break;
                                     case TableItemType.Link:
                                         var linkContent = item.SelectSingleNode("a");
-                                        model.ArticleLink = linkContent == null ? null : new Uri(MatchHost + linkContent.Attributes["href"].Value);
+                                        model.ArticleLink = 
+                                            linkContent == null ? null :
+                                            !string.IsNullOrEmpty(new Regex(@"article").Match(linkContent.Attributes["href"].Value).Value) ? 
+                                            new Uri(HomeHostInsert + linkContent.Attributes["href"].Value) :
+                                            new Uri(linkContent.Attributes["href"].Value);
+                                        model.ArticleID =
+                                            linkContent != null && !string.IsNullOrEmpty(new Regex(@"article").Match(linkContent.Attributes["href"].Value).Value) ?
+                                            (int?)Convert.ToInt32(new Regex(@"\d{6,}").Match(linkContent.Attributes["href"].Value).Value) :
+                                            null;
+                                        model.MatchType =
+                                            linkContent == null ? MatchListType.None :
+                                            !string.IsNullOrEmpty(new Regex(@"article").Match(linkContent.Attributes["href"].Value).Value) ? MatchListType.Review :
+                                            MatchListType.Live;
                                         break;
                                     default: break;
                                 }

@@ -84,9 +84,32 @@ namespace DQD.Net.Pages {
             }
         }
 
+        private void MatchListView_ItemClick(object sender, ItemClickEventArgs e) {
+            var itemUri = (e.ClickedItem as MatchListModel).ArticleLink;
+            var itemNum = (e.ClickedItem as MatchListModel).ArticleID;
+            if (itemNum != null) {
+                MainPage.Current.ItemClick?.Invoke(
+                    this,
+                    typeof(ContentPage),
+                    MainPage.Current.contentFrame,
+                    itemUri,
+                    (int)itemNum,
+                    null);
+                MainPage.Current.SideGrid.Visibility = Visibility.Visible; }
+            if (itemUri != null && itemNum == null) {
+                MainPage.Current.ItemClick?.Invoke(
+                    this,
+                    typeof(WebLivePage),
+                    MainPage.Current.contentFrame,
+                    itemUri,
+                    0,
+                    null);
+                MainPage.Current.SideGrid.Visibility = Visibility.Visible; }
+        }
+
         #endregion
 
-        #region Events
+            #region Events
 
         private async void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             ItemsGrouped.Source = null;
@@ -117,5 +140,6 @@ namespace DQD.Net.Pages {
         private List<AlphaKeyGroup<MatchListModel>> resources;
         private Dictionary<string, List<AlphaKeyGroup<MatchListModel>>> cacheDic;
         #endregion
+
     }
 }

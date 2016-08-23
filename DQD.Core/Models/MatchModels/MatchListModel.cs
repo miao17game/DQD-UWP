@@ -17,6 +17,8 @@ namespace DQD.Core.Models.MatchModels {
         public string Score { get; set; }
         public bool IsOverOrNot { get; set; }
         public Uri ArticleLink { get; set; }
+        public int? ArticleID { get; set; }
         public string GroupCategory { get; set; }
+        public MatchListType MatchType { get; set; }
     }
 }

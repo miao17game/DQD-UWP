@@ -60,11 +60,6 @@
                                 <Thickness>0,16,0,0</Thickness>
                             </Setter.Value>
                         </Setter>
-                        <Setter Target="sideGrid.(FrameworkElement.Margin)">
-                            <Setter.Value>
-                                <Thickness>0,16,0,0</Thickness>
-                            </Setter.Value>
-                        </Setter>
                         <Setter Target="sideGrid.(Grid.ColumnSpan)" Value="2"/>
                         <Setter Target="sideGrid.(UIElement.Visibility)" Value="Collapsed"/>
                         <Setter Target="BackgroundImage.(UIElement.Opacity)" Value="0"/>
@@ -89,11 +84,6 @@
                             </Setter.Value>
                         </Setter>
                         <Setter Target="BaseGrid.(FrameworkElement.Margin)">
-                            <Setter.Value>
-                                <Thickness>0,16,0,0</Thickness>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Target="sideGrid.(FrameworkElement.Margin)">
                             <Setter.Value>
                                 <Thickness>0,16,0,0</Thickness>
                             </Setter.Value>
@@ -183,22 +173,22 @@
                     </Pivot.HeaderTemplate>
                     <PivotItem Name="HomePItem" 
                            Header="首页"
-                           Background="White" >
+                           Background="Transparent" >
                         <Frame Name="HomePFrame"/>
                     </PivotItem>
                     <PivotItem Name="MatchPItem" 
                            Header="比赛"
-                           Background="SteelBlue">
+                           Background="Transparent">
                         <Frame Name="MatchPFrame"/>
                     </PivotItem>
                     <PivotItem Name="VideoPItem" 
                            Header="视频"
-                           Background="Black">
+                           Background="Transparent">
                         <Frame Name="VideoPFrame"/>
                     </PivotItem>
                     <PivotItem Name="DataPItem" 
                            Header="数据"
-                           Background="Pink">
+                           Background="Transparent">
                         <Frame Name="DataPFrame"/>
                     </PivotItem>
                 </MPV:PersonalPivot>
@@ -211,7 +201,8 @@
         </Border>
 
         <Grid Name="sideGrid" 
-              Grid.Column="1">
+              Grid.Column="1"
+              Background="{ThemeResource DQDPopupBackColor}">
             <Image Name="BackgroundImage" 
                    Source="/Assets/38565-105.jpg"
                    Stretch="UniformToFill"/>

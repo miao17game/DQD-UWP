@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region Using
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 using DQD.Core.Controls;
 using DQD.Core.Helpers;
 using DQD.Core.Tools;
+#endregion
 
 namespace DQD.Net.Pages {
     /// <summary>
@@ -140,6 +142,19 @@ namespace DQD.Net.Pages {
             scroll = MainPage.GetScrollViewer(MainPage.GetPVItemViewer(MyPivot, ref num));
             scroll.ViewChanged += ScrollViewer_ViewChanged;
             loadingAnimation.IsActive = false;
+        }
+
+        private void FlipInnerButton_Click(object sender, RoutedEventArgs e) {
+            var itemUri = (sender as Button).Content as Uri;
+            var itemNum = (int)((sender as Button).CommandParameter);
+            MainPage.Current.ItemClick?.Invoke(
+                this,
+                typeof(ContentPage),
+                MainPage.Current.contentFrame,
+                itemUri,
+                itemNum,
+                null);
+            MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
 
         #endregion
@@ -273,6 +288,6 @@ namespace DQD.Net.Pages {
         private int itemNumber;
 
         #endregion
-        
+
     }
 }

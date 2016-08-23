@@ -126,6 +126,7 @@
     <Compile Include="Models\CommentModels\CommentModel.cs" />
     <Compile Include="Models\MatchModels\MatchGroup.cs" />
     <Compile Include="Models\MatchModels\MatchListModel.cs" />
+    <Compile Include="Models\MatchModels\MatchListType.cs" />
     <Compile Include="Models\PageContentModels\ContentFlashs.cs" />
     <Compile Include="Models\PageContentModels\ContentGifs.cs" />
     <Compile Include="Models\PageContentModels\ContentImages.cs" />

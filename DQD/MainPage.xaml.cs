@@ -222,7 +222,6 @@ namespace DQD.Net {
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(true);
                     BaseGrid.Margin = new Thickness(0, 16, 0, 0);
-                    sideGrid.Margin = new Thickness(0, 16, 0, 0);
                 }
             } else {
                 StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
@@ -230,7 +229,6 @@ namespace DQD.Net {
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(false);
                     BaseGrid.Margin = new Thickness(0, 0, 0, 0);
-                    sideGrid.Margin = new Thickness(0, 0, 0, 0);
                 }
             }
         }

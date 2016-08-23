@@ -422,6 +422,16 @@
                                 <Thickness>50,0,0,0</Thickness>
                             </Setter.Value>
                         </Setter>
+                        <Setter Target="TitleGrid.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0,16,0,0</Thickness>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="RootPivot.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0,76,0,0</Thickness>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Mobile480">
@@ -436,6 +446,16 @@
                                 <Thickness>50,0,0,0</Thickness>
                             </Setter.Value>
                         </Setter>
+                        <Setter Target="TitleGrid.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0,16,0,0</Thickness>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="RootPivot.(FrameworkElement.Margin)">
+                            <Setter.Value>
+                                <Thickness>0,76,0,0</Thickness>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Desktop">
@@ -448,10 +468,14 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid Background="{ThemeResource DQDBackground}"
-                Height="60"
-                VerticalAlignment="Top">
-            <Button x:Name="BackBtn"
+        <Border Name="TitleBorder"
+                VerticalAlignment="Top"
+                Background="{ThemeResource DQDBackground}">
+            <Grid Name="TitleGrid" 
+                  Background="{ThemeResource DQDBackground}"
+                  Height="60"
+                  VerticalAlignment="Top">
+                <Button x:Name="BackBtn"
                     Style="{StaticResource MainPagePopupButtonStyle}"
                     Content="&#xE0A6;"
                     FontFamily="Segoe MDL2 Assets"
@@ -459,21 +483,23 @@
                     Click="BackBtn_Click"
                     Visibility="Collapsed"
                     Foreground="{ThemeResource AppPersonalTextColorPure}"/>
-            <TextBlock x:Name="ContentTitle"
+                <TextBlock x:Name="ContentTitle"
                        FontSize="22"
                        Margin="15,2,0,2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        Height="30"
                        Foreground="{ThemeResource AppPersonalTextColorPure}"/>
-            <Rectangle Height="1"
+                <Rectangle Height="1"
                        Fill="{ThemeResource DQDSummTextColor}"
                        VerticalAlignment="Bottom"/>
-            <Rectangle Height="30" Width="10"
+                <Rectangle Height="30" Width="10"
                        Fill="#F0F0F0"
                        HorizontalAlignment="Left"/>
-        </Grid>
+            </Grid>
 
+        </Border>
+       
         <MPV:PersonalPivot Name="RootPivot" 
                                Margin="0,60,0,0" 
                                Width="{Binding Width, ElementName=BaseGrid, Mode=OneWay}"
@@ -494,7 +520,8 @@
                 </DataTemplate>
             </MPV:PersonalPivot.HeaderTemplate>
             <PivotItem Name="IntergralPItem" 
-                           Header="积分榜" >
+                       Header="积分榜" 
+                       Background="Transparent">
                 
                 <!--#region IntergralList -->
                 <ListView Name="IntergralList"
@@ -729,7 +756,7 @@
             </PivotItem>
             <PivotItem Name="ShootPItem" 
                            Header="射手榜"
-                           Background="SteelBlue">
+                           Background="Transparent">
                 
                 <!--#region ShootList -->
                 <ListView Name="ShootList"
@@ -839,7 +866,7 @@
             </PivotItem>
             <PivotItem Name="HelpPItem" 
                            Header="助攻榜"
-                           Background="Black">
+                           Background="Transparent">
                 
                 <!--#region HelpList-->
                 <ListView Name="HelpList"
@@ -949,7 +976,7 @@
             </PivotItem>
             <PivotItem Name="SchedulePItem" 
                            Header="赛程表"
-                           Background="Pink">
+                           Background="Transparent">
                 
                 <!--#region ScheduleList-->
                 <ListView Name="ScheduleList"
