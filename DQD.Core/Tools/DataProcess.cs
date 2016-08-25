@@ -4,6 +4,7 @@ using DQD.Core.Models.CommentModels;
 using DQD.Core.Models.MatchModels;
 using DQD.Core.Models.PageContentModels;
 using DQD.Core.Models.TeamModels;
+using DQD.Core.Tools.EmojiExpressions;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -134,7 +135,7 @@ namespace DQD.Core. Tools {
                         model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("img").Attributes["src"].Value));
                         model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
                         model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
-                        var targetStr = eachLi.SelectSingleNode("p[@class='comCon']").InnerText;
+                        var targetStr = EmojiReplace.ToEmoji(eachLi.SelectSingleNode("p[@class='comCon']").InnerText);
                         model.Content = targetStr.Substring(9, targetStr.Length - 13);
                         list.Add(model);
                     } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
@@ -166,13 +167,13 @@ namespace DQD.Core. Tools {
                         model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("img").Attributes["src"].Value));
                         model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
                         model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
-                        var targetStr = eachLi.SelectSingleNode("p[@class='comCon']").InnerText;
+                        var targetStr = EmojiReplace.ToEmoji(eachLi.SelectSingleNode("p[@class='comCon']").InnerText);
                         model.Content = targetStr.Substring(9, targetStr.Length - 13);
                         var ReDiv = eachLi.SelectSingleNode("div[@class='recomm']");
                         if (ReDiv != null) {
                             model.ReName = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='name']").InnerText;
                             model.ReTime = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='time']").InnerText;
-                            var targetStr2 = ReDiv.SelectNodes("p").ElementAt(1).InnerText;
+                            var targetStr2 = EmojiReplace.ToEmoji(ReDiv.SelectNodes("p").ElementAt(1).InnerText);
                             model.ReContent = targetStr2.Substring(17, targetStr2.Length - 17);
                         } list.Add(model);
                     } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());

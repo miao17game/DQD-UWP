@@ -72,7 +72,7 @@ namespace DQD.Net.Pages {
         }
 
         private void BackBtn_Click(object sender, RoutedEventArgs e) {
-            MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
+            storyToSideGridOut.Begin();
         }
 
         private async void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
@@ -184,7 +184,8 @@ namespace DQD.Net.Pages {
 
         #region Animations
         #region Animations Properties
-        Storyboard storyToSideGrid = new Storyboard();
+        private Storyboard storyToSideGrid = new Storyboard();
+        public Storyboard storyToSideGridOut = new Storyboard();
         TranslateTransform transToSideGrid;
         DoubleAnimation doubleAnimation;
         #endregion
@@ -201,7 +202,24 @@ namespace DQD.Net.Pages {
             Storyboard.SetTarget(doubleAnimation, transToSideGrid);
             Storyboard.SetTargetProperty(doubleAnimation, "X");
             storyToSideGrid.Children.Add(doubleAnimation);
+            doubleAnimation = new DoubleAnimation() {
+                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
+                From = 0,
+                To = -this.ActualWidth,
+            };
+            doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
+            doubleAnimation.Completed += DoublAnimationSlideOut_Completed;
+            storyToSideGridOut = new Storyboard();
+            Storyboard.SetTarget(doubleAnimation, transToSideGrid);
+            Storyboard.SetTargetProperty(doubleAnimation, "X");
+            storyToSideGridOut.Children.Add(doubleAnimation);
             storyToSideGrid.Begin();
+        }
+
+        private void DoublAnimationSlideOut_Completed(object sender, object e) {
+            storyToSideGridOut.Stop();
+            doubleAnimation.Completed -= DoublAnimation_Completed;
+            MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
         }
 
         private void DoublAnimation_Completed(object sender, object e) {

@@ -156,6 +156,7 @@
     <Compile Include="Tools\Converters\TopOrBottomConverter.cs" />
     <Compile Include="Tools\DataProcess.cs" />
     <Compile Include="Tools\DelegateCommand.cs" />
+    <Compile Include="Tools\EmojiExpressions\EmojiReplace.cs" />
     <Compile Include="Tools\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Tools\GetAlphaKeyGroup.cs" />
     <Compile Include="Tools\Converters\ItemConverter.cs" />

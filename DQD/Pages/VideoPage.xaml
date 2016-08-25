@@ -85,21 +85,22 @@
                                                Grid.Row="0" 
                                                Grid.Column="1"
                                                Margin="3"
+                                               FontSize="14"
                                                TextWrapping="WrapWholeWords"/>
                                     <TextBlock Text="{Binding Date}" 
                                                Grid.Row="1" 
                                                Grid.Column="1"
                                                Margin="3"
-                                               FontSize="14"
+                                               FontSize="12"
                                                Foreground="{ThemeResource DQDSummTextColor}"/>
                                     <Image Source="{Binding Image}" 
                                                Grid.Column="0"
                                                Grid.RowSpan="2" 
                                                Margin="2"/>
-                                    <Button Content="{Binding ShareNum}" 
+                                    <TextBlock Text="{Binding ShareNum}" 
                                             Grid.RowSpan="2" 
                                             Grid.ColumnSpan="3"
-                                            Background="Transparent"
+                                            VerticalAlignment="Center"
                                             HorizontalAlignment="Right"
                                             Foreground="{ThemeResource DQDBackground}"/>
                                 </Grid>
@@ -112,12 +113,13 @@
 
         <!--#region FloatButton-->
         <StackPanel Name="ButtonStack" 
-              Width="150" 
-              Height=" 200"
-              HorizontalAlignment="Right"
-              VerticalAlignment="Bottom"
+                    Width="150" 
+                    Height=" 200"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
                     Orientation="Vertical"
-              FlowDirection="RightToLeft">
+                    FlowDirection="RightToLeft"
+                    Visibility="Collapsed">
             <Shadow:Shadow 
                 Margin="0"
                 CornerRadius="0.5"

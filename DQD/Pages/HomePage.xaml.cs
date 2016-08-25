@@ -141,6 +141,7 @@ namespace DQD.Net.Pages {
             var num = MyPivot.SelectedIndex;
             scroll = MainPage.GetScrollViewer(MainPage.GetPVItemViewer(MyPivot, ref num));
             scroll.ViewChanged += ScrollViewer_ViewChanged;
+            scroll.ViewChanged += ScrollViewerChangedForFlip;
             loadingAnimation.IsActive = false;
         }
 

@@ -33,6 +33,7 @@ namespace DQD.Net {
         public MainPage() {
             Current = this;
             InitializeComponent();
+            PrepareFrame.Navigate(typeof(PreparePage));
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             BaseLoadingProgress = BaseLoadingAnimation;
             LoadingProgress = LoadingAnimation;
@@ -41,7 +42,6 @@ namespace DQD.Net {
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                 ApplicationView.GetForCurrentView().VisibleBoundsChanged += (s, e) => { ChangeViewWhenNavigationBarChanged(); };
                 ChangeViewWhenNavigationBarChanged(); }
-            PrepareFrame.Navigate(typeof(PreparePage));
             VersionText.Text = "版本号：" + Utils.GetAppVersion();
             InitSwitchState();
             InitFlipTimer();
@@ -65,8 +65,13 @@ namespace DQD.Net {
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs e) {
-            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") ) { sideGrid.Visibility = Visibility.Collapsed; }
-            contentFrame.Content = null;
+            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") ) {
+                if(ContentPage.Current!=null)
+                    ContentPage.Current.storyToSideGridOut.Begin();
+                if (DataContentPage.Current != null)
+                    DataContentPage.Current.storyToSideGridOut.Begin();
+            }
+            else contentFrame.Content = null;
             e.Handled = true;
         }
 
@@ -191,11 +196,9 @@ namespace DQD.Net {
 
             public static List<Uri> GetBackground() { return BackgroundPicMaps; }
             static private List<Uri> BackgroundPicMaps = new List < Uri > {
-            new Uri("ms-appx:///Assets/bg1.jpg"),
             new Uri("ms-appx:///Assets/bg2.jpg"),
             new Uri("ms-appx:///Assets/bg3.jpg"),
             new Uri("ms-appx:///Assets/bg4.jpg"),
-            new Uri("ms-appx:///Assets/bg5.jpg"),
             new Uri("ms-appx:///Assets/bg6.jpg"),
             new Uri("ms-appx:///Assets/bg7.jpg"),
             new Uri("ms-appx:///Assets/bg8.jpg"),
@@ -251,6 +254,7 @@ namespace DQD.Net {
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(true);
                     BaseGrid.Margin = new Thickness(0, 16, 0, 0);
+                    sideGrid.Margin = new Thickness(0, 0, 0, 0);
                 }
             } else {
                 StatusBarInit.InitDesktopStatusBarToPrepare(isLightOrNot);
@@ -258,6 +262,7 @@ namespace DQD.Net {
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(false);
                     BaseGrid.Margin = new Thickness(0, 0, 0, 0);
+                    sideGrid.Margin = new Thickness(0, -16, 0, 0);
                 }
             }
         }
@@ -312,6 +317,8 @@ namespace DQD.Net {
             }
         }
 
+        #region Swith Methods
+
         private void InitSwitchState() {
             IsFloatButtonEnable = 
                 AnimationSwitch.IsEnabled = 
@@ -324,7 +331,7 @@ namespace DQD.Net {
             IsButtonShadowVisible = 
                 ShadowSwitch.IsOn = 
                 (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonShadow) ?? false;
-            ColorSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
+            ColorSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? true;
             var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
             RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
             ThemeModeBtn.Content = isLightOrNot ? char.ConvertFromUtf32(0xEC46) : char.ConvertFromUtf32(0xEC8A);
@@ -342,7 +349,7 @@ namespace DQD.Net {
                     StatusBarInit.InitInnerMobileStatusBar(true);
                     Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
                     BaseGrid.Margin = new Thickness(0, 16, 0, 0);
-                    sideGrid.Margin = new Thickness(0, 16, 0, 0);
+                    sideGrid.Margin = new Thickness(0, 0, 0, 0);
                     Margin = Height + 24 - wholeHeight > -0.1 ? new Thickness(0, -0, 0, 0) : new Thickness(0, -48, 0, 0);
                 }
             } else {
@@ -352,7 +359,7 @@ namespace DQD.Net {
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
                     BaseGrid.Margin = new Thickness(0, 0, 0, 0);
-                    sideGrid.Margin = new Thickness(0, 0, 0, 0);
+                    sideGrid.Margin = new Thickness(0, -16, 0, 0);
                     StatusBarInit.InitInnerMobileStatusBar(false);
                     Margin = Height + 24 - wholeHeight > -0.1 ? new Thickness(0, 24, 0, 0) : new Thickness(0, -24, 0, 0);
                 }
@@ -404,6 +411,8 @@ namespace DQD.Net {
         private void DivideVisibility(bool isVisible, StackPanel sp1,StackPanel sp2) { sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); sp2.Visibility = VisiEnumHelper.GetVisibility(!isVisible); }
 
         private void SyncVisibility(bool isVisible, StackPanel sp1, StackPanel sp2) { sp2.Visibility = sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); }
+      
+        #endregion
 
         #region Handler of ListView Scroll 
 

@@ -45,10 +45,10 @@ namespace DQD.Net.Pages {
             StatusBarInit.InitDesktopStatusBar(false);
             StatusBarInit.InitMobileStatusBar(false);
             InitSliderTimer();
-            OutIMG.BeginTime = new TimeSpan(0, 0, 0, 0, 500);
-            OutREC.BeginTime = new TimeSpan(0, 0, 0, 0, 500);
-            OutIMG.SpeedRatio = 0.1;
-            OutREC.SpeedRatio = 0.1;
+            OutIMG.BeginTime = new TimeSpan(0, 0, 0, 0, 800);
+            OutREC.BeginTime = new TimeSpan(0, 0, 0, 0, 800);
+            OutIMG.SpeedRatio = 0.07;
+            OutREC.SpeedRatio = 0.07;
             OutIMG.Begin();
             OutREC.Begin();
         }

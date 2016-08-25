@@ -31,6 +31,7 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="MyFlip.(FrameworkElement.Height)" Value="180"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Mobile480">
@@ -63,7 +64,7 @@
                     <DataTemplate x:DataType="model:ContentListModel">
                         <Grid >
                             <Image Source="{Binding Image}"
-                                   Height=" 240"
+                                   Height="{Binding Height, ElementName=MyFlip}"
                                    Stretch="UniformToFill"/>
                             <Border Background="#70202020"
                                     VerticalAlignment="Bottom">
@@ -125,26 +126,28 @@
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
                                         <TextBlock Text="{Binding Title}" 
-                                               Grid.Row="0" 
-                                               Grid.Column="1"
-                                               Margin="3"
-                                               TextWrapping="WrapWholeWords"/>
+                                                   Grid.Row="0" 
+                                                   Grid.Column="1"
+                                                   Margin="3"
+                                                   FontSize="14"
+                                                   TextWrapping="WrapWholeWords"/>
                                         <TextBlock Text="{Binding Date}" 
                                                Grid.Row="1" 
                                                Grid.Column="1"
                                                Margin="3"
-                                               FontSize="14"
+                                               FontSize="12"
                                                Foreground="{ThemeResource DQDSummTextColor}"/>
                                         <Image Source="{Binding Image}" 
                                                Grid.Column="0"
                                                Grid.RowSpan="2" 
                                                Margin="2"/>
-                                        <Button Content="{Binding ShareNum}" 
-                                            Grid.RowSpan="2" 
-                                            Grid.ColumnSpan="3"
-                                            Background="Transparent"
-                                            HorizontalAlignment="Right"
-                                            Foreground="{ThemeResource DQDBackground}"/>
+                                        <TextBlock Text="{Binding ShareNum}" 
+                                                   Grid.RowSpan="2" 
+                                                   Grid.ColumnSpan="3"
+                                                   FontSize="12"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{ThemeResource DQDBackground}"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -158,12 +161,13 @@
 
         <!--#region FloatButton-->
         <StackPanel Name="ButtonStack" 
-              Width="150" 
-              Height=" 200"
-              HorizontalAlignment="Right"
-              VerticalAlignment="Bottom"
+                    Width="150" 
+                    Height=" 200"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
                     Orientation="Vertical"
-              FlowDirection="RightToLeft">
+                    FlowDirection="RightToLeft"
+                    Visibility="Collapsed">
             <Shadow:Shadow 
                 Margin="0"
                 CornerRadius="0.5"

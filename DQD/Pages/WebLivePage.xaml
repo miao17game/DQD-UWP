@@ -141,7 +141,8 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Orientation="Vertical"
-                    FlowDirection="RightToLeft">
+                    FlowDirection="RightToLeft"
+                    Visibility="Collapsed">
             <Shadow:Shadow 
                 Margin="0"
                 CornerRadius="0.5"

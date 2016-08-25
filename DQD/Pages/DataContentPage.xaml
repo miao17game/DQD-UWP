@@ -573,7 +573,7 @@
                                     Converter={StaticResource VisibilityConverter} ,
                                     ConverterParameter='LeaTeamHeader'}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="0.65*"/>
                                         <ColumnDefinition Width="0.7*"/>
                                         <ColumnDefinition Width="2*"/>
                                         <ColumnDefinition Width="0.6*"/>
@@ -588,43 +588,54 @@
                                     <TextBlock Text="{Binding RankHeader}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Grid.Column="0"/>
+                                               Grid.Column="0"
+                                               FontSize="12"/>
                                     <TextBlock Text="{Binding TeamHeader}" 
                                                Grid.Column="1"
+                                               Grid.ColumnSpan="2"
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               Margin="10,0,0,0"/>
+                                               Margin="10,0,0,0"
+                                                FontSize="12"/>
                                     <TextBlock Text="{Binding AmountHeader}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               Grid.Column="3"/>
+                                               Grid.Column="3"
+                                                FontSize="12"/>
                                     <TextBlock Text="{Binding WinHeader}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               Grid.Column="4"/>
+                                               Grid.Column="4"
+                                                FontSize="12"/>
                                     <TextBlock Text="{Binding DrawHeader}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="5"/>
                                     <TextBlock Text="{Binding LoseHeader}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="6"/>
                                     <TextBlock Text="{Binding ScoreBallHeader}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="7"/>
                                     <TextBlock Text="{Binding LostBallHeader}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="8"/>
                                     <TextBlock Text="{Binding NetBallHeader}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="9"/>
                                     <TextBlock Text="{Binding IntegralHeader}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="10"/>
                                 </Grid>
                                 <!--#endregion-->
@@ -657,6 +668,7 @@
                                     <TextBlock Text="{Binding Rank}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="0"/>
                                     <Image Source="{Binding TeamIcon}"
                                            Margin="5"
@@ -664,7 +676,7 @@
                                     <TextBlock Text="{Binding Team}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               FontSize="14"
+                                                FontSize="12"
                                                Grid.Column="2"/>
                                     <TextBlock Text="{Binding Amount}" 
                                                HorizontalAlignment="Left"
@@ -673,30 +685,37 @@
                                     <TextBlock Text="{Binding Win}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="4"/>
                                     <TextBlock Text="{Binding Draw}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="5"/>
                                     <TextBlock Text="{Binding Lose}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="6"/>
                                     <TextBlock Text="{Binding ScoreBall}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="7"/>
                                     <TextBlock Text="{Binding LostBall}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="8"/>
                                     <TextBlock Text="{Binding NetBall}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="9"/>
                                     <TextBlock Text="{Binding Integral}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="10"/>
                                 </Grid>
                                 <!--#endregion-->
@@ -724,6 +743,7 @@
                                     <TextBlock Text="{Binding Time}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Margin=" 2,0,0,0"
                                                Grid.Column="0"/>
                                     <Image Source="{Binding AwayTeamIcon}"
@@ -732,14 +752,17 @@
                                     <TextBlock Text="{Binding AwayTeam}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="2"/>
                                     <TextBlock Text="{Binding Score}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="3"/>
                                     <TextBlock Text="{Binding HomeTeam}" 
                                                HorizontalAlignment="Right"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="4"/>
                                     <Image Source="{Binding HomeTeamIcon}"
                                            Margin="5"
@@ -795,17 +818,21 @@
                                     <TextBlock Text="{Binding RankHeader}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="0"/>
                                     <TextBlock Text="{Binding MemberHeader}" 
                                                Grid.Column="1"
                                                HorizontalAlignment="Center"
+                                                FontSize="12"
                                                VerticalAlignment="Center"/>
                                     <TextBlock Text="{Binding TeamHeader}" 
                                                HorizontalAlignment="Center"
+                                                FontSize="12"
                                                VerticalAlignment="Center"
                                                Grid.Column="3"/>
                                     <TextBlock Text="{Binding StatHeader}" 
                                                HorizontalAlignment="Center"
+                                                FontSize="12"
                                                VerticalAlignment="Center"
                                                Grid.Column="5"/>
                                 </Grid>
@@ -834,6 +861,7 @@
                                     <TextBlock Text="{Binding Rank}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="0"/>
                                     <Image Source="{Binding MemberIcon}"
                                            Margin="5"
@@ -841,7 +869,7 @@
                                     <TextBlock Text="{Binding Member}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               FontSize="14"
+                                                FontSize="12"
                                                Grid.Column="2"/>
                                     <Image Source="{Binding TeamIcon}"
                                            Margin="4"
@@ -849,10 +877,12 @@
                                     <TextBlock Text="{Binding Team}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="4"/>
                                     <TextBlock Text="{Binding Stat}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="5"/>
                                 </Grid>
                                 <!--#endregion-->
@@ -904,19 +934,23 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="{Binding RankHeader}" 
                                                HorizontalAlignment="Center"
+                                                FontSize="12"
                                                VerticalAlignment="Center"
                                                Grid.Column="0"/>
                                     <TextBlock Text="{Binding MemberHeader}" 
                                                Grid.Column="1"
                                                HorizontalAlignment="Center"
+                                                FontSize="12"
                                                VerticalAlignment="Center"/>
                                     <TextBlock Text="{Binding TeamHeader}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="3"/>
                                     <TextBlock Text="{Binding StatHeader}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="5"/>
                                 </Grid>
                                 <!--#endregion-->
@@ -944,6 +978,7 @@
                                     <TextBlock Text="{Binding Rank}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="0"/>
                                     <Image Source="{Binding MemberIcon}"
                                            Margin="5"
@@ -951,7 +986,7 @@
                                     <TextBlock Text="{Binding Member}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               FontSize="14"
+                                                FontSize="12"
                                                Grid.Column="2"/>
                                     <Image Source="{Binding TeamIcon}"
                                            Margin="4"
@@ -959,10 +994,12 @@
                                     <TextBlock Text="{Binding Team}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="4"/>
                                     <TextBlock Text="{Binding Stat}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="5"/>
                                 </Grid>
                                 <!--#endregion-->
@@ -1006,7 +1043,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="0.1*" />
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="1.7*"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="0.1*" />
                                     </Grid.ColumnDefinitions>
@@ -1018,6 +1055,7 @@
                                             VerticalAlignment="Stretch"
                                             Background="Transparent"
                                             Foreground="#EFEFEF"
+                                             FontSize="15"
                                             Style="{StaticResource MainPagePopupButtonStyle}"
                                             Visibility="{
                                         Binding Content, 
@@ -1036,6 +1074,7 @@
                                             VerticalAlignment="Stretch"
                                             Background="Transparent"
                                             Foreground="#EFEFEF"
+                                             FontSize="15"
                                             Style="{StaticResource MainPagePopupButtonStyle}"
                                             Visibility="{
                                         Binding Content, 
@@ -1054,7 +1093,7 @@
                                     ConverterParameter='Content'}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="0.2*" />
-                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="2*"/>
                                         <ColumnDefinition Width="0.5*"/>
                                         <ColumnDefinition Width="1.5*"/>
                                         <ColumnDefinition />
@@ -1066,6 +1105,7 @@
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
                                                Margin=" 2,0,0,0"
+                                                FontSize="12"
                                                Grid.Column="1"/>
                                     <Image Source="{Binding AwayTeamIcon}"
                                            Margin="5"
@@ -1073,14 +1113,17 @@
                                     <TextBlock Text="{Binding AwayTeam}" 
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="3"/>
                                     <TextBlock Text="{Binding Score}" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="4"/>
                                     <TextBlock Text="{Binding HomeTeam}" 
                                                HorizontalAlignment="Right"
                                                VerticalAlignment="Center"
+                                                FontSize="12"
                                                Grid.Column="5"/>
                                     <Image Source="{Binding HomeTeamIcon}"
                                            Margin="5"
@@ -1103,7 +1146,8 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Orientation="Vertical"
-                    FlowDirection="RightToLeft">
+                    FlowDirection="RightToLeft"
+                    Visibility="Collapsed">
             <Shadow:Shadow 
                 Margin="0"
                 CornerRadius="0.5"

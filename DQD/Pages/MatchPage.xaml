@@ -24,6 +24,34 @@
 
     <Grid Background="{ThemeResource AppPersonalExtraBackground02}">
 
+        <!--#region Adaptive Triggers-->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="Mobile360">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Mobile480">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="361"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Desktop">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowHeight="400" MinWindowWidth="800"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <!--#endregion-->
+        
         <Pivot Name="MyPivot" 
                Width="{Binding Width, ElementName=grid ,Mode=OneWay}"
                ItemsSource="{Binding Source={StaticResource HeaderResources}}"
@@ -102,7 +130,7 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="2*"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="0.7*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="{Binding Time}" 
                                                Grid.Column="0"
@@ -119,16 +147,17 @@
                                                 <Image Source="{Binding AwayImage}" 
                                                        Grid.Column="2"
                                                        Grid.RowSpan="2"
-                                                       Width="40"
-                                                       Height="40"
+                                                       Width="30"
+                                                       Height="30"
                                                        Margin="2"/>
                                                 <TextBlock Text="{Binding AwayTeam}" 
-                                               Grid.Column="3"
-                                               Grid.RowSpan="2"
-                                               Margin="3"
-                                               FontSize="14"
-                                               VerticalAlignment="Center"
-                                               Foreground="{ThemeResource DQDSummTextColor}"/>
+                                                           Grid.Column="3"
+                                                           Grid.RowSpan="2"
+                                                           Margin="3"
+                                                           FontSize="12"
+                                                           HorizontalAlignment="Left"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{ThemeResource DQDSummTextColor}"/>
                                                 <TextBlock Text="{Binding Score}" 
                                                Grid.Column="4"
                                                Grid.RowSpan="2"
@@ -137,24 +166,25 @@
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
                                                 <TextBlock Text="{Binding HomeTeam}" 
-                                               Grid.Column="5"
-                                               Grid.RowSpan="2"
-                                               Margin="3"
-                                               FontSize="14"
-                                               FlowDirection="RightToLeft"
-                                               VerticalAlignment="Center"
-                                               Foreground="{ThemeResource DQDSummTextColor}"/>
+                                                           Grid.Column="5"
+                                                           Grid.RowSpan="2"
+                                                           Margin="3"
+                                                           FontSize="12"
+                                                           FlowDirection="RightToLeft"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Right"
+                                                           Foreground="{ThemeResource DQDSummTextColor}"/>
                                                 <Image Source="{Binding HomeImage}" 
                                                        Grid.Column="6"
                                                        Grid.RowSpan="2"
-                                                       Width="40"
-                                                       Height="40"
+                                                       Width="30"
+                                                       Height="30"
                                                        Margin="2"/>
                                                 <TextBlock Text="&#xE70A;" 
                                                            Grid.Column="7"
                                                            Grid.RowSpan="2"
                                                            Margin="3"
-                                                           FontSize="20"
+                                                           FontSize="16"
                                                            FontWeight="Bold"
                                                            VerticalAlignment="Center"
                                                            HorizontalAlignment="Center"
@@ -205,7 +235,8 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Orientation="Vertical"
-                    FlowDirection="RightToLeft">
+                    FlowDirection="RightToLeft"
+                    Visibility="Collapsed">
             <Shadow:Shadow 
                 Margin="0"
                 CornerRadius="0.5"
