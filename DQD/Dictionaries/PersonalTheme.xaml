@@ -66,6 +66,8 @@
             <SolidColorBrush x:Key="DQDSummTextColor" Color="#909090"/>
             <!--DQDPopupBackColor-->
             <SolidColorBrush x:Key="DQDPopupBackColor" Color="#BB000000"/>
+            <!--DQDPopupBackColor-->
+            <SolidColorBrush x:Key="DQDPopupBackColor2" Color="#55000000"/>
             <!--DQDReTextColor-->
             <SolidColorBrush x:Key="DQDReTextColor" Color="#EFEFEF"/>
             <!--DQDListTitleColor-->
@@ -149,6 +151,8 @@
             <SolidColorBrush x:Key="DQDSummTextColor" Color="#909090"/>
             <!--DQDPopupBackColor-->
             <SolidColorBrush x:Key="DQDPopupBackColor" Color="#BBFFFFFF"/>
+            <!--DQDPopupBackColor-->
+            <SolidColorBrush x:Key="DQDPopupBackColor2" Color="#55FFFFFF"/>
             <!--DQDReTextColor-->
             <SolidColorBrush x:Key="DQDReTextColor" Color="#303030"/>
             <!--DQDListTitleColor-->

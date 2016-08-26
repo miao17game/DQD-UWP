@@ -3127,7 +3127,7 @@
                             <Border.Resources>
                                 <ControlTemplate x:Key="HorizontalNextTemplate" TargetType="Button">
                                     <Border x:Name="Root"
-                                    Background="{ThemeResource FlipViewButtonBackgroundThemeBrush}"
+                                    Background="{ThemeResource DQDPopupBackColor2}"
                                     BorderThickness="{ThemeResource FlipViewButtonBorderThemeThickness}"
                                     BorderBrush="{ThemeResource FlipViewButtonBorderThemeBrush}">
                                         <VisualStateManager.VisualStateGroups>
@@ -3137,7 +3137,7 @@
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
                                                                                Storyboard.TargetProperty="Background">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewButtonPointerOverBackgroundThemeBrush}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource DQDPopupBackColor}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
                                                                                Storyboard.TargetProperty="BorderBrush">
@@ -3145,7 +3145,7 @@
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow"
                                                                                Storyboard.TargetProperty="Fill">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewButtonPointerOverForegroundThemeBrush}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppPersonalTextColorPure02}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                     </Storyboard>
                                                 </VisualState>
@@ -3153,7 +3153,7 @@
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
                                                                                Storyboard.TargetProperty="Background">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewButtonPressedBackgroundThemeBrush}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource DQDPopupBackColor}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
                                                                                Storyboard.TargetProperty="BorderBrush">
@@ -3161,7 +3161,7 @@
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow"
                                                                                Storyboard.TargetProperty="Fill">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewButtonPressedForegroundThemeBrush}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppPersonalTextColorPure02}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                     </Storyboard>
                                                 </VisualState>
@@ -3169,7 +3169,7 @@
                                         </VisualStateManager.VisualStateGroups>
                                         <Path x:Name="Arrow"
                                       Data="M4.12,0 L9.67,5.47 L4.12,10.94 L0,10.88 L5.56,5.47 L0,0.06 z"
-                                      Fill="{ThemeResource FlipViewButtonForegroundThemeBrush}"
+                                      Fill="{ThemeResource AppPersonalTextColorPure02}"
                                       Width="9.67"
                                       Height="10.94"
                                       Stretch="Fill"
@@ -3180,7 +3180,7 @@
                                 </ControlTemplate>
                                 <ControlTemplate x:Key="HorizontalPreviousTemplate" TargetType="Button">
                                     <Border x:Name="Root"
-                                    Background="{ThemeResource FlipViewButtonBackgroundThemeBrush}"
+                                    Background="{ThemeResource DQDPopupBackColor2}"
                                     BorderThickness="{ThemeResource FlipViewButtonBorderThemeThickness}"
                                     BorderBrush="{ThemeResource FlipViewButtonBorderThemeBrush}">
                                         <VisualStateManager.VisualStateGroups>
@@ -3190,7 +3190,7 @@
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
                                                                                Storyboard.TargetProperty="Background">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewButtonPointerOverBackgroundThemeBrush}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource DQDPopupBackColor}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
                                                                                Storyboard.TargetProperty="BorderBrush">
@@ -3198,7 +3198,7 @@
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow"
                                                                                Storyboard.TargetProperty="Fill">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewButtonPointerOverForegroundThemeBrush}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppPersonalTextColorPure02}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                     </Storyboard>
                                                 </VisualState>
@@ -3206,7 +3206,7 @@
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
                                                                                Storyboard.TargetProperty="Background">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewButtonPressedBackgroundThemeBrush}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource DQDPopupBackColor}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
                                                                                Storyboard.TargetProperty="BorderBrush">
@@ -3214,7 +3214,7 @@
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow"
                                                                                Storyboard.TargetProperty="Fill">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewButtonPressedForegroundThemeBrush}" />
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppPersonalTextColorPure02}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                     </Storyboard>
                                                 </VisualState>
@@ -3222,7 +3222,7 @@
                                         </VisualStateManager.VisualStateGroups>
                                         <Path x:Name="Arrow"
                                       Data="M5.55,0 L9.67,0.06 L4.12,5.47 L9.67,10.88 L5.55,10.94 L0,5.48 z"
-                                      Fill="{ThemeResource FlipViewButtonForegroundThemeBrush}"
+                                      Fill="{ThemeResource AppPersonalTextColorPure02}"
                                       Width="9.67"
                                       Height="10.94"
                                       Stretch="Fill"

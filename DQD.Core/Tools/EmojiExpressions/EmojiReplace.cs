@@ -60,7 +60,7 @@ namespace DQD.Core.Tools.EmojiExpressions {
                         stringExpress = new Regex(@"\[受伤\]").Replace(stringExpress, "\ud83e\udd12");
                         break;
                     case "[XJBT]":
-                        stringExpress = new Regex(@"\[XJBT\]").Replace(stringExpress, "\ud83c\udfd0XJB\ud83c\udfc3");
+                        stringExpress = new Regex(@"\[XJBT\]").Replace(stringExpress, "\ud83c\udfd0XJB\ud83c\udfc3 ");
                         break;
                     case "[祈福]":
                         stringExpress = new Regex(@"\[祈福\]").Replace(stringExpress, "\ud83d\ude4f");
@@ -83,6 +83,9 @@ namespace DQD.Core.Tools.EmojiExpressions {
                     case "[红牌]":
                         stringExpress = new Regex(@"\[红牌\]").Replace(stringExpress, "\ud83d\udca3");
                         break;
+                    case "[黄牌]":
+                        stringExpress = new Regex(@"\[黄牌\]").Replace(stringExpress, "\ud83d\udca2");
+                        break;
                     case "[愤怒]":
                         stringExpress = new Regex(@"\[愤怒\]").Replace(stringExpress, "\ud83d\ude24 \ud83d\udde1");
                         break;
@@ -91,6 +94,12 @@ namespace DQD.Core.Tools.EmojiExpressions {
                         break;
                     case "[金牌]":
                         stringExpress = new Regex(@"\[金牌\]").Replace(stringExpress, "\ud83e\udd47");
+                        break;
+                    case "[酷]":
+                        stringExpress = new Regex(@"\[酷\]").Replace(stringExpress, "\ud83d\ude0e");
+                        break;
+                    case "[虐狗]":
+                        stringExpress = new Regex(@"\[虐狗\]").Replace(stringExpress, "\ud83d\udc15");
                         break;
                     default: break;
                 }

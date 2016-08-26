@@ -21,6 +21,7 @@ using DQD.Core.Models;
 using Edi.UWP.Helpers;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.UI.Xaml.Media.Imaging;
+using DQD.Core.Controls;
 #endregion
 namespace DQD.Net {
     /// <summary>
@@ -42,7 +43,7 @@ namespace DQD.Net {
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                 ApplicationView.GetForCurrentView().VisibleBoundsChanged += (s, e) => { ChangeViewWhenNavigationBarChanged(); };
                 ChangeViewWhenNavigationBarChanged(); }
-            VersionText.Text = "版本号：" + Utils.GetAppVersion();
+            VersionText.Text = "版本号：" + Edi.UWP.Helpers.Utils.GetAppVersion();
             InitSwitchState();
             InitFlipTimer();
         }
@@ -66,12 +67,17 @@ namespace DQD.Net {
 
         private void OnBackRequested(object sender, BackRequestedEventArgs e) {
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") ) {
-                if(ContentPage.Current!=null)
-                    ContentPage.Current.storyToSideGridOut.Begin();
-                if (DataContentPage.Current != null)
-                    DataContentPage.Current.storyToSideGridOut.Begin();
-            }
-            else contentFrame.Content = null;
+                if (contentFrame.Content == null) {
+                    if (!isNeedClose) { InitCloseTask(); }else { Application.Current.Exit(); }
+                } else new BackPressedEvent(() => {
+                    if (ContentPage.Current != null) 
+                        ContentPage.Current.storyToSideGridOut.Begin(); 
+                    if (DataContentPage.Current != null)
+                        DataContentPage.Current.storyToSideGridOut.Begin();
+                    if (WebLivePage.Current != null)
+                        WebLivePage.Current.storyToSideGridOut.Begin(); }
+                ).Invoke();
+            } else contentFrame.Content = null;
             e.Handled = true;
         }
 
@@ -146,87 +152,15 @@ namespace DQD.Net {
 
         #endregion
 
-        #region Static Inside Class
-
-        /// <summary>
-        /// Page inside resources of navigating and choosing frames.
-        /// </summary>
-        static class InsideResources {
-
-            public static Type GetTPageype(string str) { return PagesMaps.ContainsKey(str) ? PagesMaps[str] : null; }
-            static public Dictionary<string, Type> PagesMaps = new Dictionary<string, Type> {
-            {"HomePItem",typeof(HomePage)},
-            {"MatchPItem",typeof(MatchPage)},
-            {"VideoPItem",typeof(VideoPage)},
-            {"DataPItem",typeof(DataPage)},
-        };
-
-            public static Frame GetTFrameype(string str) { return FramesMaps.ContainsKey(str) ? FramesMaps[str] : null; }
-            static private Dictionary<string, Frame> FramesMaps = new Dictionary<string, Frame> {
-            {"HomePItem",Current.HomePFrame},
-            {"MatchPItem",Current.MatchPFrame},
-            {"VideoPItem",Current.VideoPFrame},
-            {"DataPItem",Current.DataPFrame},
-        };
-
-            public static Dictionary<string, ScrollViewer> GetPopupPanelColl() { return PopupInnerMaps; }
-            public static ScrollViewer GetPanelInstance(string str) { return PopupInnerMaps.ContainsKey(str) ? PopupInnerMaps[str] : null; }
-            public static void CollapsedAllPanel() { foreach (var item in PopupInnerMaps) { item.Value.Visibility = Visibility.Collapsed; } }
-            static private Dictionary<string, ScrollViewer> PopupInnerMaps = new Dictionary<string, ScrollViewer> {
-            {"SettBtn",Current.SettMenu},
-            {"AboutBtn",Current.AboutMenu},
-            {"AboutDongQDBtn",Current.AboutDongQDMenu},
-        };
-
-            public static ToggleSwitch GetSwitchInstance(string str) { return SwitchSettingsMaps.ContainsKey(str) ? SwitchSettingsMaps[str] : null; }
-            static private Dictionary<string, ToggleSwitch> SwitchSettingsMaps = new Dictionary<string, ToggleSwitch> {
-            {"ColorSwitch",Current.ColorSwitch},
-            {"ButtonSwitch",Current.ButtonSwitch},
-            {"ShadowSwitch",Current.ShadowSwitch},
-            {"AnimationSwitch",Current.AnimationSwitch},
-        };
-
-            public static SwitchEventHandler GetSwitchHandler(string str) { return SwitchHandlerMaps.ContainsKey(str) ? SwitchHandlerMaps[str] : null; }
-            static private Dictionary<string, SwitchEventHandler> SwitchHandlerMaps = new Dictionary<string, SwitchEventHandler> {
-            {"ColorSwitch", new SwitchEventHandler(instance=> { Current.OnStatusBarSwitchToggled(GetSwitchInstance(instance)); }) },
-            {"ButtonSwitch", new SwitchEventHandler(instance=> { Current .OnFloatButtonSwitchToggled(GetSwitchInstance(instance)); }) },
-            {"ShadowSwitch", new SwitchEventHandler(instance=> { Current .OnButtonShadowSwitchToggled(GetSwitchInstance(instance)); }) },
-            {"AnimationSwitch", new SwitchEventHandler(instance=> { Current .OnButtonAutoAnimaSwitchToggled(GetSwitchInstance(instance)); }) },
-        };
-
-            public static List<Uri> GetBackground() { return BackgroundPicMaps; }
-            static private List<Uri> BackgroundPicMaps = new List < Uri > {
-            new Uri("ms-appx:///Assets/bg2.jpg"),
-            new Uri("ms-appx:///Assets/bg3.jpg"),
-            new Uri("ms-appx:///Assets/bg4.jpg"),
-            new Uri("ms-appx:///Assets/bg6.jpg"),
-            new Uri("ms-appx:///Assets/bg7.jpg"),
-            new Uri("ms-appx:///Assets/bg8.jpg"),
-        };
-
-        }
-        #endregion
-
-        #region Properties and States
-
-        public static MainPage Current { get; private set; }
-        public Frame contentFrame { get; private set; }
-        public Grid SideGrid { get; private set; }
-        public ProgressRing BaseLoadingProgress { get; private set; }
-        public ProgressRing LoadingProgress { get; private set; }
-        public bool IsFloatButtonEnable { get; private set; }
-        public bool IsButtonShadowVisible { get; private set; }
-        public bool IsButtonAnimationEnable { get; private set; }
-        private int nowBackgroundPic = 0;
-        public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
-        public delegate void SwitchEventHandler(string instance);
-        public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri ,int num, string content);
-        private NavigateEventHandler SelectionChanged = (sender, type, frame) => { frame.Navigate(type); };
-        public ClickEventHandler ItemClick = (sender, type, frame, uri ,num ,content) => { frame.Navigate(type, new ParameterNavigate { Number=num,Uri=uri,Summary= content }); };
-
-        #endregion
-
         #region Methods
+
+        private void InitCloseTask() {
+            isNeedClose = true;
+            new ToastSmooth("再按一次返回键退出").Show();
+            Task.Run(async () => {
+                await Task.Delay(2000);
+                isNeedClose = false; });
+        }
 
         private void InitFlipTimer() {
             DispatcherTimer timer = new DispatcherTimer();
@@ -238,7 +172,8 @@ namespace DQD.Net {
                 } else {
                     BackgroundImage.Source = new BitmapImage(InsideResources.GetBackground()[0]);
                     nowBackgroundPic = 0;
-                } };
+                }
+            };
             timer.Start();
         }
 
@@ -280,7 +215,7 @@ namespace DQD.Net {
 
             string subject = "DQD-UWP 反馈";
             string body = $"问题描述：{msg}  " +
-                          $"\n\n\n\n\n\n（程序版本：{Utils.GetAppVersion()} ";
+                          $"\n\n\n\n\n\n（程序版本：{Edi.UWP.Helpers.Utils.GetAppVersion()} ";
 
             if (includeDeviceInfo) {
                 body += $", \n设备名：{deviceInfo.FriendlyName}, " +
@@ -311,8 +246,8 @@ namespace DQD.Net {
             } else {
                 Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
                 Margin =
-                    Height + 24 - wholeHeight > -0.1 ? 
-                    new Thickness(0, 24, 0, 0) : 
+                    Height + 24 - wholeHeight > -0.1 ?
+                    new Thickness(0, 24, 0, 0) :
                     new Thickness(0, -24, 0, 0);
             }
         }
@@ -320,16 +255,16 @@ namespace DQD.Net {
         #region Swith Methods
 
         private void InitSwitchState() {
-            IsFloatButtonEnable = 
-                AnimationSwitch.IsEnabled = 
-                ShadowSwitch.IsEnabled = 
-                ButtonSwitch.IsOn = 
+            IsFloatButtonEnable =
+                AnimationSwitch.IsEnabled =
+                ShadowSwitch.IsEnabled =
+                ButtonSwitch.IsOn =
                 (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonEnabled) ?? false;
-            IsButtonAnimationEnable = 
-                AnimationSwitch.IsOn = 
+            IsButtonAnimationEnable =
+                AnimationSwitch.IsOn =
                 (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonAnimation) ?? false;
-            IsButtonShadowVisible = 
-                ShadowSwitch.IsOn = 
+            IsButtonShadowVisible =
+                ShadowSwitch.IsOn =
                 (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonShadow) ?? false;
             ColorSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? true;
             var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
@@ -385,9 +320,9 @@ namespace DQD.Net {
         private void OnButtonShadowSwitchToggled(ToggleSwitch sender) {
             IsButtonShadowVisible = sender.IsOn;
             SettingsHelper.SaveSettingsValue(SettingsConstants.IsFloatButtonShadow, IsButtonShadowVisible);
-            if (DataContentPage.Current != null) 
+            if (DataContentPage.Current != null)
                 DivideVisibility(IsButtonShadowVisible, DataContentPage.Current.ButtonShadow, DataContentPage.Current.ButtonNoShadow);
-            if (ContentPage.Current != null) 
+            if (ContentPage.Current != null)
                 DivideVisibility(IsButtonShadowVisible, ContentPage.Current.ButtonShadow, ContentPage.Current.ButtonNoShadow);
             if (HomePage.Current != null)
                 DivideVisibility(IsButtonShadowVisible, HomePage.Current.ButtonShadow, HomePage.Current.ButtonNoShadow);
@@ -408,10 +343,10 @@ namespace DQD.Net {
                 ContentPage.Current.HandleAnimation(IsButtonAnimationEnable);
         }
 
-        private void DivideVisibility(bool isVisible, StackPanel sp1,StackPanel sp2) { sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); sp2.Visibility = VisiEnumHelper.GetVisibility(!isVisible); }
+        private void DivideVisibility(bool isVisible, StackPanel sp1, StackPanel sp2) { sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); sp2.Visibility = VisiEnumHelper.GetVisibility(!isVisible); }
 
         private void SyncVisibility(bool isVisible, StackPanel sp1, StackPanel sp2) { sp2.Visibility = sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); }
-      
+
         #endregion
 
         #region Handler of ListView Scroll 
@@ -446,6 +381,94 @@ namespace DQD.Net {
         }
 
         #endregion
+
+        #endregion
+
+        #region Static Inside Class
+
+        /// <summary>
+        /// Page inside resources of navigating and choosing frames.
+        /// </summary>
+        static class InsideResources {
+
+            public static Type GetTPageype(string str) { return PagesMaps.ContainsKey(str) ? PagesMaps[str] : null; }
+            static public Dictionary<string, Type> PagesMaps = new Dictionary<string, Type> {
+            {"HomePItem",typeof(HomePage)},
+            {"MatchPItem",typeof(MatchPage)},
+            {"VideoPItem",typeof(VideoPage)},
+            {"DataPItem",typeof(DataPage)},
+        };
+
+            public static Frame GetTFrameype(string str) { return FramesMaps.ContainsKey(str) ? FramesMaps[str] : null; }
+            static private Dictionary<string, Frame> FramesMaps = new Dictionary<string, Frame> {
+            {"HomePItem",Current.HomePFrame},
+            {"MatchPItem",Current.MatchPFrame},
+            {"VideoPItem",Current.VideoPFrame},
+            {"DataPItem",Current.DataPFrame},
+        };
+
+            public static Dictionary<string, ScrollViewer> GetPopupPanelColl() { return PopupInnerMaps; }
+            public static ScrollViewer GetPanelInstance(string str) { return PopupInnerMaps.ContainsKey(str) ? PopupInnerMaps[str] : null; }
+            public static void CollapsedAllPanel() { foreach (var item in PopupInnerMaps) { item.Value.Visibility = Visibility.Collapsed; } }
+            static private Dictionary<string, ScrollViewer> PopupInnerMaps = new Dictionary<string, ScrollViewer> {
+            {"SettBtn",Current.SettMenu},
+            {"AboutBtn",Current.AboutMenu},
+            {"AboutDongQDBtn",Current.AboutDongQDMenu},
+        };
+
+            public static ToggleSwitch GetSwitchInstance(string str) { return SwitchSettingsMaps.ContainsKey(str) ? SwitchSettingsMaps[str] : null; }
+            static private Dictionary<string, ToggleSwitch> SwitchSettingsMaps = new Dictionary<string, ToggleSwitch> {
+            {"ColorSwitch",Current.ColorSwitch},
+            {"ButtonSwitch",Current.ButtonSwitch},
+            {"ShadowSwitch",Current.ShadowSwitch},
+            {"AnimationSwitch",Current.AnimationSwitch},
+        };
+
+            public static SwitchEventHandler GetSwitchHandler(string str) { return SwitchHandlerMaps.ContainsKey(str) ? SwitchHandlerMaps[str] : null; }
+            static private Dictionary<string, SwitchEventHandler> SwitchHandlerMaps = new Dictionary<string, SwitchEventHandler> {
+            {"ColorSwitch", new SwitchEventHandler(instance=> { Current.OnStatusBarSwitchToggled(GetSwitchInstance(instance)); }) },
+            {"ButtonSwitch", new SwitchEventHandler(instance=> { Current .OnFloatButtonSwitchToggled(GetSwitchInstance(instance)); }) },
+            {"ShadowSwitch", new SwitchEventHandler(instance=> { Current .OnButtonShadowSwitchToggled(GetSwitchInstance(instance)); }) },
+            {"AnimationSwitch", new SwitchEventHandler(instance=> { Current .OnButtonAutoAnimaSwitchToggled(GetSwitchInstance(instance)); }) },
+        };
+
+            public static List<Uri> GetBackground() { return BackgroundPicMaps; }
+            static private List<Uri> BackgroundPicMaps = new List < Uri > {
+                new Uri("ms-appx:///Assets/bg1.jpg"),
+                new Uri("ms-appx:///Assets/bg2.jpg"),
+                new Uri("ms-appx:///Assets/bg3.jpg"),
+                new Uri("ms-appx:///Assets/bg4.jpg"),
+                new Uri("ms-appx:///Assets/bg5.jpg"),
+                new Uri("ms-appx:///Assets/bg6.jpg"),
+                new Uri("ms-appx:///Assets/bg7.jpg"),
+                new Uri("ms-appx:///Assets/bg8.jpg"),
+                new Uri("ms-appx:///Assets/bg9.jpg"),
+                new Uri("ms-appx:///Assets/bg10.jpg"),
+                new Uri("ms-appx:///Assets/bg11.jpg"),
+                new Uri("ms-appx:///Assets/bg12.jpg"),
+        };
+
+        }
+        #endregion
+
+        #region Properties and States
+
+        public static MainPage Current { get; private set; }
+        public Frame contentFrame { get; private set; }
+        public Grid SideGrid { get; private set; }
+        public ProgressRing BaseLoadingProgress { get; private set; }
+        public ProgressRing LoadingProgress { get; private set; }
+        public bool IsFloatButtonEnable { get; private set; }
+        public bool IsButtonShadowVisible { get; private set; }
+        public bool IsButtonAnimationEnable { get; private set; }
+        private int nowBackgroundPic = 0;
+        private bool isNeedClose = false;
+        public delegate void BackPressedEvent();
+        public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
+        public delegate void SwitchEventHandler(string instance);
+        public delegate void ClickEventHandler(object sender, Type type, Frame frame, Uri uri ,int num, string content);
+        private NavigateEventHandler SelectionChanged = (sender, type, frame) => { frame.Navigate(type); };
+        public ClickEventHandler ItemClick = (sender, type, frame, uri ,num ,content) => { frame.Navigate(type, new ParameterNavigate { Number=num,Uri=uri,Summary= content }); };
 
         #endregion
 
