@@ -153,7 +153,7 @@
                        Margin="0,59,0,0"/>
                 <MPV:PersonalPivot Name="RootPivot" 
                                Margin="0,60,0,0" 
-                               Width="{Binding Width, ElementName=BaseGrid, Mode=TwoWay}"
+                               Width="{Binding Width, ElementName=BaseGrid, Mode=OneWay}"
                                Background="{ThemeResource AppScrollViewerBackground}"
                                SelectionChanged="RootPivot_SelectionChanged"
                                IndicatorLineStroke="{ThemeResource DQDBackground}" 

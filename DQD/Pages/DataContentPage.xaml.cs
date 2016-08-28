@@ -3,6 +3,7 @@ using DQD.Core.Helpers;
 using DQD.Core.Models;
 using DQD.Core.Models.TeamModels;
 using DQD.Core.Tools;
+using DQD.Net.Base;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,14 +26,12 @@ namespace DQD.Net.Pages {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class DataContentPage : Page {
+    public sealed partial class DataContentPage : BaseContentPage {
 
         #region Constructor
 
         public DataContentPage() {
             Current = this;
-            transToSideGrid = this.RenderTransform as TranslateTransform;
-            if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
             this.InitializeComponent();
             ButtonShadow = ButtonStack;
             ButtonNoShadow = ButtonStackNoShadow;
@@ -179,52 +178,6 @@ namespace DQD.Net.Pages {
                 { "SchedulePItem", new NavigateEventHandler(path=> { return DataProcess.GetScheduleTeamsContent(path).ToArray(); })},
             };
 
-        }
-        #endregion
-
-        #region Animations
-        #region Animations Properties
-        private Storyboard storyToSideGrid = new Storyboard();
-        public Storyboard storyToSideGridOut = new Storyboard();
-        TranslateTransform transToSideGrid;
-        DoubleAnimation doubleAnimation;
-        #endregion
-
-        public void InitStoryBoard() {
-            doubleAnimation = new DoubleAnimation() {
-                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
-                From = this.ActualWidth,
-                To = 0,
-            };
-            doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
-            doubleAnimation.Completed += DoublAnimation_Completed;
-            storyToSideGrid = new Storyboard();
-            Storyboard.SetTarget(doubleAnimation, transToSideGrid);
-            Storyboard.SetTargetProperty(doubleAnimation, "X");
-            storyToSideGrid.Children.Add(doubleAnimation);
-            doubleAnimation = new DoubleAnimation() {
-                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
-                From = 0,
-                To = -this.ActualWidth,
-            };
-            doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
-            doubleAnimation.Completed += DoublAnimationSlideOut_Completed;
-            storyToSideGridOut = new Storyboard();
-            Storyboard.SetTarget(doubleAnimation, transToSideGrid);
-            Storyboard.SetTargetProperty(doubleAnimation, "X");
-            storyToSideGridOut.Children.Add(doubleAnimation);
-            storyToSideGrid.Begin();
-        }
-
-        private void DoublAnimationSlideOut_Completed(object sender, object e) {
-            storyToSideGridOut.Stop();
-            doubleAnimation.Completed -= DoublAnimation_Completed;
-            MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
-        }
-
-        private void DoublAnimation_Completed(object sender, object e) {
-            storyToSideGrid.Stop();
-            doubleAnimation.Completed -= DoublAnimation_Completed;
         }
         #endregion
 

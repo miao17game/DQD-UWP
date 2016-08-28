@@ -91,7 +91,7 @@ namespace DQD.Net.Pages {
                 MainPage.Current.ItemClick?.Invoke(
                     this,
                     typeof(ContentPage),
-                    MainPage.Current.contentFrame,
+                    MainPage.Current.ContFrame,
                     itemUri,
                     (int)itemNum,
                     null);
@@ -100,7 +100,7 @@ namespace DQD.Net.Pages {
                 MainPage.Current.ItemClick?.Invoke(
                     this,
                     typeof(WebLivePage),
-                    MainPage.Current.contentFrame,
+                    MainPage.Current.ContFrame,
                     itemUri,
                     0,
                     null);

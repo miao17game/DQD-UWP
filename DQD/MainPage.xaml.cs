@@ -38,8 +38,10 @@ namespace DQD.Net {
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             BaseLoadingProgress = BaseLoadingAnimation;
             LoadingProgress = LoadingAnimation;
-            contentFrame = ContentFrame;
+            ContFrame = ContentFrame;
             SideGrid = sideGrid;
+            MainGrid = grid;
+            BaseBorderTarget = BaseBorder;
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                 ApplicationView.GetForCurrentView().VisibleBoundsChanged += (s, e) => { ChangeViewWhenNavigationBarChanged(); };
                 ChangeViewWhenNavigationBarChanged(); }
@@ -66,19 +68,27 @@ namespace DQD.Net {
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs e) {
-            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") ) {
-                if (contentFrame.Content == null) {
-                    if (!isNeedClose) { InitCloseTask(); }else { Application.Current.Exit(); }
+            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
+                if (ContFrame.Content == null) {
+                    if (!isNeedClose) { InitCloseTask(); } else { Application.Current.Exit(); }
+                    e.Handled = true;
+                    return;
                 } else new BackPressedEvent(() => {
-                    if (ContentPage.Current != null) 
-                        ContentPage.Current.storyToSideGridOut.Begin(); 
+                    if (ContentPage.Current != null)
+                        ContentPage.Current.storyToSideGridOut.Begin();
                     if (DataContentPage.Current != null)
                         DataContentPage.Current.storyToSideGridOut.Begin();
                     if (WebLivePage.Current != null)
-                        WebLivePage.Current.storyToSideGridOut.Begin(); }
-                ).Invoke();
-            } else contentFrame.Content = null;
-            e.Handled = true;
+                        WebLivePage.Current.ClearThisPageByAnima(); }).Invoke();
+            else {
+                ContentFrame.Content = null;
+                if (ContentPage.Current != null)
+                    ContentPage.Current.ClearThisPage();
+                if (DataContentPage.Current != null)
+                    DataContentPage.Current.ClearThisPage();
+                if (WebLivePage.Current != null)
+                    WebLivePage.Current.ClearThisPage();
+            } e.Handled = true;
         }
 
         private void grid_SizeChanged(object sender, SizeChangedEventArgs e) {
@@ -91,7 +101,7 @@ namespace DQD.Net {
         }
 
         private void BaseGrid_SizeChanged(object sender,SizeChangedEventArgs e) {
-            RootPivot.HeaderWidth=(sender as Grid).ActualWidth/4;
+            RootPivot.HeaderWidth=((sender as Grid).ActualWidth-1)/4;
         }
 
         private void ThemeModeBtn_Click(object sender, RoutedEventArgs e) {
@@ -236,7 +246,24 @@ namespace DQD.Net {
         private void ChangeViewWhenNavigationBarChanged() {
             Width = ApplicationView.GetForCurrentView().VisibleBounds.Width;
             var wholeHeight = Window.Current.Bounds.Height;
+            var wholeWidth = Window.Current.Bounds.Width;
             var isColorfulOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? false;
+            if (Window.Current.Bounds.Height < Window.Current.Bounds.Width) {
+                Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
+                if (isColorfulOrNot) {
+                    Width = ApplicationView.GetForCurrentView().VisibleBounds.Width + 48;
+                    Margin =
+                        Width - wholeWidth > -0.1 ?
+                        new Thickness(0, 0, 0, 0) :
+                        new Thickness(-24, 0, 0, 0);
+                } else {
+                    Width = ApplicationView.GetForCurrentView().VisibleBounds.Width;
+                    Margin =
+                        Width + 48 - wholeWidth > -0.1 ?
+                        new Thickness(40, 0, 0, 0) :
+                        new Thickness(-24, 0, 0, 0);
+                } return;
+            }
             if (isColorfulOrNot) {
                 Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
                 Margin =
@@ -282,6 +309,11 @@ namespace DQD.Net {
                 Window.Current.SetTitleBar(TitleBarRec);
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
                     StatusBarInit.InitInnerMobileStatusBar(true);
+                    if(Window.Current.Bounds.Height < Window.Current.Bounds.Width) {
+                        BaseGrid.Margin = new Thickness(0, 0, 0, 0);
+                        sideGrid.Margin = new Thickness(0, 0, 0, 0);
+                        new Thickness(0, -0, 0, 0);
+                        return; }
                     Height = ApplicationView.GetForCurrentView().VisibleBounds.Height + 24;
                     BaseGrid.Margin = new Thickness(0, 16, 0, 0);
                     sideGrid.Margin = new Thickness(0, 0, 0, 0);
@@ -292,6 +324,11 @@ namespace DQD.Net {
                 StatusBarInit.InitMobileStatusBarToPrepare(isLightOrNot);
                 StatusBarInit.InitInnerDesktopStatusBar(false);
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
+                    if (Window.Current.Bounds.Height < Window.Current.Bounds.Width) {
+                        BaseGrid.Margin = new Thickness(0, 0, 0, 0);
+                        sideGrid.Margin = new Thickness(0, 0, 0, 0);
+                        new Thickness(0, -0, 0, 0);
+                        return; }
                     Height = ApplicationView.GetForCurrentView().VisibleBounds.Height;
                     BaseGrid.Margin = new Thickness(0, 0, 0, 0);
                     sideGrid.Margin = new Thickness(0, -16, 0, 0);
@@ -315,6 +352,9 @@ namespace DQD.Net {
                 SyncVisibility(IsFloatButtonEnable, MatchPage.Current.ButtonShadow, MatchPage.Current.ButtonNoShadow);
             if (VideoPage.Current != null)
                 SyncVisibility(IsFloatButtonEnable, VideoPage.Current.ButtonShadow, VideoPage.Current.ButtonNoShadow);
+            if (WebLivePage.Current != null) {
+                SyncVisibility(IsFloatButtonEnable, WebLivePage.Current.ButtonShadow, WebLivePage.Current.ButtonNoShadow);
+                SyncVisibility(IsFloatButtonEnable, WebLivePage.Current.ScreenShadow, WebLivePage.Current.ScreenNoShadow); }
         }
 
         private void OnButtonShadowSwitchToggled(ToggleSwitch sender) {
@@ -330,6 +370,9 @@ namespace DQD.Net {
                 DivideVisibility(IsButtonShadowVisible, MatchPage.Current.ButtonShadow, MatchPage.Current.ButtonNoShadow);
             if (VideoPage.Current != null)
                 DivideVisibility(IsButtonShadowVisible, VideoPage.Current.ButtonShadow, VideoPage.Current.ButtonNoShadow);
+            if (WebLivePage.Current != null) {
+                DivideVisibility(IsButtonShadowVisible, WebLivePage.Current.ButtonShadow, WebLivePage.Current.ButtonNoShadow);
+                DivideVisibility(IsButtonShadowVisible, WebLivePage.Current.ScreenShadow, WebLivePage.Current.ScreenNoShadow); }
         }
 
         private void OnButtonAutoAnimaSwitchToggled(ToggleSwitch sender) {
@@ -454,8 +497,10 @@ namespace DQD.Net {
         #region Properties and States
 
         public static MainPage Current { get; private set; }
-        public Frame contentFrame { get; private set; }
+        public Frame ContFrame { get; private set; }
         public Grid SideGrid { get; private set; }
+        public Grid MainGrid { get; private set; }
+        public Border BaseBorderTarget { get; set; }
         public ProgressRing BaseLoadingProgress { get; private set; }
         public ProgressRing LoadingProgress { get; private set; }
         public bool IsFloatButtonEnable { get; private set; }

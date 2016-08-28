@@ -1,10 +1,11 @@
-﻿<Page
+﻿<base:BaseContentPage
     x:Class="DQD.Net.Pages.WebLivePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DQD.Net.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:base="using:DQD.Net.Base"
     xmlns:control="using:DQD.Core.Controls"
     xmlns:Converters="using:DQD.Core.Tools"
      xmlns:Shadow="using:DQD.Shadow"
@@ -24,7 +25,8 @@
     </Page.Resources>
     <!--#endregion-->
 
-    <Grid Name="BaseGrid" Background="{ThemeResource AppPersonalExtraBackground}">
+    <Grid Name="BaseGrid" Background="{ThemeResource AppPersonalExtraBackground}"
+          SizeChanged="BaseGrid_SizeChanged">
 
         <!--#region Adaptive Triggers-->
         <VisualStateManager.VisualStateGroups>
@@ -46,11 +48,6 @@
                                 <Thickness>0,16,0,0</Thickness>
                             </Setter.Value>
                         </Setter>
-                        <Setter Target="ContentBord.(FrameworkElement.Margin)">
-                            <Setter.Value>
-                                <Thickness>0,76,0,0</Thickness>
-                            </Setter.Value>
-                        </Setter>
                         <Setter Target="TitleBorder.(FrameworkElement.Height)" Value="76"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -69,11 +66,6 @@
                         <Setter Target="TitleGrid.(FrameworkElement.Margin)">
                             <Setter.Value>
                                 <Thickness>0,16,0,0</Thickness>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Target="ContentBord.(FrameworkElement.Margin)">
-                            <Setter.Value>
-                                <Thickness>0,76,0,0</Thickness>
                             </Setter.Value>
                         </Setter>
                         <Setter Target="TitleBorder.(FrameworkElement.Height)" Value="76"/>
@@ -126,12 +118,10 @@
         <Border Name="ContentBord" 
                 Background="{ThemeResource AppPersonalExtraBackground}"
                 Margin="0,60,0,0">
-            <ScrollViewer Name="ContentScroll">
-                <WebView Name="webView"
+            <WebView Name="webView"
                          ContentLoading="webView_ContentLoading"
                          DOMContentLoaded="webView_DOMContentLoaded"
                          DefaultBackgroundColor="{ThemeResource AppPersonalExtraBackground}"/>
-            </ScrollViewer>
         </Border>
         <!--#endregion-->
 
@@ -196,5 +186,66 @@
         </StackPanel>
         <!--#endregion-->
 
+        <!--#region Screen Button-->
+        <StackPanel Name="ScreenStack" 
+                    Width="150" 
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+                    FlowDirection="LeftToRight"
+                    Visibility="Visible">
+            <Shadow:Shadow 
+                Margin="0"
+                CornerRadius="0.5"
+                Z_Depth="4">
+                <xp:XPButton  
+                    Name="ScreenBtn"
+                    Width="60"
+                    Height="60"
+                    Background="#EE4455"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="#EE4477"
+                    PressedBackground="#EE4433"
+                    Click="ScreenBtn_Click">
+                    <xp:XPButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEBFC;"/>
+                    </xp:XPButton.Icon>
+                </xp:XPButton>
+            </Shadow:Shadow>
+        </StackPanel>
+
+        <StackPanel Name="ScreenStackNoShadow" 
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Orientation="Vertical"
+                    FlowDirection="LeftToRight"
+                    Margin=" 25,0,0,30"
+                    Visibility="Collapsed">
+            <xp:XPButton  
+                    Name="ScreenBtnNoSHdow"
+                    Width="60"
+                    Height="60"
+                    Background="#EE4455"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Foreground="White"
+                    IconForeground="White"
+                    IconPosition="OnlyIcon"
+                    IconSize="24"
+                    PointerOverBackground="#EE4477"
+                    PressedBackground="#EE4433"
+                    Click="ScreenBtn_Click">
+                <xp:XPButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEBFC;"/>
+                </xp:XPButton.Icon>
+            </xp:XPButton>
+        </StackPanel>
+        <!--#endregion-->
+
     </Grid>
-</Page>
+</base:BaseContentPage>

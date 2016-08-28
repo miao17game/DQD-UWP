@@ -5,6 +5,7 @@ using DQD.Core.Models;
 using DQD.Core.Models.CommentModels;
 using DQD.Core.Models.PageContentModels;
 using DQD.Core.Tools;
+using DQD.Net.Base;
 using ImageLib;
 using ImageLib.Cache.Memory;
 using ImageLib.Cache.Storage;
@@ -37,13 +38,12 @@ namespace DQD.Net.Pages {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ContentPage : Page {
+    public sealed partial class ContentPage : BaseContentPage {
+
         #region Constructor
 
         public ContentPage() {
             Current = this;
-            transToSideGrid = this.RenderTransform as TranslateTransform;
-            if (transToSideGrid == null) this.RenderTransform = transToSideGrid = new TranslateTransform();
             loadingAnimation = MainPage.Current.LoadingProgress;
             loadingAnimation.IsActive = true;
             this.Opacity = 0;
@@ -70,7 +70,7 @@ namespace DQD.Net.Pages {
             if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
             loadingAnimation.IsActive = false;
             this.Opacity = 1;
-            InitStoryBoard();
+            base.InitStoryBoard();
             InitFloatButtonView();
         }
 
@@ -242,7 +242,7 @@ namespace DQD.Net.Pages {
                             MainPage.Current.ItemClick?.Invoke(
                                 this, 
                                 typeof(ContentPage), 
-                                MainPage.Current.contentFrame, 
+                                MainPage.Current.ContFrame, 
                                 (item as ContentSelfUris).Uri, 
                                 (item as ContentSelfUris).Number, 
                                 null);
@@ -273,57 +273,7 @@ namespace DQD.Net.Pages {
         }
 
         #endregion
-
-        #region Animations
-
-        #region Page Animation
-
-        #region Animations Properties
-        private Storyboard storyToSideGrid = new Storyboard();
-        public Storyboard storyToSideGridOut = new Storyboard();
-        TranslateTransform transToSideGrid;
-        DoubleAnimation doubleAnimation;
-        #endregion
-
-        public void InitStoryBoard() {
-            doubleAnimation = new DoubleAnimation() {
-                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
-                From = this.ActualWidth,
-                To = 0,
-            } ;
-            doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
-            doubleAnimation.Completed += DoublAnimation_Completed;
-            storyToSideGrid = new Storyboard();
-            Storyboard.SetTarget(doubleAnimation, transToSideGrid);
-            Storyboard.SetTargetProperty(doubleAnimation, "X");
-            storyToSideGrid.Children.Add(doubleAnimation);
-            doubleAnimation = new DoubleAnimation() {
-                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
-                From = 0,
-                To = -this.ActualWidth,
-            };
-            doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
-            doubleAnimation.Completed += DoublAnimationSlideOut_Completed;
-            storyToSideGridOut = new Storyboard();
-            Storyboard.SetTarget(doubleAnimation, transToSideGrid);
-            Storyboard.SetTargetProperty(doubleAnimation, "X");
-            storyToSideGridOut.Children.Add(doubleAnimation);
-            storyToSideGrid.Begin();
-        }
-
-        private void DoublAnimationSlideOut_Completed(object sender, object e) {
-            storyToSideGridOut.Stop();
-            doubleAnimation.Completed -= DoublAnimation_Completed;
-            MainPage.Current.SideGrid.Visibility = Visibility.Collapsed;
-            MainPage.Current.contentFrame.Content = null;
-        }
-
-        private void DoublAnimation_Completed(object sender, object e) {
-            storyToSideGrid.Stop();
-            doubleAnimation.Completed -= DoublAnimation_Completed;
-        }
-        #endregion
-
+        
         #region Button Animations
 
         #region Animations Properties
@@ -421,8 +371,6 @@ namespace DQD.Net.Pages {
             ButtonThisPage.Visibility = Visibility.Collapsed;
             ContentScroll.ViewChanged += ScrollViewer_ViewChanged;
         }
-        #endregion
-
         #endregion
 
         #endregion

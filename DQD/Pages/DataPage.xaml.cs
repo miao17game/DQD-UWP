@@ -39,7 +39,7 @@ namespace DQD.Net.Pages {
         private void ListView_ItemClick(object sender, ItemClickEventArgs e) {
             var item = e.ClickedItem as LeagueModel;
             MainPage.Current.LoadingProgress.IsActive = true;
-            MainPage.Current.ItemClick?.Invoke(this, typeof(DataContentPage), MainPage.Current.contentFrame, item.Href, 0,item.LeagueName);
+            MainPage.Current.ItemClick?.Invoke(this, typeof(DataContentPage), MainPage.Current.ContFrame, item.Href, 0,item.LeagueName);
             MainPage.Current.SideGrid.Visibility = Visibility.Visible;
         }
     }

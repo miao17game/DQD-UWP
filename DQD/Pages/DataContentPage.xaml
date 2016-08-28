@@ -1,4 +1,4 @@
-﻿<Page
+﻿<base:BaseContentPage
     x:Class="DQD.Net.Pages.DataContentPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,6 +6,7 @@
     xmlns:MPV="using:DQD.Core.Controls"
     xmlns:model="using:DQD.Core.Models.TeamModels"
     xmlns:Converters="using:DQD.Core.Tools.Converters"
+    xmlns:base="using:DQD.Net.Base"
     xmlns:Shadow="using:DQD.Shadow"
     xmlns:xp="using:XP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -1203,4 +1204,4 @@
         <!--#endregion-->
 
     </Grid>
-</Page>
+</base:BaseContentPage>
