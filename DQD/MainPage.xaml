@@ -349,7 +349,7 @@
                             RelativePanel.AlignRightWithPanel="True"
                             Margin="0.25,53,0,0"
                             Padding="15,12,5,5"
-                            Visibility="Visible">
+                            Visibility="Collapsed">
                     <StackPanel>
                         <TextBlock Text="设置" FontSize="20"/>
                         <StackPanel Orientation="Vertical" 
@@ -440,7 +440,7 @@
                             RelativePanel.AlignRightWithPanel="True"
                             Margin="0.25,53,0,0"
                             Padding="0,12,0,5"
-                            Visibility="Collapsed">
+                            Visibility="Visible">
                     <StackPanel Margin="15,0,10,0">
                         <Rectangle Height="1"
                                Fill="{ThemeResource DQDBackground}"
@@ -503,6 +503,19 @@
                                      Foreground="{ThemeResource DQDBackground}"
                                      Padding="0"
                                      Margin="50,-73,0,0"/>
+                        <TextBlock FontWeight="Thin"
+                               FontSize="16"
+                               Margin="0,15,5,0"
+                               TextWrapping="WrapWholeWords">
+                        <Run Text="捐助与支持" FontWeight="SemiBold"/>
+                        </TextBlock>
+                        <TextBlock FontWeight="Thin"
+                               FontSize="16"
+                               Margin="0,5,5,5"
+                               TextWrapping="WrapWholeWords">
+                        <Run Text="完全自愿，多少随意(｡･∀･)ﾉﾞ，您的支持我的动力" FontSize="14"/><LineBreak/>
+                        <Run Text="支付宝：18640046260" FontSize="14"/><LineBreak/>
+                        </TextBlock>
                         <TextBlock FontWeight="Thin"
                                FontSize="16"
                                Margin="0,15,5,5"
