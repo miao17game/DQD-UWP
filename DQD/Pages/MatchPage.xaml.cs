@@ -61,7 +61,7 @@ namespace DQD.Net.Pages {
                 stringModel,
                 nowDate.Year.ToString(),
                 nowDate.Month >= 10 ? nowDate.Month.ToString() : "0" + nowDate.Month.ToString(),
-                nowDate.Day > 10 ? nowDate.Day.ToString() : "0" + nowDate.Day.ToString());
+                nowDate.Day >=10 ? nowDate.Day.ToString() : "0" + nowDate.Day.ToString());
         }
 
         public async Task<List<AlphaKeyGroup<MatchListModel>>> FetchHtml(string rel,string scrolltimes,string timezone) {
@@ -109,7 +109,7 @@ namespace DQD.Net.Pages {
 
         #endregion
 
-            #region Events
+        #region Events
 
         private async void MyPivot_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             ItemsGrouped.Source = null;

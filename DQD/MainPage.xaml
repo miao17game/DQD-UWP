@@ -387,7 +387,7 @@
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="页面浮动按钮"
                                    Style="{StaticResource TitleTextStyle}"/>
-                                <TextBlock Text="现实或隐藏浮动操作钮"
+                                <TextBlock Text="显示或隐藏浮动按钮"
                                    Style="{StaticResource SummaryTextStyle}"/>
                             </StackPanel>
                             <ToggleSwitch Name="ButtonSwitch" 

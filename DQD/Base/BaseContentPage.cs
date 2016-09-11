@@ -59,12 +59,12 @@ namespace DQD.Net.Base {
             doubleAnimation.Completed -= DoublAnimation_Completed;
         }
 
-        public void ClearThisPageByAnima() {
+        public virtual void ClearThisPageByAnima() {
             storyToSideGridOut.Completed += (obj, args) => { GC.Collect(); };
             storyToSideGridOut.Begin();
         }
 
-        public void ClearThisPage() { GC.Collect(); }
+        public virtual void ClearThisPage() { GC.Collect(); }
 
     }
 }

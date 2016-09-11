@@ -42,7 +42,7 @@
                         <Setter Target="ContentAuthor.(TextBlock.FontSize)" Value="10"/>
                         <Setter Target="ContentDate.(TextBlock.FontSize)" Value="10"/>
                         <Setter Target="BackBtn.(FrameworkElement.Visibility)" Value="Visible"/>
-                        <Setter Target="ContentTitle.(FrameworkElement.Margin)">
+                        <Setter Target="TitleScroll.(FrameworkElement.Margin)">
                             <Setter.Value>
                                 <Thickness>50,0,0,0</Thickness>
                             </Setter.Value>
@@ -68,7 +68,7 @@
                         <Setter Target="ContentTitle.(TextBlock.FontSize)" Value="20"/>
                         <Setter Target="ContentDate.(TextBlock.FontSize)" Value="12"/>
                         <Setter Target="BackBtn.(FrameworkElement.Visibility)" Value="Visible"/>
-                        <Setter Target="ContentTitle.(FrameworkElement.Margin)">
+                        <Setter Target="TitleScroll.(FrameworkElement.Margin)">
                             <Setter.Value>
                                 <Thickness>50,0,0,0</Thickness>
                             </Setter.Value>
@@ -116,12 +116,20 @@
                     Click="BackBtn_Click"
                     Visibility="Collapsed"
                     Foreground="{ThemeResource AppPersonalTextColorPure}"/>
-                <TextBlock x:Name="ContentTitle"
+                <ScrollViewer x:Name="TitleScroll"
+                              HorizontalScrollMode="Enabled"
+                              VerticalScrollMode="Disabled"
+                              IsVerticalRailEnabled="False" 
+                              HorizontalScrollBarVisibility="Visible"
+                              IsHorizontalRailEnabled="True"
+                              HorizontalContentAlignment="Left"
+                              Margin="15,2,0,2">
+                    <TextBlock x:Name="ContentTitle"
                        FontSize="22"
-                       Margin="15,2,0,2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        Foreground="{ThemeResource AppPersonalTextColorPure}"/>
+                </ScrollViewer>
                 <Rectangle Height="1"
                        Fill="{ThemeResource DQDSummTextColor}"
                        VerticalAlignment="Bottom"/>

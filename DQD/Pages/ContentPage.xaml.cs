@@ -24,6 +24,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -67,7 +68,7 @@ namespace DQD.Net.Pages {
             HostNumber = parameter.Number;
             if (HostSource == null) return;
             await HandleHtmlResources();
-            if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
+            if (StatusBarInit.HaveAddMobileExtensions()) { BackBtn.Visibility = Visibility.Collapsed; TitleScroll.Margin = new Thickness(15, 0, 0, 0); }
             loadingAnimation.IsActive = false;
             this.Opacity = 1;
             base.InitStoryBoard();
@@ -78,6 +79,10 @@ namespace DQD.Net.Pages {
             var urlString = await WebProcess.GetHtmlResources(HostSource.ToString());
             AddChildrenToStackPanel(urlString.ToString());
             AddChildrenToCommentsStack(urlString.ToString());
+            //var timer = new DispatcherTimer();
+            //timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            //timer.Tick += (sender, args) => { TitleScroll.ChangeView(TitleScroll.HorizontalOffset + 1, 0, 1); };
+            //timer.Start();
         }
 
         private void MoreCommentsBtn_Click(object sender, RoutedEventArgs e) {
@@ -218,11 +223,11 @@ namespace DQD.Net.Pages {
                             MinHeight = 200,
                             MinWidth = 300,
                         });
-                        ContentStack.Children.Add(new TextBlock {
-                            Text = "若不支持Youku视频播放，请转到浏览器查看" ,
+                        ContentStack.Children.Add(!AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") ? new TextBlock {
+                            Text = "若不支持，请转到浏览器查看",
                             Margin = new Thickness(5),
                             FontSize = 12,
-                        });
+                        } : null);
                         ContentStack.Children.Add(new HyperlinkButton {
                             NavigateUri = (item as ContentFlashs).FlashUri,
                             Margin = new Thickness(5),

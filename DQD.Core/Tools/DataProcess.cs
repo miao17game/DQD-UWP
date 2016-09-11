@@ -38,6 +38,12 @@ namespace DQD.Core. Tools {
             });
         }
 
+        public static async void ReportException(string erroeMessage) {
+            await Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+                new ToastSmooth(erroeMessage).Show();
+            });
+        }
+
         public static Uri ConvertToUri(string str) { return !string.IsNullOrEmpty(str) ? new Uri(str) : null; }
 
         public static List<ContentListModel> GetFlipViewContent(string stringBUD) {
@@ -57,10 +63,11 @@ namespace DQD.Core. Tools {
                         model.Path = new Uri(HomeHostInsert + eachLi.SelectSingleNode("a").Attributes["href"].Value);
                         model.ID = Convert.ToInt32( new Regex(@"\d{6,}").Match(eachLi.SelectSingleNode("a").Attributes["href"].Value).Value);
                         list.Add(model);
-                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (NullReferenceException ) { ReportException("读取数据异常，请检查网络");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
                     } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
+                    } catch (Exception E) { ReportError(E.Message.ToString());
                     }
                 }
             } catch (Exception E) { ReportError(E.Message.ToString()); }
@@ -109,13 +116,15 @@ namespace DQD.Core. Tools {
                                 model.ContentSelfUri.Add(new ContentSelfUris { Uri = new Uri(ArticleHost + contentNumber), Number = Convert.ToInt32(contentNumber), Title = item.SelectSingleNode("a").InnerText, Index = index });
                             } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
                         } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
-                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (NullReferenceException ) { ReportException("部分内容加载异常，请检查网络");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
-                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (ArgumentNullException ) { 
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
                     } catch (Exception E) { ReportError(E.Message.ToString());
                     }
                 }
+            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException) {
             } catch (Exception E) { ReportError(E.Message.ToString());
             } return model;
         }
@@ -138,14 +147,15 @@ namespace DQD.Core. Tools {
                         var targetStr = EmojiReplace.ToEmoji(eachLi.SelectSingleNode("p[@class='comCon']").InnerText);
                         model.Content = targetStr.Substring(9, targetStr.Length - 13);
                         list.Add(model);
-                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (NullReferenceException ) {
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
-                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (ArgumentNullException) {
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
                     }
                 }
-            } catch (Exception E) {
-                ReportError(E.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException) {
+            } catch (Exception E) { ReportError(E.Message.ToString());
             }
             return list;
         }
@@ -176,14 +186,15 @@ namespace DQD.Core. Tools {
                             var targetStr2 = EmojiReplace.ToEmoji(ReDiv.SelectNodes("p").ElementAt(1).InnerText);
                             model.ReContent = targetStr2.Substring(17, targetStr2.Length - 17);
                         } list.Add(model);
-                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (NullReferenceException ) { ReportException("抱歉，目前还没有用户评论");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
-                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (ArgumentNullException ) { 
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
                     }
                 }
-            } catch (Exception E) {
-                ReportError(E.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException) {
+            } catch (Exception E) { ReportError(E.Message.ToString());
             }
             return list;
         }
@@ -267,16 +278,17 @@ namespace DQD.Core. Tools {
                                         break;
                                     default: break;
                                 }
-                            } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                            } catch (NullReferenceException ) { ReportException("没有获取到相应的信息");
                             } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
-                            } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                            } catch (ArgumentNullException ) { 
                             } catch (FormatException FE) { ReportError(FE.Message.ToString());
                             }
                         } list.Add(model);
                     }
                 }
-            } catch (Exception E) {
-                ReportError(E.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException) {
+            } catch (Exception E) { ReportError(E.Message.ToString());
             }
             return list;
         }
@@ -298,14 +310,15 @@ namespace DQD.Core. Tools {
                             listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25) :
                             listItemA.InnerText.Substring(25, listItemA.InnerText.Length - 25);
                         list.Add(model);
-                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (NullReferenceException ) { ReportException("没有获取到相应的信息");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
-                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (ArgumentNullException ) { 
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
                     }
                 }
-            } catch (Exception E) {
-                ReportError(E.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException) {
+            } catch (Exception E) { ReportError(E.Message.ToString());
             }
             return list;
         }
@@ -349,12 +362,14 @@ namespace DQD.Core. Tools {
                                     break;
                             } list.Add(model);
                         }
-                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (NullReferenceException ) { ReportException("没有获取到相应的信息");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
-                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (ArgumentNullException ) { 
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
                     }
                 }
+            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException) {
             } catch (Exception E) {ReportError(E.Message.ToString());
             }
             return list;
@@ -388,13 +403,15 @@ namespace DQD.Core. Tools {
                                     InsertSocMemHeaderModel(model, ths);
                                     break;
                             } list.Add(model);
-                        } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                        } catch (NullReferenceException) { ReportException("没有获取到相应的信息");
                         } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
-                        } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                        } catch (ArgumentNullException ) { 
                         } catch (FormatException FE) { ReportError(FE.Message.ToString());
                         }
                     }
                 }
+            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException) {
             } catch (Exception E) { ReportError(E.Message.ToString());
             }
             return list;
@@ -440,12 +457,14 @@ namespace DQD.Core. Tools {
                             new Uri(DefaultImageFlagHost);
                         model.Score= item.SelectSingleNode("td[@class='status']").InnerText;
                         list.Add(model);
-                    } catch (NullReferenceException NRE) { ReportError(NRE.Message.ToString());
+                    } catch (NullReferenceException) { ReportException("没有获取到相应的信息");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
-                    } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
+                    } catch (ArgumentNullException ) { 
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
                     }
                 } 
+            } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
+            } catch (ArgumentNullException) {
             } catch (Exception E) { ReportError(E.Message.ToString());
             }
             return list;

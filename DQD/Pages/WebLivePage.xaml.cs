@@ -11,6 +11,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System.Display;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -42,6 +43,7 @@ namespace DQD.Net.Pages {
             ButtonNoShadow = ButtonStackNoShadow;
             ScreenShadow = ScreenStack;
             ScreenNoShadow = ScreenStackNoShadow;
+            displayRequest = new DisplayRequest();
             GC.Collect();
         }
 
@@ -87,7 +89,15 @@ namespace DQD.Net.Pages {
         #endregion
 
         #region Methods
+        public override void ClearThisPageByAnima() {
+            base.ClearThisPageByAnima();
+            displayRequest.RequestRelease();
+        }
 
+        public override void ClearThisPage() {
+            base.ClearThisPage();
+            displayRequest.RequestRelease();
+        }
         #endregion
 
         #region Button Animations
@@ -127,6 +137,7 @@ namespace DQD.Net.Pages {
         private int HostNumber;
         private bool IsFirstNavigated;
         private ProgressRing loadingAnimation;
+        private DisplayRequest displayRequest;
 
         #endregion
 
@@ -136,6 +147,7 @@ namespace DQD.Net.Pages {
                 TitleBorder.Visibility = Visibility.Collapsed;
                 IsScreenOpen = true;
                 ContentBord.Margin = new Thickness(0, 0, 0, 0);
+                displayRequest.RequestActive();
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) { return; }
                 Grid.SetColumnSpan(MainPage.Current.BaseBorderTarget, 2);
             } else {
@@ -143,6 +155,7 @@ namespace DQD.Net.Pages {
                 TitleBorder.Visibility = Visibility.Visible;
                 IsScreenOpen = false;
                 ContentBord.Margin = new Thickness(0, 60, 0, 0);
+                displayRequest.RequestRelease();
                 if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) { return; }
                 Grid.SetColumnSpan(MainPage.Current.BaseBorderTarget, 1);
             }

@@ -20,20 +20,26 @@ namespace DQD.Core. Tools {
         /// <returns></returns>
         public  static async Task<StringBuilder> GetHtmlResources ( string urlString ) {
             var LrcStringBuider = new StringBuilder ( );
-            var request = WebRequest . Create ( urlString ) as HttpWebRequest;
-            request . Method = "GET";
             try {
-                using ( var response = await request . GetResponseAsync ( ) as HttpWebResponse ) {
-                    var stream = response . GetResponseStream ( );
-                    var streamReader = new StreamReader ( stream , Encoding . UTF8 );
-                    LrcStringBuider . Append ( await streamReader . ReadToEndAsync ( ) );
-                }
-            } catch ( WebException ex ) { Debug . WriteLine ( "\nTimeOut：\n" + ex . Message );
-                await Dispatcher . RunAsync ( CoreDispatcherPriority . Normal , ( ) => { new ToastSmooth ( "网络超时，请重试" ) . Show ( ); } );
-            } catch ( Exception e ) { Debug . WriteLine ( "\nTimeOut：\n" + e . Message );
-                await Dispatcher . RunAsync ( CoreDispatcherPriority . Normal , ( ) => { new ToastSmooth ( "网络异常，请重试" ) . Show ( ); } );
+                var request = WebRequest.Create(urlString) as HttpWebRequest;
+                request.Method = "GET";
+                try {
+                    using (var response = await request.GetResponseAsync() as HttpWebResponse) {
+                        var stream = response.GetResponseStream();
+                        var streamReader = new StreamReader(stream, Encoding.UTF8);
+                        LrcStringBuider.Append(await streamReader.ReadToEndAsync());
+                    }
+                } catch (WebException ex) {
+                    Debug.WriteLine("\nTimeOut：\n" + ex.Message);
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { new ToastSmooth("网络超时，请重试").Show(); });
+                } catch (Exception e) {
+                    Debug.WriteLine("\nTimeOut：\n" + e.Message);
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { new ToastSmooth("网络异常，请重试").Show(); });
+                } request.Abort();
+            } catch {
+                Debug.WriteLine("\nTimeOut：\n" );
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { new ToastSmooth("网络异常，请检查网络").Show(); });
             }
-            request . Abort ( );
             return LrcStringBuider;
         }
 
