@@ -22,6 +22,8 @@ using Edi.UWP.Helpers;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.UI.Xaml.Media.Imaging;
 using DQD.Core.Controls;
+using Windows.Storage;
+using Windows.Storage.FileProperties;
 #endregion
 namespace DQD.Net {
     /// <summary>
@@ -124,11 +126,12 @@ namespace DQD.Net {
                 .Invoke((sender as ToggleSwitch).Name);
         }
 
-        private void SettingsBtn_Click(object sender, RoutedEventArgs e) {
+        private async void SettingsBtn_Click(object sender, RoutedEventArgs e) {
             InsideResources.CollapsedAllPanel();
             SettingsPopup.IsOpen = true;
             PopupBorder.Visibility = Visibility.Visible;
             EnterPopupBorder.Begin();
+            await ShowCacheSize();
         }
 
         private void SettingsPopup_SizeChanged(object sender, SizeChangedEventArgs e) {
@@ -139,6 +142,14 @@ namespace DQD.Net {
             foreach (var item in InsideResources.GetPopupPanelColl()) 
                 if (item.Value.Visibility == Visibility.Visible){item.Value.Visibility = Visibility.Collapsed; return;}
             SettingsPopup.IsOpen = false;
+        }
+
+        private async void CacheClearBtn_Click(object sender, RoutedEventArgs e) {
+            CacheClearBtn.IsEnabled = false;
+            ClearRing.IsActive = true;
+            await ClearCacheSize();
+            CacheClearBtn.IsEnabled = true;
+            ClearRing.IsActive = false;
         }
 
         private void PopupInnerClick(object sender, RoutedEventArgs e) {
@@ -185,6 +196,34 @@ namespace DQD.Net {
                 }
             };
             timer.Start();
+        }
+
+        private async Task ShowCacheSize() {
+            var localCF = ApplicationData.Current.LocalCacheFolder;
+            var folders = await localCF.GetFoldersAsync();
+            double sizeOfCache = 0.00;
+            BasicProperties propertiesOfItem;
+            foreach (var item in folders) {
+                var files = await item.GetFilesAsync(Windows.Storage.Search.CommonFileQuery.DefaultQuery);
+                foreach (var file in files) {
+                    propertiesOfItem = await file.GetBasicPropertiesAsync();
+                    sizeOfCache += propertiesOfItem.Size;
+                }
+            }
+            var sizeInMb = sizeOfCache / (1024 * 1024);
+            CacheSizeTitle.Text = sizeInMb - 0 > 0.00000001 ? sizeInMb.ToString("#.##") + "MB" : "0 MB";
+        }
+
+        private async Task ClearCacheSize() {
+            var localCF = ApplicationData.Current.LocalCacheFolder;
+            var folders = await localCF.GetFoldersAsync();
+            foreach (var item in folders) {
+                var files = await item.GetFilesAsync(Windows.Storage.Search.CommonFileQuery.DefaultQuery);
+                foreach (var file in files) {
+                    await file.DeleteAsync();
+                }
+            }
+            await ShowCacheSize();
         }
 
         /// <summary>
@@ -281,7 +320,8 @@ namespace DQD.Net {
 
         #region Swith Methods
 
-        private void InitSwitchState() {
+        private async void InitSwitchState() {
+            await ShowCacheSize();
             IsFloatButtonEnable =
                 AnimationSwitch.IsEnabled =
                 ShadowSwitch.IsEnabled =

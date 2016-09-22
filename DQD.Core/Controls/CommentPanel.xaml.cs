@@ -42,6 +42,12 @@ namespace DQD.Core.Controls {
             set { SetValue(ComContentProperty, value); }
         }
 
+        public static readonly DependencyProperty ComZanProperty = DependencyProperty.Register("ComZan", typeof(string), typeof(CommentPanel), null);
+        public string ComZan {
+            get { return GetValue(ComZanProperty) as string; }
+            set { SetValue(ComZanProperty, value); }
+        }
+
         public CommentPanel() {
             this.InitializeComponent();
             this.DataContext = this;

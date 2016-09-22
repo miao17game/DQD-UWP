@@ -20,6 +20,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Image Name="Ximage" 
                Grid.RowSpan="2"
@@ -51,5 +52,14 @@
                    Text="{Binding ComContent}"
                    TextWrapping="WrapWholeWords"
                    Margin=" 7,5,7,0"/>
+        <TextBlock Name="Xzan"
+                   Grid.Row="2"
+                   Grid.Column="1"
+                   FontSize="12"
+                   Text="{Binding ComZan}"
+                   Foreground="{ThemeResource DQDBackground}"
+                   HorizontalAlignment="Right"
+                   TextWrapping="WrapWholeWords"
+                   Margin=" 4,2,10,2"/>
     </Grid>
 </UserControl>

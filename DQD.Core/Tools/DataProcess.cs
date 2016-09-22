@@ -146,6 +146,7 @@ namespace DQD.Core. Tools {
                         model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
                         var targetStr = EmojiReplace.ToEmoji(eachLi.SelectSingleNode("p[@class='comCon']").InnerText);
                         model.Content = targetStr.Substring(9, targetStr.Length - 13);
+                        model.Zan = eachLi.SelectSingleNode("div[@class='ctr']").SelectSingleNode("a[@class='zan']").InnerText;
                         list.Add(model);
                     } catch (NullReferenceException ) {
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());

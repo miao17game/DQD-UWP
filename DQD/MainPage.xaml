@@ -349,7 +349,7 @@
                             RelativePanel.AlignRightWithPanel="True"
                             Margin="0.25,53,0,0"
                             Padding="15,12,5,5"
-                            Visibility="Collapsed">
+                            Visibility="Visible">
                     <StackPanel>
                         <TextBlock Text="设置" FontSize="20"/>
                         <StackPanel Orientation="Vertical" 
@@ -430,6 +430,35 @@
                                       OffContent=" " 
                                       Toggled="Switch_Toggled" />
                         </Grid>
+                        <StackPanel Orientation="Vertical" 
+                                    Margin=" 0,10,0,0">
+                            <TextBlock Text="其他选项" FontWeight="Bold"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                            <Rectangle Height="1"
+                                       Margin=" 0,5,0,0"
+                                       Fill="{ThemeResource DQDSummTextColor}"/>
+                        </StackPanel>
+                        <Grid Margin="0,10,0,0" >
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="应用缓存"
+                                   Style="{StaticResource TitleTextStyle}"/>
+                                <TextBlock Text=" [计算中...]"
+                                           Name="CacheSizeTitle"
+                                           Style="{StaticResource SummaryTextStyle}"/>
+                            </StackPanel>
+                            <Grid HorizontalAlignment="Right">
+                                <Button Name="CacheClearBtn" 
+                                    Content="清理缓存"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,5,0"
+                                    Click="CacheClearBtn_Click"/>
+                                <ProgressRing Name="ClearRing"
+                                              Foreground="{ThemeResource DQDBackground}"
+                                              Width="30"
+                                              Height="30"
+                                              IsActive="False"/>
+                            </Grid>
+                        </Grid>
                     </StackPanel>
                 </ScrollViewer>
                 <ScrollViewer Name="AboutMenu"
@@ -440,7 +469,7 @@
                             RelativePanel.AlignRightWithPanel="True"
                             Margin="0.25,53,0,0"
                             Padding="0,12,0,5"
-                            Visibility="Visible">
+                            Visibility="Collapsed">
                     <StackPanel Margin="15,0,10,0">
                         <Rectangle Height="1"
                                Fill="{ThemeResource DQDBackground}"

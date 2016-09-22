@@ -14,5 +14,9 @@ namespace DQD.Core.Models.CommentModels {
         public string Rel { get; set; }
         public string ID { get; set; }
         public string Res { get; set; }
+        public string Zan { get; set; }
+        public string ReName { get; set; }
+        public string ReTime { get; set; }
+        public string ReContent { get; set; }
     }
 }

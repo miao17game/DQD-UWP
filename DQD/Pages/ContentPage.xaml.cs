@@ -137,8 +137,11 @@ namespace DQD.Net.Pages {
             ImageLoader.Initialize(new ImageConfig.Builder() {
                 CacheMode = ImageLib.Cache.CacheMode.MemoryAndStorageCache,
                 MemoryCacheImpl = new LRUCache<string, IRandomAccessStream>(),
-                StorageCacheImpl = new LimitedStorageCache(ApplicationData.Current.LocalCacheFolder,
-                            "cache", new SHA1CacheGenerator(), 1024 * 1024 * 1024)
+                StorageCacheImpl = new LimitedStorageCache(
+                    ApplicationData.Current.LocalCacheFolder,
+                    "cache", 
+                    new SHA1CacheGenerator(), 
+                    1024 * 1024 * 1024)
             }.AddDecoder<GifDecoder>().Build(), false);
         }
 
@@ -193,14 +196,27 @@ namespace DQD.Net.Pages {
                         });
                         break;
                     case ContentType.Gif:
-                        ContentStack.Children.Add(new ImageView {
-                            UriSource = (item as ContentGifs).ImageUri,
+                        var grid = new Grid {
                             Margin = new Thickness(5, 5, 5, 5),
-                            Stretch = Stretch.UniformToFill,
-                            HorizontalAlignment = HorizontalAlignment.Center,
                             MinHeight = 200,
                             MinWidth = 300,
-                        });
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                        };
+                        var btn = new Button {
+                            HorizontalAlignment = HorizontalAlignment.Stretch,
+                            VerticalAlignment = VerticalAlignment.Stretch,
+                            Content = "点击加载GIF",
+                        };
+                        btn.CommandParameter = (item as ContentGifs).ImageUri;
+                        btn.Click += (sender, args) => {
+                            (sender as Button).Visibility = Visibility.Collapsed;
+                            grid.Children.Add(new ImageView {
+                                UriSource = (sender as Button).CommandParameter as Uri,
+                                Stretch = Stretch.UniformToFill,
+                            });
+                        };
+                        grid.Children.Add(btn);
+                        ContentStack.Children.Add(grid);
                         break;
                     case ContentType.Video:
                         ContentStack.Children.Add(new MediaElement {
@@ -273,6 +289,7 @@ namespace DQD.Net.Pages {
                     ComImage = item.Image,
                     ComName = item.Name,
                     ComTime = item.Time,
+                    ComZan = item.Zan,
                 });
             }
         }
