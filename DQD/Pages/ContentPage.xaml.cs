@@ -306,18 +306,26 @@ namespace DQD.Net.Pages {
                             MinHeight = 200,
                             MinWidth = 300,
                         });
-                        ContentStack.Children.Add(!AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile") ? new TextBlock {
-                            Text = "若不支持，请转到浏览器查看",
-                            Margin = new Thickness(5),
-                            FontSize = 12,
-                        } : null);
-                        ContentStack.Children.Add(new HyperlinkButton {
-                            NavigateUri = (item as ContentFlashs).FlashUri,
-                            Margin = new Thickness(5),
-                            Content = ContentTitle.Text,
-                            Foreground = (Brush)Application.Current.Resources["DQDBackground"],
-                            FontSize = 12,
-                        });
+                        if (!AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile")) {
+                            ContentStack.Children.Add(new TextBlock {
+                                Text = "若不支持，请转到浏览器查看",
+                                Margin = new Thickness(5),
+                                FontSize = 12,
+                            });
+                            ContentStack.Children.Add(new HyperlinkButton {
+                                NavigateUri = (item as ContentFlashs).FlashUri,
+                                Margin = new Thickness(5),
+                                Content = ContentTitle.Text,
+                                Foreground = (Brush)Application.Current.Resources["DQDBackground"],
+                                FontSize = 12,
+                            });
+                        }else {
+                            ContentStack.Children.Add(new TextBlock {
+                                Text = "Mobile端暂不支持视频集锦",
+                                Margin = new Thickness(5),
+                                FontSize = 12,
+                            });
+                        }
                         break;
 
                     case ContentType.SelfUri:
