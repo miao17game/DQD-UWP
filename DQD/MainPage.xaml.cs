@@ -50,6 +50,7 @@ namespace DQD.Net {
             VersionText.Text = "版本号：" + Edi.UWP.Helpers.Utils.GetAppVersion();
             InitSwitchState();
             InitFlipTimer();
+            InitSliderValue();
         }
 
         #endregion
@@ -198,6 +199,10 @@ namespace DQD.Net {
             timer.Start();
         }
 
+        private void InitSliderValue() {
+            TextFieldSizeSlider.Value = (double?)SettingsHelper.ReadSettingsValue(SettingsConstants.TextFieldSize) ?? 14;
+        }
+
         private async Task ShowCacheSize() {
             var localCF = ApplicationData.Current.LocalCacheFolder;
             var folders = await localCF.GetFoldersAsync();
@@ -333,6 +338,7 @@ namespace DQD.Net {
             IsButtonShadowVisible =
                 ShadowSwitch.IsOn =
                 (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonShadow) ?? false;
+            PicturesAutoSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsPicturesAutoLoad) ?? false;
             ColorSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? true;
             var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
             RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
@@ -426,6 +432,10 @@ namespace DQD.Net {
                 ContentPage.Current.HandleAnimation(IsButtonAnimationEnable);
         }
 
+        private void OnGifsAutoLoadSwitchToggled(ToggleSwitch sender) {
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsPicturesAutoLoad, (sender as ToggleSwitch).IsOn);
+        }
+
         private void DivideVisibility(bool isVisible, StackPanel sp1, StackPanel sp2) { sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); sp2.Visibility = VisiEnumHelper.GetVisibility(!isVisible); }
 
         private void SyncVisibility(bool isVisible, StackPanel sp1, StackPanel sp2) { sp2.Visibility = sp1.Visibility = VisiEnumHelper.GetVisibility(isVisible); }
@@ -505,6 +515,7 @@ namespace DQD.Net {
             {"ButtonSwitch",Current.ButtonSwitch},
             {"ShadowSwitch",Current.ShadowSwitch},
             {"AnimationSwitch",Current.AnimationSwitch},
+            {"PicturesAutoSwitch",Current.PicturesAutoSwitch},
         };
 
             public static SwitchEventHandler GetSwitchHandler(string str) { return SwitchHandlerMaps.ContainsKey(str) ? SwitchHandlerMaps[str] : null; }
@@ -513,6 +524,7 @@ namespace DQD.Net {
             {"ButtonSwitch", new SwitchEventHandler(instance=> { Current .OnFloatButtonSwitchToggled(GetSwitchInstance(instance)); }) },
             {"ShadowSwitch", new SwitchEventHandler(instance=> { Current .OnButtonShadowSwitchToggled(GetSwitchInstance(instance)); }) },
             {"AnimationSwitch", new SwitchEventHandler(instance=> { Current .OnButtonAutoAnimaSwitchToggled(GetSwitchInstance(instance)); }) },
+            {"PicturesAutoSwitch", new SwitchEventHandler(instance=> { Current .OnGifsAutoLoadSwitchToggled(GetSwitchInstance(instance)); }) },
         };
 
             public static List<Uri> GetBackground() { return BackgroundPicMaps; }
@@ -548,6 +560,7 @@ namespace DQD.Net {
         public bool IsButtonAnimationEnable { get; private set; }
         private int nowBackgroundPic = 0;
         private bool isNeedClose = false;
+        private bool isInitSliderValue = true;
         public delegate void BackPressedEvent();
         public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
         public delegate void SwitchEventHandler(string instance);
@@ -557,5 +570,14 @@ namespace DQD.Net {
 
         #endregion
 
+        private void TextFieldSizeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e) {
+            if(ExampleText!=null)
+                ExampleText.FontSize = e.NewValue;
+            if (ContentPage.Current != null)
+                ContentPage.Current.ChangeTextFieldSize(e.NewValue);
+            if(!isInitSliderValue)
+                SettingsHelper.SaveSettingsValue(SettingsConstants.TextFieldSize, e.NewValue);
+            isInitSliderValue = false;
+        }
     }
 }

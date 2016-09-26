@@ -233,6 +233,8 @@ namespace DQD.Net.Pages {
 
         private void InitStoryBoard() {
             IsAnimaEnabled = true;
+            if (ButtonThisPage == null)
+                return;
             transToButtonThisPage = ButtonThisPage.RenderTransform as TranslateTransform;
             if (transToButtonThisPage == null) ButtonThisPage.RenderTransform = transToButtonThisPage = new TranslateTransform();
             doubleAnimation = new DoubleAnimation() {

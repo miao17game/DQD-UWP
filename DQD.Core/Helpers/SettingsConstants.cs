@@ -12,5 +12,7 @@
         public const string IsFloatButtonEnabled = "BUTTON_ENABLED_MODE";
         public const string IsFloatButtonShadow = "BUTTON_SHADOW_MODE";
         public const string IsFloatButtonAnimation = "BUTTON_AUTOANIMATION_MODE";
+        public const string IsPicturesAutoLoad = "IMAGE_AUTO_LOAD_MODE";
+        public const string TextFieldSize = "TEXT_FIELD_SIZE";
     }
 }

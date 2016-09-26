@@ -1,14 +1,17 @@
 ﻿using DQD.Core.Controls;
 using DQD.Core.Tools;
+using Microsoft.WindowsAzure.Messaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Networking.PushNotifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -51,18 +54,35 @@ namespace DQD.Net {
             new ToastSmooth("发生错误 \n" + e.Exception.Message).Show();
         }
 
+        private async Task InitNotificationsAsync() {
+            var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+
+            var hub = new NotificationHub(
+                "DQD-Notification-Sender", 
+                "Endpoint=sb://dqd-uwp-notifi.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=OKbUdj0QqOBqBVEOWi8iKh8d8WKozn+o7Ei+anG0Msk=");
+            var result = await hub.RegisterNativeAsync(channel.Uri);
+
+            //// Displays the registration ID so you know it was successful
+            //if (result.RegistrationId != null)
+            //{
+            //    var dialog = new MessageDialog("Registration successful: " + result.RegistrationId);
+            //    dialog.Commands.Add(new UICommand("OK"));
+            //    await dialog.ShowAsync();
+            //}
+        }
+
         /// <summary>
         /// 在应用程序由最终用户正常启动时进行调用。
         /// 将在启动应用程序以打开特定文件等情况下使用。
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e) {
+        protected override async void OnLaunched(LaunchActivatedEventArgs e) {
 
-//#if DEBUG
-//            if (System.Diagnostics.Debugger.IsAttached) {
-//                this.DebugSettings.EnableFrameRateCounter = true;
-//            }
-//#endif
+            //#if DEBUG
+            //            if (System.Diagnostics.Debugger.IsAttached) {
+            //                this.DebugSettings.EnableFrameRateCounter = true;
+            //            }
+            //#endif
 
 
             RegisterExceptionHandlingSynchronizationContext();
@@ -95,6 +115,9 @@ namespace DQD.Net {
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();
             }
+
+            await InitNotificationsAsync();
+
         }
 
         protected override void OnActivated(IActivatedEventArgs args) {

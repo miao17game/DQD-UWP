@@ -1,7 +1,8 @@
 ﻿{
   "dependencies": {
     "ImageLib.UWP": "5.0.0",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2"
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "WindowsAzure.Messaging.Managed": "0.1.7.9"
   },
   "frameworks": {
     "uap10.0": {}

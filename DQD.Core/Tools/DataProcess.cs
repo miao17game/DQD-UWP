@@ -116,7 +116,7 @@ namespace DQD.Core. Tools {
                                 model.ContentSelfUri.Add(new ContentSelfUris { Uri = new Uri(ArticleHost + contentNumber), Number = Convert.ToInt32(contentNumber), Title = item.SelectSingleNode("a").InnerText, Index = index });
                             } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
                         } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
-                    } catch (NullReferenceException ) { ReportException("部分内容加载异常，请检查网络");
+                    } catch (NullReferenceException ) { ReportException("部分内容暂不支持显示");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
                     } catch (ArgumentNullException ) { 
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());

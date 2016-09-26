@@ -440,6 +440,21 @@
                         </StackPanel>
                         <Grid Margin="0,10,0,0" >
                             <StackPanel Orientation="Vertical">
+                                <TextBlock Text="省流量模式"
+                                   Style="{StaticResource TitleTextStyle}"/>
+                                <TextBlock Text="启动或关闭图片的自动加载"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                            </StackPanel>
+                            <ToggleSwitch Name="PicturesAutoSwitch" 
+                                      Style="{ThemeResource ThemeModeSwitch}" 
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,-100,0"
+                                      OnContent=" " 
+                                      OffContent=" " 
+                                      Toggled="Switch_Toggled" />
+                        </Grid>
+                        <Grid Margin="0,10,0,0" >
+                            <StackPanel Orientation="Vertical">
                                 <TextBlock Text="应用缓存"
                                    Style="{StaticResource TitleTextStyle}"/>
                                 <TextBlock Text=" [计算中...]"
@@ -458,6 +473,26 @@
                                               Height="30"
                                               IsActive="False"/>
                             </Grid>
+                        </Grid>
+                        <Grid Margin="0,10,0,0" >
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="新闻字体大小"
+                                   Style="{StaticResource TitleTextStyle}"/>
+                                <TextBlock Text="调整到最合适的尺寸"
+                                   Style="{StaticResource SummaryTextStyle}"/>
+                            </StackPanel>
+                            <Slider Name="TextFieldSizeSlider" 
+                                    Style="{ThemeResource NewDefaultSlider}"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,10,0"
+                                    MinWidth="150"
+                                    Maximum="28"
+                                    Minimum="8"
+                                    ValueChanged="TextFieldSizeSlider_ValueChanged"/>
+                            <TextBlock Name="ExampleText"
+                                       Text="示例文字内容"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,50,0,0"/>
                         </Grid>
                     </StackPanel>
                 </ScrollViewer>
