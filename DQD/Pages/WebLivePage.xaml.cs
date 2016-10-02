@@ -62,7 +62,13 @@ namespace DQD.Net.Pages {
             HostNumber = parameter.Number;
             if (HostSource == null) return;
             webView.Source = HostSource;
-            if (StatusBarInit.IsMobile) { BackBtn.Visibility = Visibility.Collapsed; ContentTitle.Margin = new Thickness(15, 0, 0, 0); }
+            if (StatusBarInit.IsMobile) {
+                BackBtn.Visibility = Visibility.Collapsed;
+                ContentTitle.Margin = new Thickness(15, 0, 0, 0);
+            } else {
+                ActionLink.Visibility = Visibility.Visible;
+                ActionLink.NavigateUri = HostSource;
+            }
             InitFloatButtonView();
         }
 

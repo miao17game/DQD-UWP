@@ -4,7 +4,7 @@ using DQD.Core.Models.CommentModels;
 using DQD.Core.Models.MatchModels;
 using DQD.Core.Models.PageContentModels;
 using DQD.Core.Models.TeamModels;
-using DQD.Core.Tools.EmojiExpressions;
+using DQD.Core.Tools.PersonalExpressions;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -83,7 +83,7 @@ namespace DQD.Core. Tools {
                 string XPathString = "//div[@class='detail']";
                 HtmlNodeCollection consDiv = rootnode.SelectNodes(XPathString);
                 var detail = consDiv.ElementAt(0);
-                model.Title = detail.SelectSingleNode("h1").InnerText;
+                model.Title = EscapeReplace.ToEscape(detail.SelectSingleNode("h1").InnerText);
                 var authorDateColl = detail.SelectSingleNode("h4");
                 model.Author = authorDateColl.SelectSingleNode("span[@class='name']").InnerText;
                 model.Date = authorDateColl.SelectSingleNode("span[@class='time']").InnerText;

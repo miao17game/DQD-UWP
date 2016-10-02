@@ -36,6 +36,9 @@ namespace DQD.Net {
         public MainPage() {
             Current = this;
             InitializeComponent();
+            InitFlipTimer();
+            InitSliderValue();
+            InitSwitchState();
             PrepareFrame.Navigate(typeof(PreparePage));
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             BaseLoadingProgress = BaseLoadingAnimation;
@@ -48,9 +51,6 @@ namespace DQD.Net {
                 ApplicationView.GetForCurrentView().VisibleBoundsChanged += (s, e) => { ChangeViewWhenNavigationBarChanged(); };
                 ChangeViewWhenNavigationBarChanged(); }
             VersionText.Text = "版本号：" + Edi.UWP.Helpers.Utils.GetAppVersion();
-            InitSwitchState();
-            InitFlipTimer();
-            InitSliderValue();
         }
 
         #endregion
@@ -73,7 +73,7 @@ namespace DQD.Net {
         private void OnBackRequested(object sender, BackRequestedEventArgs e) {
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
                 if (ContFrame.Content == null) {
-                    if (!isNeedClose) { InitCloseTask(); } else { Application.Current.Exit(); }
+                    if (!isNeedClose) { InitCloseAppTask(); } else { Application.Current.Exit(); }
                     e.Handled = true;
                     return;
                 } else new BackPressedEvent(() => {
@@ -172,11 +172,21 @@ namespace DQD.Net {
             await ReportError(null, "N/A", true);
         }
 
+        private void TextFieldSizeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e) {
+            if (ExampleText != null)
+                ExampleText.FontSize = e.NewValue;
+            if (ContentPage.Current != null)
+                ContentPage.Current.ChangeTextFieldSize(e.NewValue);
+            if (!isInitSliderValue)
+                SettingsHelper.SaveSettingsValue(SettingsConstants.TextFieldSize, e.NewValue);
+            isInitSliderValue = false;
+        }
+
         #endregion
 
         #region Methods
 
-        private void InitCloseTask() {
+        private void InitCloseAppTask() {
             isNeedClose = true;
             new ToastSmooth("再按一次返回键退出").Show();
             Task.Run(async () => {
@@ -326,23 +336,23 @@ namespace DQD.Net {
         #region Swith Methods
 
         private async void InitSwitchState() {
-            await ShowCacheSize();
             IsFloatButtonEnable =
                 AnimationSwitch.IsEnabled =
                 ShadowSwitch.IsEnabled =
                 ButtonSwitch.IsOn =
                 (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonEnabled) ?? false;
-            IsButtonAnimationEnable =
-                AnimationSwitch.IsOn =
-                (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonAnimation) ?? false;
             IsButtonShadowVisible =
                 ShadowSwitch.IsOn =
                 (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonShadow) ?? false;
+            IsButtonAnimationEnable =
+                AnimationSwitch.IsOn =
+                (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonAnimation) ?? false;
             PicturesAutoSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsPicturesAutoLoad) ?? false;
             ColorSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? true;
             var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
             RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
             ThemeModeBtn.Content = isLightOrNot ? char.ConvertFromUtf32(0xEC46) : char.ConvertFromUtf32(0xEC8A);
+            await ShowCacheSize();
         }
 
         private void OnStatusBarSwitchToggled(ToggleSwitch sender) {
@@ -570,14 +580,5 @@ namespace DQD.Net {
 
         #endregion
 
-        private void TextFieldSizeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e) {
-            if(ExampleText!=null)
-                ExampleText.FontSize = e.NewValue;
-            if (ContentPage.Current != null)
-                ContentPage.Current.ChangeTextFieldSize(e.NewValue);
-            if(!isInitSliderValue)
-                SettingsHelper.SaveSettingsValue(SettingsConstants.TextFieldSize, e.NewValue);
-            isInitSliderValue = false;
-        }
     }
 }

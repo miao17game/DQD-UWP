@@ -159,7 +159,7 @@ namespace DQD.Core.Models {
                     var collection = rex.Match(href);
                     model.Path = new Uri(HomeHostInsert + href);
                     model.ID = Convert.ToInt32(collection.Value);
-                    model.Title=item.SelectSingleNode("h2").SelectNodes("a").FirstOrDefault().InnerText.ToString();
+                    model.Title= Tools.PersonalExpressions.EscapeReplace.ToEscape(item.SelectSingleNode("h2").SelectNodes("a").FirstOrDefault().InnerText.ToString());
                     var coll = item.SelectNodes("a").ElementAt(0).InnerText;
                     string imgSource = !string.IsNullOrEmpty(coll) ? item.SelectNodes("a").ElementAt(0).SelectSingleNode("img").Attributes.FirstOrDefault().Value : null;
                     model.Image=new BitmapImage(new Uri(string.IsNullOrEmpty(imgSource) ? item.SelectNodes("a").ElementAt(1).SelectSingleNode("img").Attributes.FirstOrDefault().Value : imgSource));

@@ -48,6 +48,8 @@ namespace DQD.Net.Pages {
         /// </summary>
         private async void InitView() {
             StringBuilder urlString = await WebProcess.GetHtmlResources(HomeHost);
+            if (urlString == null)
+                return;
             var headerList = DataHandler.SetHeaderGroupResources(urlString.ToString());
             foreach (var item in headerList) {
                 cacheDic.Add(
@@ -60,10 +62,12 @@ namespace DQD.Net.Pages {
                         InitSelector.Special));
             }
             HeaderResources.Source = headerList;
+            if (headerList == null)
+                return;
             var list = DataProcess.GetFlipViewContent(urlString.ToString());
             FlipResouces.Source = list;
-            InitFlipTimer(list);
             InitFloatButtonView();
+            InitFlipTimer(list);
         }
 
         private void InitFlipTimer(List<ContentListModel> list) {
@@ -184,8 +188,8 @@ namespace DQD.Net.Pages {
                     && ButtonThisPage.Visibility == Visibility.Visible
                     && IsAnimaEnabled) {
                     scroll.ViewChanged -= ScrollViewer_ViewChanged;
-                    BtnStackSlideOut.Begin(); }
-                if (listViewOffset[nowItem] - (sender as ScrollViewer).VerticalOffset > 10
+                    BtnStackSlideOut.Begin();
+                } else if (listViewOffset[nowItem] - (sender as ScrollViewer).VerticalOffset > 10
                     && ButtonThisPage.Visibility == Visibility.Collapsed
                     && IsAnimaEnabled) {
                     scroll.ViewChanged -= ScrollViewer_ViewChanged;
@@ -211,15 +215,15 @@ namespace DQD.Net.Pages {
         private void InitFloatButtonView() {
             ButtonThisPage = MainPage.Current.IsButtonShadowVisible ? ButtonStack : ButtonStackNoShadow;
             int num = MyPivot.SelectedIndex;
+            bool isButtonEnable = MainPage.Current.IsFloatButtonEnable;
             scroll = MainPage.GetScrollViewer(MainPage.GetPVItemViewer(MyPivot, ref num));
             scroll.ViewChanged += ScrollViewerChangedForFlip;
-            if (MainPage.Current.IsFloatButtonEnable) {
+            if (isButtonEnable) {
                 ButtonStack.Visibility = VisiEnumHelper.GetVisibility(MainPage.Current.IsButtonShadowVisible);
                 ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(!MainPage.Current.IsButtonShadowVisible);
                 if (MainPage.Current.IsButtonAnimationEnable) {
                     scroll.ViewChanged += ScrollViewer_ViewChanged;
-                    InitStoryBoard();
-                }
+                    InitStoryBoard(); }
             } else {
                 ButtonStack.Visibility = VisiEnumHelper.GetVisibility(false);
                 ButtonStackNoShadow.Visibility = VisiEnumHelper.GetVisibility(false);
@@ -285,6 +289,7 @@ namespace DQD.Net.Pages {
         private ProgressRing loadingAnimation;
         private Dictionary<string, DQDDataContext<ContentListModel>> cacheDic;
         private DQDDataContext<ContentListModel> homeLlistResources;
+        private delegate Task<List<ContentListModel>> HeadListActionEvent();
         private const string HomeHost = "http://www.dongqiudi.com/";
         private const string HomeHostInsert = "http://www.dongqiudi.com";
         private string nowItem;

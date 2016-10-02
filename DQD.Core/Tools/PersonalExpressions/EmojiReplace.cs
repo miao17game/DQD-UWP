@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace DQD.Core.Tools.EmojiExpressions {
+namespace DQD.Core.Tools.PersonalExpressions {
     public static class EmojiReplace {
         public static string ToEmoji(string stringExpress) { return changeToEmoji(stringExpress); }
 

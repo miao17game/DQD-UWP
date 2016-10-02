@@ -32,13 +32,16 @@ namespace DQD.Core. Tools {
                 } catch (WebException ex) {
                     Debug.WriteLine("\nTimeOut：\n" + ex.Message);
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { new ToastSmooth("网络超时，请重试").Show(); });
+                    return null;
                 } catch (Exception e) {
                     Debug.WriteLine("\nTimeOut：\n" + e.Message);
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { new ToastSmooth("网络异常，请重试").Show(); });
+                    return null;
                 } request.Abort();
             } catch {
                 Debug.WriteLine("\nTimeOut：\n" );
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { new ToastSmooth("网络异常，请检查网络").Show(); });
+                return null;
             }
             return LrcStringBuider;
         }

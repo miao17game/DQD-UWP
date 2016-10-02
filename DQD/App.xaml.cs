@@ -116,7 +116,7 @@ namespace DQD.Net {
                 Window.Current.Activate();
             }
 
-            await InitNotificationsAsync();
+            try { await InitNotificationsAsync(); } catch (RegistrationException) { }
 
         }
 
