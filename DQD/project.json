@@ -2,6 +2,7 @@
   "dependencies": {
     "ImageLib.UWP": "5.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "NotificationsExtensions.Win10": "14332.0.2",
     "WindowsAzure.Messaging.Managed": "0.1.7.9"
   },
   "frameworks": {

@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using DQD.Core.Controls;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using DQD.Net.UIHelpers;
 #endregion
 namespace DQD.Net {
     /// <summary>
@@ -580,5 +581,12 @@ namespace DQD.Net {
 
         #endregion
 
+        private async void SecondTitleBtn_Click(object sender, RoutedEventArgs e) {
+            Windows.UI.StartScreen.SecondaryTile tile = TilesHelper.GenerateSecondaryTile(DateTime.Now.Ticks.ToString(), "DQD UWP", Windows.UI.Colors.Transparent);
+            tile.VisualElements.ShowNameOnSquare150x150Logo = true;
+            tile.VisualElements.ShowNameOnSquare310x310Logo = true;
+            tile.VisualElements.ShowNameOnWide310x150Logo = true;
+            await tile.RequestCreateAsync();
+        }
     }
 }

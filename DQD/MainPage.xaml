@@ -455,6 +455,21 @@
                         </Grid>
                         <Grid Margin="0,10,0,0" >
                             <StackPanel Orientation="Vertical">
+                                <TextBlock Text="透明磁贴"
+                                   Style="{StaticResource TitleTextStyle}"/>
+                                <TextBlock Text="透明第二磁贴"
+                                           Style="{StaticResource SummaryTextStyle}"/>
+                            </StackPanel>
+                            <Grid HorizontalAlignment="Right">
+                                <Button Name="SecondTitleBtn" 
+                                    Content="Pin到开始屏幕"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,5,0"
+                                    Click="SecondTitleBtn_Click"/>
+                            </Grid>
+                        </Grid>
+                        <Grid Margin="0,10,0,0" >
+                            <StackPanel Orientation="Vertical">
                                 <TextBlock Text="应用缓存"
                                    Style="{StaticResource TitleTextStyle}"/>
                                 <TextBlock Text=" [计算中...]"
