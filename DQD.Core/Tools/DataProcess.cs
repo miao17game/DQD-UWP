@@ -9,8 +9,6 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,7 +16,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace DQD.Core. Tools {
+namespace DQD.Core.Tools {
     public static class DataProcess {
         #region Properties and State
 
@@ -59,11 +57,11 @@ namespace DQD.Core. Tools {
                     try {
                         var model = new ContentListModel();
                         model.Image = new BitmapImage(new Uri(eachLi.SelectSingleNode("a/img").Attributes["src"].Value));
-                        model.Title = eachLi.SelectSingleNode("a/h3").InnerText;
+                        model.Title = EscapeReplace.ToEscape(eachLi.SelectSingleNode("a/h3").InnerText);
                         model.Path = new Uri(HomeHostInsert + eachLi.SelectSingleNode("a").Attributes["href"].Value);
                         model.ID = Convert.ToInt32( new Regex(@"\d{6,}").Match(eachLi.SelectSingleNode("a").Attributes["href"].Value).Value);
                         list.Add(model);
-                    } catch (NullReferenceException ) { ReportException("读取数据异常，请检查网络");
+                    } catch (NullReferenceException ) { ReportException("读取数据异常");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
                     } catch (ArgumentNullException ANE) { ReportError(ANE.Message.ToString());
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
@@ -102,20 +100,43 @@ namespace DQD.Core. Tools {
                             var targetStr = item.SelectSingleNode("img").Attributes["src"].Value;
                             var coll = new Regex(".+.gif").Matches(targetStr);
                             if (coll.Count == 0) {
-                                model.ContentImage.Add(new ContentImages { Image = new BitmapImage(new Uri(targetStr)), Index = index });
-                            } else { model.ContentGif.Add(new ContentGifs { ImageUri = new Uri(targetStr), Index = index }); }
+                                model.ContentImage.Add(new ContentImages {
+                                    Image = new BitmapImage(new Uri(targetStr)),
+                                    Index = index
+                                });
+                            } else { model.ContentGif.Add(new ContentGifs {
+                                ImageUri = new Uri(targetStr),
+                                Index = index
+                            }); }
                         } else if (item.SelectSingleNode("video") != null) {
-                            model.ContentVideo.Add(new ContentVideos { VideoUri = new Uri(item.SelectSingleNode("video").Attributes["src"].Value), Index = index });
+                            model.ContentVideo.Add(new ContentVideos {
+                                VideoUri = new Uri(item.SelectSingleNode("video").Attributes["src"].Value),
+                                Index = index
+                            });
                         } else if (item.SelectSingleNode("embed") != null) {
-                            model.ContentFlash.Add(new ContentFlashs { FlashUri = new Uri(item.SelectSingleNode("embed").Attributes["src"].Value), Index = index });
+                            model.ContentFlash.Add(new ContentFlashs {
+                                FlashUri = new Uri(item.SelectSingleNode("embed").Attributes["src"].Value),
+                                Index = index
+                            });
                         } else if ((item.SelectSingleNode("a") != null)) {
                             var targetStr = item.SelectSingleNode("a").Attributes["href"].Value;
                             var match = new Regex(@"dongqiudi.+\d{6,}").Match(targetStr);
                             if (!string.IsNullOrEmpty(match.Value)) {
                                 var contentNumber = new Regex(@"\d{6,}").Match(match.Value).Value;
-                                model.ContentSelfUri.Add(new ContentSelfUris { Uri = new Uri(ArticleHost + contentNumber), Number = Convert.ToInt32(contentNumber), Title = item.SelectSingleNode("a").InnerText, Index = index });
-                            } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
-                        } else { model.ContentString.Add(new ContentStrings { Content = item.InnerText, Index = index }); }
+                                model.ContentSelfUri.Add(new ContentSelfUris {
+                                    Uri = new Uri(ArticleHost + contentNumber),
+                                    Number = Convert.ToInt32(contentNumber),
+                                    Title = item.SelectSingleNode("a").InnerText,
+                                    Index = index
+                                });
+                            } else { model.ContentString.Add(new ContentStrings {
+                                Content = EscapeReplace.ToEscape(item.InnerText),
+                                Index = index
+                            }); }
+                        } else { model.ContentString.Add(new ContentStrings {
+                            Content = EscapeReplace.ToEscape(item.InnerText),
+                            Index = index
+                        }); }
                     } catch (NullReferenceException ) { ReportException("部分内容暂不支持显示");
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
                     } catch (ArgumentNullException ) { 
@@ -145,10 +166,10 @@ namespace DQD.Core. Tools {
                         model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
                         model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
                         var targetStr = EmojiReplace.ToEmoji(eachLi.SelectSingleNode("p[@class='comCon']").InnerText);
-                        model.Content = targetStr.Substring(9, targetStr.Length - 13);
+                        model.Content = EscapeReplace.ToEscape(targetStr.Substring(9, targetStr.Length - 13));
                         model.Zan = eachLi.SelectSingleNode("div[@class='ctr']").SelectSingleNode("a[@class='zan']").InnerText;
                         list.Add(model);
-                    } catch (NullReferenceException ) {
+                    } catch (NullReferenceException ) { 
                     } catch (ArgumentOutOfRangeException AOORE) { ReportError(AOORE.Message.ToString());
                     } catch (ArgumentNullException) {
                     } catch (FormatException FE) { ReportError(FE.Message.ToString());
@@ -179,7 +200,7 @@ namespace DQD.Core. Tools {
                         model.Name = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='name']").InnerText;
                         model.Time = eachLi.SelectSingleNode("p[@class='nameCon']").SelectSingleNode("span[@class='time']").InnerText;
                         var targetStr = EmojiReplace.ToEmoji(eachLi.SelectSingleNode("p[@class='comCon']").InnerText);
-                        model.Content = targetStr.Substring(9, targetStr.Length - 13);
+                        model.Content = EscapeReplace.ToEscape(targetStr.Substring(9, targetStr.Length - 13));
                         var ReDiv = eachLi.SelectSingleNode("div[@class='recomm']");
                         if (ReDiv != null) {
                             model.ReName = ReDiv.SelectNodes("p").ElementAt(0).SelectSingleNode("span[@class='name']").InnerText;
