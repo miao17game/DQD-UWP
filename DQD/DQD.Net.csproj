@@ -132,7 +132,6 @@
       <DependentUpon>WebLivePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UIHelpers\TilesHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -232,6 +231,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DQD.BackgroundTasks\DQD.BackgroundTasks.csproj">
+      <Project>{171f97a8-9b50-458c-aef6-81ab22448b0f}</Project>
+      <Name>DQD.BackgroundTasks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DQD.Core\DQD.Core.csproj">
       <Project>{5607d571-b077-41dc-a02b-0dfed98e13b0}</Project>
       <Name>DQD.Core</Name>

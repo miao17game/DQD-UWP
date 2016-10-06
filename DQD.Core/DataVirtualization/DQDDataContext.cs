@@ -40,7 +40,7 @@ namespace DQD.Core.DataVirtualization {
         }
 
         uint wholeCount = 0;
-        public delegate Task<ObservableCollection<T>> FetchDataCallbackHandler( int ID , uint rollNum, uint nowWholeCount);
+        public delegate Task<List<T>> FetchDataCallbackHandler( int ID , uint rollNum, uint nowWholeCount);
         public FetchDataCallbackHandler FetchCallback;
         private int number;
         private uint rollNumber;

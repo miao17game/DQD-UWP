@@ -153,7 +153,7 @@ namespace DQD.Net.Pages {
             }.AddDecoder<GifDecoder>().Build(), false);
         }
 
-        private async Task<ObservableCollection<AllCommentModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
+        private async Task<List<AllCommentModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
             targetHost = string.Format(targetHost, number, nowWholeCountX / rollNum);
             return await DataProcess.GetPageAllComments(targetHost);
         }

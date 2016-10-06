@@ -2,16 +2,18 @@
 using DQD.Core.Tools;
 using Microsoft.WindowsAzure.Messaging;
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Background;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -19,6 +21,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Diagnostics;
 
 namespace DQD.Net {
     /// <summary>
@@ -116,8 +119,16 @@ namespace DQD.Net {
                 Window.Current.Activate();
             }
 
-            try { await InitNotificationsAsync(); } catch (RegistrationException) { }
-
+            try {
+                //Core.UIHelpers.TilesHelper.UpdateTitles((await Core.Models.DataHandler.SetHomeListResources())
+                //                    .Take(5)
+                //                    .GroupBy(i => i.Title)
+                //                    .Select(s => s.Key)
+                //                    .ToList());
+                await InitNotificationsAsync();
+            } catch (RegistrationException) {
+            } catch (Exception) {
+            }
         }
 
         protected override void OnActivated(IActivatedEventArgs args) {
@@ -145,5 +156,6 @@ namespace DQD.Net {
             //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
         }
+
     }
 }

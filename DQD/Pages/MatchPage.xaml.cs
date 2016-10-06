@@ -48,7 +48,7 @@ namespace DQD.Net.Pages {
         #region Methods
 
         private async void InitHeaderGroup() {
-            ObservableCollection<HeaderModel> headerList = new ObservableCollection<HeaderModel>();
+            var headerList = new List<HeaderModel>();
             headerList = await DataHandler.SetMatchGroupResources();
             HeaderResources.Source = headerList;
             InitFloatButtonView();

@@ -41,7 +41,7 @@ namespace DQD.Net.Pages {
         /// Init the Page Initual databundle resources.
         /// </summary>
         private async void InitView() {
-            ObservableCollection<HeaderModel> headerList = new ObservableCollection<HeaderModel>();
+            var headerList = new List<HeaderModel>();
             headerList = await DataHandler.SetSpecialHeaderGroupResources(HomeHostInsert);
             foreach (var item in headerList) {
                 cacheDic.Add(
@@ -55,7 +55,7 @@ namespace DQD.Net.Pages {
             InitFloatButtonView();
         }
 
-        private async Task<ObservableCollection<ContentListModel>> FetchMoreResources( int number, uint rollNum, uint nowWholeCountX) {
+        private async Task<List<ContentListModel>> FetchMoreResources( int number, uint rollNum, uint nowWholeCountX) {
             var Host = "http://www.dongqiudi.com/video?tab={0}&page={1}";
             Host = string.Format(Host, number, nowWholeCountX / rollNum);
             return await DataHandler.SetHomeListResources(Host);

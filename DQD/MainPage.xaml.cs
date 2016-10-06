@@ -24,7 +24,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using DQD.Core.Controls;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using DQD.Net.UIHelpers;
+using DQD.Core.UIHelpers;
+using Windows.ApplicationModel.Background;
 #endregion
 namespace DQD.Net {
     /// <summary>
@@ -57,6 +58,10 @@ namespace DQD.Net {
         #endregion
 
         #region Events
+
+        protected override void OnNavigatedTo(Windows.UI.Xaml.Navigation.NavigationEventArgs e) {
+            this.RegisterAllTask();
+        }
 
         /// <summary>
         /// When pivot item changed, show the right page by agent event.
@@ -181,6 +186,20 @@ namespace DQD.Net {
             if (!isInitSliderValue)
                 SettingsHelper.SaveSettingsValue(SettingsConstants.TextFieldSize, e.NewValue);
             isInitSliderValue = false;
+        }
+
+        private async void SecondTitleBtn_Click(object sender, RoutedEventArgs e) {
+            Windows.UI.StartScreen.SecondaryTile tile = TilesHelper.GenerateSecondaryTile("SecondaryTitle", "DQD UWP", Windows.UI.Colors.Transparent);
+            tile.VisualElements.ShowNameOnSquare150x150Logo =
+                tile.VisualElements.ShowNameOnSquare310x310Logo =
+                tile.VisualElements.ShowNameOnWide310x150Logo =
+                true;
+            await tile.RequestCreateAsync();
+            TilesHelper.UpdateTitles((await DataHandler.SetHomeListResources())
+                    .Take(5)
+                    .GroupBy(i => i.Title)
+                    .Select(s => s.Key)
+                    .ToList());
         }
 
         #endregion
@@ -581,12 +600,44 @@ namespace DQD.Net {
 
         #endregion
 
-        private async void SecondTitleBtn_Click(object sender, RoutedEventArgs e) {
-            Windows.UI.StartScreen.SecondaryTile tile = TilesHelper.GenerateSecondaryTile(DateTime.Now.Ticks.ToString(), "DQD UWP", Windows.UI.Colors.Transparent);
-            tile.VisualElements.ShowNameOnSquare150x150Logo = true;
-            tile.VisualElements.ShowNameOnSquare310x310Logo = true;
-            tile.VisualElements.ShowNameOnWide310x150Logo = true;
-            await tile.RequestCreateAsync();
+        #region Live Title Methods
+        private const string liveTitleTask = "LIVE_TITLE_TASK";
+        private const string ServiceCompleteTask = "SERVICE_COMPLETE_TASK";
+
+        private async void RegisterAllTask() {
+            var status = await BackgroundExecutionManager.RequestAccessAsync();
+            if (status == BackgroundAccessStatus.Unspecified || status == BackgroundAccessStatus.Denied) { return; }
+            RegisterServiceCompleteTask();
+            RegisterLiveTitleTask();
         }
+
+        private void RegisterLiveTitleTask() {
+            foreach (var item in BackgroundTaskRegistration.AllTasks)
+                if (item.Value.Name == liveTitleTask)
+                    item.Value.Unregister(true);
+
+            var taskBuilder = new BackgroundTaskBuilder {
+                Name = liveTitleTask,
+                TaskEntryPoint = typeof(BackgroundTasks.NotificationBackgroundUpdateTask).FullName
+            };
+            taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+            taskBuilder.SetTrigger(new TimeTrigger(15, false));
+            var register = taskBuilder.Register();
+        }
+
+        private void RegisterServiceCompleteTask() {
+            foreach (var item in BackgroundTaskRegistration.AllTasks)
+                if (item.Value.Name == ServiceCompleteTask)
+                    item.Value.Unregister(true);
+
+            var taskBuilder = new BackgroundTaskBuilder {
+                Name = ServiceCompleteTask,
+                TaskEntryPoint = typeof(BackgroundTasks.ServicingComplete).FullName
+            };
+            taskBuilder.SetTrigger(new SystemTrigger(SystemTriggerType.ServicingComplete, false));
+            taskBuilder.SetTrigger(new TimeTrigger(15, false));
+            var register = taskBuilder.Register();
+        }
+        #endregion
     }
 }

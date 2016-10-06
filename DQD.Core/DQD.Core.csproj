@@ -164,6 +164,7 @@
     <Compile Include="Tools\PersonalExpressions\EscapeReplace.cs" />
     <Compile Include="Tools\StatusBarInit.cs" />
     <Compile Include="Tools\WebProcess.cs" />
+    <Compile Include="UIHelpers\TilesHelper.cs" />
     <EmbeddedResource Include="Properties\DQD.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>

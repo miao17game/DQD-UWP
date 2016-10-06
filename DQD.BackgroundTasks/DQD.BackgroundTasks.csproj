@@ -108,13 +108,19 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BadgeNotificationHistoryChangedTriggerTask.cs" />
+    <Compile Include="NotificationBackgroundUpdateTask.cs" />
     <Compile Include="Helpers\BackgroundTaskStatus.cs" />
     <Compile Include="Helpers\BackgroundTaskStorage.cs" />
     <Compile Include="Helpers\BadgeHelper.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\ToastHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DQD.Core\DQD.Core.csproj">
+      <Project>{5607D571-B077-41DC-A02B-0DFED98E13B0}</Project>
+      <Name>DQD.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

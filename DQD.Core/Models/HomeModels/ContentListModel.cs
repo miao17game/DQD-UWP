@@ -14,6 +14,8 @@ namespace DQD.Core.Models {
         [DataMember]
         public BitmapImage Image { get; set; }
         [DataMember]
+        public Uri ImageSource { get; set; }
+        [DataMember]
         public string Date { get; set; }
         [DataMember]
         public Uri Path { get; set; }

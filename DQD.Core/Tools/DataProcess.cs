@@ -182,8 +182,8 @@ namespace DQD.Core.Tools {
             return list;
         }
 
-        public static async Task<ObservableCollection<AllCommentModel>> GetPageAllComments(string targetHost) {
-            var list = new ObservableCollection<AllCommentModel>();
+        public static async Task<List<AllCommentModel>> GetPageAllComments(string targetHost) {
+            var list = new List<AllCommentModel>();
             try {
                 StringBuilder urlString = new StringBuilder();
                 urlString = await WebProcess.GetHtmlResources(targetHost);

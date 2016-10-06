@@ -77,7 +77,7 @@ namespace DQD.Net.Pages {
             timer.Start();
         }
 
-        private async Task<ObservableCollection<ContentListModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
+        private async Task<List<ContentListModel>> FetchMoreResources(int number, uint rollNum, uint nowWholeCountX) {
             var Host = "http://www.dongqiudi.com?tab={0}&page={1}";
             Host = string.Format(
                 Host, 

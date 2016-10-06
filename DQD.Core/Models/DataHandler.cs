@@ -27,9 +27,9 @@ namespace DQD.Core.Models {
         /// Handle the html resources from DQD Header Group.
         /// </summary>
         /// <returns></returns>
-        public static ObservableCollection<HeaderModel> SetHeaderGroupResources(string stringDUB) {
+        public static List<HeaderModel> SetHeaderGroupResources(string stringDUB) {
             const string HomeHostInsert = "http://www.dongqiudi.com/";
-            ObservableCollection<HeaderModel> HeaderGroup = new ObservableCollection<HeaderModel>();
+            var HeaderGroup = new List<HeaderModel>();
             try {
                 HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(stringDUB);
@@ -62,9 +62,9 @@ namespace DQD.Core.Models {
         /// Handle the html resources from DQD SpecialHeader Group.
         /// </summary>
         /// <returns></returns>
-        public static async Task<ObservableCollection<HeaderModel>> SetSpecialHeaderGroupResources(string targetPath) {
+        public static async Task<List<HeaderModel>> SetSpecialHeaderGroupResources(string targetPath) {
             string HomeHostInsert = targetPath + "/";
-            ObservableCollection<HeaderModel> HeaderGroup = new ObservableCollection<HeaderModel>();
+            var HeaderGroup = new List<HeaderModel>();
             try {
                 StringBuilder urlString = new StringBuilder();
                 urlString = await WebProcess.GetHtmlResources(HomeHostInsert);
@@ -99,9 +99,9 @@ namespace DQD.Core.Models {
         /// Handle the html resources from DQD Header Group.
         /// </summary>
         /// <returns></returns>
-        public static async Task<ObservableCollection<HeaderModel>> SetMatchGroupResources() {
+        public static async Task<List<HeaderModel>> SetMatchGroupResources() {
             const string HomeHostInsert = "http://www.dongqiudi.com/match/"; 
-            ObservableCollection<HeaderModel> HeaderGroup = new ObservableCollection<HeaderModel>();
+            var HeaderGroup = new List<HeaderModel>();
             try {
                 StringBuilder urlString = new StringBuilder();
                 urlString = await WebProcess.GetHtmlResources(HomeHostInsert);
@@ -132,14 +132,18 @@ namespace DQD.Core.Models {
             return HeaderGroup;
         }
 
+        public static async Task<List<ContentListModel>> SetHomeListResources() {
+            return await SetHomeListResourcesForBackTask("http://www.dongqiudi.com/");
+        }
+
         /// <summary>
         /// Handle the html resources from DQD HomePage.
         /// </summary>
         /// <returns></returns>
-        public static async Task<ObservableCollection<ContentListModel>> SetHomeListResources(string homeHost) {
+        public static async Task<List<ContentListModel>> SetHomeListResources(string homeHost) {
             const string HomeHostInsert = "http://www.dongqiudi.com";
             string hone = homeHost;
-            ObservableCollection<ContentListModel> HomeList = new ObservableCollection<ContentListModel>();
+            List<ContentListModel> HomeList = new List<ContentListModel>();
             try {
                 StringBuilder urlString = new StringBuilder();
                 urlString=await WebProcess.GetHtmlResources(homeHost);
@@ -169,9 +173,45 @@ namespace DQD.Core.Models {
             } catch(ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
             } catch(ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
             } catch(FormatException FE) { Debug.WriteLine(FE.Message.ToString());
-            } catch(Exception E) { Debug.WriteLine(E.Message.ToString());
-            }
-            return HomeList;
+            } catch(Exception E) { Debug.WriteLine(E.Message + "\n" + E.StackTrace);
+            } return HomeList;
+        }
+
+        public static async Task<List<ContentListModel>> SetHomeListResourcesForBackTask(string homeHost) {
+            const string HomeHostInsert = "http://www.dongqiudi.com";
+            string hone = homeHost;
+            List<ContentListModel> HomeList = new List<ContentListModel>();
+            try {
+                StringBuilder urlString = new StringBuilder();
+                urlString = await WebProcess.GetHtmlResources(homeHost);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(urlString.ToString());
+                HtmlNode rootnode = doc.DocumentNode;
+                string XPathString = "//div[@id='news_list']";
+                HtmlNodeCollection aa = rootnode.SelectNodes(XPathString);
+                var li = aa.ElementAt(0).SelectNodes("ol").ElementAt(0).SelectNodes("li");
+                foreach (var item in li) {
+                    ContentListModel model = new ContentListModel();
+                    model.Date = item.SelectSingleNode("div[@class='info']").SelectSingleNode("span[@class='time']").InnerText;
+                    model.ShareNum = Convert.ToInt32(item.SelectSingleNode("div[@class='info']").SelectSingleNode("a[@class='comment']").InnerText);
+                    model.Share = new Uri(HomeHostInsert + item.SelectSingleNode("div[@class='info']").SelectSingleNode("a[@class='comment']").Attributes["href"].Value);
+                    var href = item.SelectSingleNode("a").Attributes["href"].Value;
+                    Regex rex = new Regex(@"[0-9]{1,}");
+                    var collection = rex.Match(href);
+                    model.Path = new Uri(HomeHostInsert + href);
+                    model.ID = Convert.ToInt32(collection.Value);
+                    model.Title = Tools.PersonalExpressions.EscapeReplace.ToEscape(item.SelectSingleNode("h2").SelectNodes("a").FirstOrDefault().InnerText.ToString());
+                    var coll = item.SelectNodes("a").ElementAt(0).InnerText;
+                    string imgSource = !string.IsNullOrEmpty(coll) ? item.SelectNodes("a").ElementAt(0).SelectSingleNode("img").Attributes.FirstOrDefault().Value : null;
+                    model.ImageSource = new Uri(string.IsNullOrEmpty(imgSource) ? item.SelectNodes("a").ElementAt(1).SelectSingleNode("img").Attributes.FirstOrDefault().Value : imgSource);
+                    HomeList.Add(model);
+                }
+            } catch (NullReferenceException NRE) { Debug.WriteLine(NRE.Message.ToString());
+            } catch (ArgumentOutOfRangeException AOORE) { Debug.WriteLine(AOORE.Message.ToString());
+            } catch (ArgumentNullException ANE) { Debug.WriteLine(ANE.Message.ToString());
+            } catch (FormatException FE) { Debug.WriteLine(FE.Message.ToString());
+            } catch (Exception E) { Debug.WriteLine(E.Message + "\n" + E.StackTrace);
+            } return HomeList;
         }
 
         //// 需要确保只有一个请求正在进行一次
