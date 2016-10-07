@@ -28,6 +28,8 @@ namespace DQD.Net {
     /// 提供特定于应用程序的行为，以补充默认的应用程序类。
     /// </summary>
     sealed partial class App : Application {
+        public string FromToastArgument;
+
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
         /// 已执行，逻辑上等同于 main() 或 WinMain()。
@@ -133,6 +135,31 @@ namespace DQD.Net {
 
         protected override void OnActivated(IActivatedEventArgs args) {
             RegisterExceptionHandlingSynchronizationContext();
+            if (args.Kind == ActivationKind.ToastNotification) {
+                var toastArgs = args as ToastNotificationActivatedEventArgs;
+                FromToastArgument = toastArgs.Argument;
+                Frame root = Window.Current.Content as Frame;
+                if (root == null) {
+                    root = new Frame();
+                    Window.Current.Content = root;
+                }
+                if (root.Content == null) {
+                    root.Navigate(typeof(MainPage), toastArgs);
+                } else { try {
+                        var itemNum = FromToastArgument;
+                        var itemUri = "http://dongqiudi.com/article/" + FromToastArgument;
+                        MainPage.Current.ItemClick?.Invoke(
+                            this,
+                            typeof(Pages.ContentPage),
+                            MainPage.Current.ContFrame,
+                            new Uri(itemUri),
+                            Convert.ToInt32(itemNum),
+                            null);
+                        MainPage.Current.SideGrid.Visibility = Visibility.Visible;
+                    } catch { /* I do not want my app to be shut down. */}
+                }
+                Window.Current.Activate();
+            }
         }
 
         /// <summary>

@@ -13,9 +13,7 @@ namespace DQD.Core. Helpers {
     /// 此文件向所有项目共享
     /// </summary>
     public static class CacheHelpers {
-        private const string example = "EXAMPLE";
-        public const string HomeList = "HOME_LIST";
-
+        
         /// <summary>
         /// 读取缓存文件 ///
         /// </summary>
@@ -25,11 +23,14 @@ namespace DQD.Core. Helpers {
             StorageFile file = default ( StorageFile );
             try {
                 switch ( key ) {
-                    case example:
-                        file = await localFolder . GetFileAsync ( "example.txt" );
+                    case CacheConstants.CacheId:
+                        file = await localFolder . GetFileAsync ("CacheId.txt");
                         break;
-                    case HomeList:
-                        file=await localFolder.GetFileAsync("homeList.txt");
+                    case CacheConstants.HomeList:
+                        file=await localFolder.GetFileAsync("HomeList.txt");
+                        break;
+                    case CacheConstants.BackgroundHomeListStorage:
+                        file = await localFolder.GetFileAsync("BackgroundHomeListStorage.txt");
                         break;
                     default:
                         Debug . WriteLine ( "----->【 没有匹配的读取指令】" );
@@ -49,11 +50,14 @@ namespace DQD.Core. Helpers {
             var localFolder = ApplicationData . Current . LocalCacheFolder;
             StorageFile file = default ( StorageFile );
             switch ( key ) {
-                case example:
-                    file = await localFolder . CreateFileAsync ( "example.txt" , CreationCollisionOption . ReplaceExisting );
+                case CacheConstants.CacheId:
+                    file = await localFolder . CreateFileAsync ("CacheId.txt", CreationCollisionOption . ReplaceExisting );
                     break;
-                case HomeList:
-                    file=await localFolder.CreateFileAsync("homeList.txt",CreationCollisionOption.ReplaceExisting);
+                case CacheConstants.HomeList:
+                    file=await localFolder.CreateFileAsync("HomeList.txt", CreationCollisionOption.ReplaceExisting);
+                    break;
+                case CacheConstants.BackgroundHomeListStorage:
+                    file = await localFolder.CreateFileAsync("BackgroundHomeListStorage.txt", CreationCollisionOption.ReplaceExisting);
                     break;
                 default:
                     Debug . WriteLine ( "Error -----> 【 缓存文件写入失败 】" );

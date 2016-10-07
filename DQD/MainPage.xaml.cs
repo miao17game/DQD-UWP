@@ -61,6 +61,19 @@ namespace DQD.Net {
 
         protected override void OnNavigatedTo(Windows.UI.Xaml.Navigation.NavigationEventArgs e) {
             this.RegisterAllTask();
+            if(e.Parameter as Windows.ApplicationModel.Activation.ToastNotificationActivatedEventArgs != null) { try {
+                    var itemNum = (e.Parameter as Windows.ApplicationModel.Activation.ToastNotificationActivatedEventArgs).Argument;
+                    var itemUri = "http://dongqiudi.com/article/" + itemNum;
+                    ItemClick?.Invoke(
+                        this,
+                        typeof(ContentPage),
+                        Current.ContFrame,
+                        new Uri(itemUri),
+                        Convert.ToInt32(itemNum),
+                        null);
+                    sideGrid.Visibility = Visibility.Visible;
+                } catch { /* Ignore istead of shutting down. */ }
+            }
         }
 
         /// <summary>
@@ -600,22 +613,28 @@ namespace DQD.Net {
 
         #endregion
 
-        #region Live Title Methods
+        #region BackgroundTasks Methods
         private const string liveTitleTask = "LIVE_TITLE_TASK";
+        private const string ToastBackgroundTask = "TOAST_BACKGROUND_TASK";
         private const string ServiceCompleteTask = "SERVICE_COMPLETE_TASK";
 
         private async void RegisterAllTask() {
             var status = await BackgroundExecutionManager.RequestAccessAsync();
             if (status == BackgroundAccessStatus.Unspecified || status == BackgroundAccessStatus.Denied) { return; }
+            foreach (var item in BackgroundTaskRegistration.AllTasks) {
+                if (item.Value.Name == liveTitleTask)
+                    item.Value.Unregister(true);
+                if (item.Value.Name == ToastBackgroundTask)
+                    item.Value.Unregister(true);
+                if (item.Value.Name == ServiceCompleteTask)
+                    item.Value.Unregister(true);
+            }
             RegisterServiceCompleteTask();
             RegisterLiveTitleTask();
+            RegisterToastBackgroundTask();
         }
 
         private void RegisterLiveTitleTask() {
-            foreach (var item in BackgroundTaskRegistration.AllTasks)
-                if (item.Value.Name == liveTitleTask)
-                    item.Value.Unregister(true);
-
             var taskBuilder = new BackgroundTaskBuilder {
                 Name = liveTitleTask,
                 TaskEntryPoint = typeof(BackgroundTasks.NotificationBackgroundUpdateTask).FullName
@@ -626,10 +645,6 @@ namespace DQD.Net {
         }
 
         private void RegisterServiceCompleteTask() {
-            foreach (var item in BackgroundTaskRegistration.AllTasks)
-                if (item.Value.Name == ServiceCompleteTask)
-                    item.Value.Unregister(true);
-
             var taskBuilder = new BackgroundTaskBuilder {
                 Name = ServiceCompleteTask,
                 TaskEntryPoint = typeof(BackgroundTasks.ServicingComplete).FullName
@@ -638,6 +653,17 @@ namespace DQD.Net {
             taskBuilder.SetTrigger(new TimeTrigger(15, false));
             var register = taskBuilder.Register();
         }
+
+        private void RegisterToastBackgroundTask() {
+            var taskBuilder = new BackgroundTaskBuilder {
+                Name = ToastBackgroundTask,
+                TaskEntryPoint = typeof(BackgroundTasks.ToastBackgroundPushTask).FullName
+            };
+            taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+            taskBuilder.SetTrigger(new TimeTrigger(120, false));
+            var register = taskBuilder.Register();
+        }
         #endregion
+
     }
 }

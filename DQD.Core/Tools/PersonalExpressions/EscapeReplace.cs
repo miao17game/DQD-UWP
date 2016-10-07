@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DQD.Core.Tools.PersonalExpressions {
-    class EscapeReplace {
+    public static class EscapeReplace {
         public static string ToEscape(string stringExpress) { return changeToEscape(stringExpress); }
 
         static string changeToEscape(string stringExpress) {

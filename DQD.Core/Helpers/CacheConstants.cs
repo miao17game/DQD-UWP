@@ -5,7 +5,8 @@
     /// </summary>
     public static class CacheConstants {
         // Data key
-        public const string CacheId = "cacheid";
+        public const string CacheId = "CACHE_ID";
         public const string HomeList = "HOME_LIST";
+        public const string BackgroundHomeListStorage = "BACKGROUND_HOMELIST_STORAGE";
     }
 }

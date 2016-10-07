@@ -12,6 +12,7 @@ using DQD.Core.UIHelpers;
 using Windows.UI.Xaml;
 using System.Diagnostics;
 using Windows.UI.StartScreen;
+using DQD.Core.Helpers;
 
 namespace DQD.BackgroundTasks {
     public sealed class NotificationBackgroundUpdateTask : IBackgroundTask {

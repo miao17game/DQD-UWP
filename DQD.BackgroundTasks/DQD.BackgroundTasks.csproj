@@ -109,12 +109,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NotificationBackgroundUpdateTask.cs" />
-    <Compile Include="Helpers\BackgroundTaskStatus.cs" />
-    <Compile Include="Helpers\BackgroundTaskStorage.cs" />
-    <Compile Include="Helpers\BadgeHelper.cs" />
-    <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\ToastHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServicingComplete.cs" />
+    <Compile Include="ToastBackgroundPushTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DQD.Core\DQD.Core.csproj">

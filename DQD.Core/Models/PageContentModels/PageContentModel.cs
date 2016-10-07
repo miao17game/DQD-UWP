@@ -9,6 +9,7 @@ namespace DQD.Core.Models.PageContentModels {
         public string Title { get; set; }
         public string Author { get; set; }
         public string Date { get; set; }
+        public string PreviewContent { get; set; }
         public List<ContentStrings> ContentString { get; set; }
         public List<ContentImages> ContentImage { get; set; }
         public List<ContentGifs> ContentGif { get; set; }

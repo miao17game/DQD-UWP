@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="64530WallaceSun.DQDUWP" Publisher="CN=F20CB244-5466-4E73-B935-8A83BABDE8FA" Version="1.1007.1938.0" />
+  <Identity Name="64530WallaceSun.DQDUWP" Publisher="CN=F20CB244-5466-4E73-B935-8A83BABDE8FA" Version="1.1008.1453.0" />
   <mp:PhoneIdentity PhoneProductId="2624580d-5b5e-4d19-8bf9-2670d62366d7" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>DQD UWP</DisplayName>
@@ -26,14 +26,19 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#33BB73" />
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="DQD.BackgroundTasks.ServicingComplete">
+        <Extension Category="windows.backgroundTasks" EntryPoint="DQD.BackgroundTasks.ToastBackgroundPushTask">
           <BackgroundTasks>
-            <Task Type="systemEvent" />
+            <Task Type="timer" />
           </BackgroundTasks>
         </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="DQD.BackgroundTasks.NotificationBackgroundUpdateTask">
           <BackgroundTasks>
             <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="DQD.BackgroundTasks.ServicingComplete">
+          <BackgroundTasks>
+            <Task Type="systemEvent" />
           </BackgroundTasks>
         </Extension>
       </Extensions>

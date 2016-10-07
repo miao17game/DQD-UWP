@@ -11,7 +11,7 @@ namespace DQD.Core.Models {
     public class ContentListModel {
         [DataMember]
         public string Title { get; set; }
-        [DataMember]
+
         public BitmapImage Image { get; set; }
         [DataMember]
         public Uri ImageSource { get; set; }
