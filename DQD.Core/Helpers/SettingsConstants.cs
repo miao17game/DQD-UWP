@@ -14,5 +14,7 @@
         public const string IsFloatButtonAnimation = "BUTTON_AUTOANIMATION_MODE";
         public const string IsPicturesAutoLoad = "IMAGE_AUTO_LOAD_MODE";
         public const string TextFieldSize = "TEXT_FIELD_SIZE";
+        public const string IsToastAutoSent = "TOAST_AUTO_SENT_MODE";
+        public const string IsQuietTime = "QUIET_TIME_MODE";
     }
 }

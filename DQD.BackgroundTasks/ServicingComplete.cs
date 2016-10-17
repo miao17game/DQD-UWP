@@ -18,7 +18,12 @@ namespace DQD.BackgroundTasks {
             if (task != null)
                 task.Unregister(true);
 
+            var task2 = FindTask(ToastBackgroundTask);
+            if (task2 != null)
+                task2.Unregister(true);
+
             this.RegisterLiveTitleTask();
+            this.RegisterToastBackgroundTask();
 
             deferral.Complete();
         }
@@ -35,6 +40,9 @@ namespace DQD.BackgroundTasks {
         }
 
         private const string liveTitleTask = "LIVE_TITLE_TASK";
+        private const string ToastBackgroundTask = "TOAST_BACKGROUND_TASK";
+        private const string ServiceCompleteTask = "SERVICE_COMPLETE_TASK";
+
         private void RegisterLiveTitleTask() {
             
             foreach (var item in BackgroundTaskRegistration.AllTasks)
@@ -49,6 +57,16 @@ namespace DQD.BackgroundTasks {
             taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
             
             taskBuilder.SetTrigger(new TimeTrigger(15, false));
+            var register = taskBuilder.Register();
+        }
+
+        private void RegisterToastBackgroundTask() {
+            var taskBuilder = new BackgroundTaskBuilder {
+                Name = ToastBackgroundTask,
+                TaskEntryPoint = typeof(BackgroundTasks.ToastBackgroundPushTask).FullName
+            };
+            taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+            taskBuilder.SetTrigger(new TimeTrigger(240, false));
             var register = taskBuilder.Register();
         }
 

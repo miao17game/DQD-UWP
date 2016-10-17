@@ -60,8 +60,9 @@ namespace DQD.Net {
         #region Events
 
         protected override void OnNavigatedTo(Windows.UI.Xaml.Navigation.NavigationEventArgs e) {
-            this.RegisterAllTask();
-            if(e.Parameter as Windows.ApplicationModel.Activation.ToastNotificationActivatedEventArgs != null) { try {
+            if((bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsToastAutoSent)??true)
+                this.RegisterAllTask();
+            if (e.Parameter as Windows.ApplicationModel.Activation.ToastNotificationActivatedEventArgs != null) { try {
                     var itemNum = (e.Parameter as Windows.ApplicationModel.Activation.ToastNotificationActivatedEventArgs).Argument;
                     var itemUri = "http://dongqiudi.com/article/" + itemNum;
                     ItemClick?.Invoke(
@@ -381,11 +382,14 @@ namespace DQD.Net {
                 AnimationSwitch.IsOn =
                 (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsFloatButtonAnimation) ?? false;
             PicturesAutoSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsPicturesAutoLoad) ?? false;
+            ToastAutoSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsToastAutoSent) ?? true;
+            QuietTimeSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsQuietTime) ?? true;
             ColorSwitch.IsOn = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsColorfulOrNot) ?? true;
             var isLightOrNot = (bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsLigheOrNot) ?? false;
             RequestedTheme = isLightOrNot ? ElementTheme.Light : ElementTheme.Dark;
             ThemeModeBtn.Content = isLightOrNot ? char.ConvertFromUtf32(0xEC46) : char.ConvertFromUtf32(0xEC8A);
             await ShowCacheSize();
+            isFirstCome = false;
         }
 
         private void OnStatusBarSwitchToggled(ToggleSwitch sender) {
@@ -475,6 +479,24 @@ namespace DQD.Net {
                 ContentPage.Current.HandleAnimation(IsButtonAnimationEnable);
         }
 
+        private async void OnToastAutoSwitchToggled(ToggleSwitch sender) {
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsToastAutoSent, sender.IsOn);
+            if (isFirstCome) return;
+            var status = await BackgroundExecutionManager.RequestAccessAsync();
+            if (status == BackgroundAccessStatus.Unspecified || status == BackgroundAccessStatus.Denied) { return; }
+            if (sender.IsOn) {
+                this.RegisterToastBackgroundTask();
+            } else {
+                var task2 = FindTask(ToastBackgroundTask);
+                if (task2 != null)
+                    task2.Unregister(true);
+            }
+        }
+
+        private void OnQuietTimeSwitchToggled(ToggleSwitch sender) {
+            SettingsHelper.SaveSettingsValue(SettingsConstants.IsQuietTime, sender.IsOn);
+        }
+
         private void OnGifsAutoLoadSwitchToggled(ToggleSwitch sender) {
             SettingsHelper.SaveSettingsValue(SettingsConstants.IsPicturesAutoLoad, (sender as ToggleSwitch).IsOn);
         }
@@ -554,20 +576,24 @@ namespace DQD.Net {
 
             public static ToggleSwitch GetSwitchInstance(string str) { return SwitchSettingsMaps.ContainsKey(str) ? SwitchSettingsMaps[str] : null; }
             static private Dictionary<string, ToggleSwitch> SwitchSettingsMaps = new Dictionary<string, ToggleSwitch> {
-            {"ColorSwitch",Current.ColorSwitch},
-            {"ButtonSwitch",Current.ButtonSwitch},
-            {"ShadowSwitch",Current.ShadowSwitch},
-            {"AnimationSwitch",Current.AnimationSwitch},
-            {"PicturesAutoSwitch",Current.PicturesAutoSwitch},
+            {Current.ColorSwitch.Name,Current.ColorSwitch},
+            {Current.ButtonSwitch.Name,Current.ButtonSwitch},
+            {Current.ShadowSwitch.Name,Current.ShadowSwitch},
+            {Current.AnimationSwitch.Name,Current.AnimationSwitch},
+            {Current.PicturesAutoSwitch.Name,Current.PicturesAutoSwitch},
+            {Current.ToastAutoSwitch.Name,Current.ToastAutoSwitch},
+            {Current.QuietTimeSwitch.Name,Current.QuietTimeSwitch},
         };
 
             public static SwitchEventHandler GetSwitchHandler(string str) { return SwitchHandlerMaps.ContainsKey(str) ? SwitchHandlerMaps[str] : null; }
             static private Dictionary<string, SwitchEventHandler> SwitchHandlerMaps = new Dictionary<string, SwitchEventHandler> {
-            {"ColorSwitch", new SwitchEventHandler(instance=> { Current.OnStatusBarSwitchToggled(GetSwitchInstance(instance)); }) },
-            {"ButtonSwitch", new SwitchEventHandler(instance=> { Current .OnFloatButtonSwitchToggled(GetSwitchInstance(instance)); }) },
-            {"ShadowSwitch", new SwitchEventHandler(instance=> { Current .OnButtonShadowSwitchToggled(GetSwitchInstance(instance)); }) },
-            {"AnimationSwitch", new SwitchEventHandler(instance=> { Current .OnButtonAutoAnimaSwitchToggled(GetSwitchInstance(instance)); }) },
-            {"PicturesAutoSwitch", new SwitchEventHandler(instance=> { Current .OnGifsAutoLoadSwitchToggled(GetSwitchInstance(instance)); }) },
+            {Current.ColorSwitch.Name, new SwitchEventHandler(instance=> { Current.OnStatusBarSwitchToggled(GetSwitchInstance(instance)); }) },
+            {Current.ButtonSwitch.Name, new SwitchEventHandler(instance=> { Current .OnFloatButtonSwitchToggled(GetSwitchInstance(instance)); }) },
+            {Current.ShadowSwitch.Name, new SwitchEventHandler(instance=> { Current .OnButtonShadowSwitchToggled(GetSwitchInstance(instance)); }) },
+            {Current.AnimationSwitch.Name, new SwitchEventHandler(instance=> { Current .OnButtonAutoAnimaSwitchToggled(GetSwitchInstance(instance)); }) },
+            {Current.PicturesAutoSwitch.Name, new SwitchEventHandler(instance=> { Current .OnGifsAutoLoadSwitchToggled(GetSwitchInstance(instance)); }) },
+            {Current.ToastAutoSwitch.Name, new SwitchEventHandler(instance=> { Current .OnToastAutoSwitchToggled(GetSwitchInstance(instance)); }) },
+            {Current.QuietTimeSwitch.Name, new SwitchEventHandler(instance=> { Current .OnQuietTimeSwitchToggled(GetSwitchInstance(instance)); }) },
         };
 
             public static List<Uri> GetBackground() { return BackgroundPicMaps; }
@@ -604,6 +630,7 @@ namespace DQD.Net {
         private int nowBackgroundPic = 0;
         private bool isNeedClose = false;
         private bool isInitSliderValue = true;
+        private bool isFirstCome = true;
         public delegate void BackPressedEvent();
         public delegate void NavigateEventHandler(object sender, Type type, Frame frame);
         public delegate void SwitchEventHandler(string instance);
@@ -660,8 +687,15 @@ namespace DQD.Net {
                 TaskEntryPoint = typeof(BackgroundTasks.ToastBackgroundPushTask).FullName
             };
             taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
-            taskBuilder.SetTrigger(new TimeTrigger(120, false));
+            taskBuilder.SetTrigger(new TimeTrigger(240, false));
             var register = taskBuilder.Register();
+        }
+
+        public static BackgroundTaskRegistration FindTask(string taskName) {
+            foreach (var cur in BackgroundTaskRegistration.AllTasks)
+                if (cur.Value.Name == taskName)
+                    return (BackgroundTaskRegistration)(cur.Value);
+            return null;
         }
         #endregion
 
