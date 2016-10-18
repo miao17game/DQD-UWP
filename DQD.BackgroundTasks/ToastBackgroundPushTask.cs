@@ -21,6 +21,9 @@ namespace DQD.BackgroundTasks {
         }
 
         private static async Task GetNewsAndPushToast() {
+            if (((bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsQuietTime) ?? true))
+                if ((DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 7) || DateTime.Now.Hour >= 23)
+                    return;
             foreach (var item in (
                 await DataHandler.SetHomeListResources())
                 .Skip(4)

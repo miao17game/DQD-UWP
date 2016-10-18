@@ -60,8 +60,7 @@ namespace DQD.Net {
         #region Events
 
         protected override void OnNavigatedTo(Windows.UI.Xaml.Navigation.NavigationEventArgs e) {
-            if((bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsToastAutoSent)??true)
-                this.RegisterAllTask();
+            this.RegisterAllTask();
             if (e.Parameter as Windows.ApplicationModel.Activation.ToastNotificationActivatedEventArgs != null) { try {
                     var itemNum = (e.Parameter as Windows.ApplicationModel.Activation.ToastNotificationActivatedEventArgs).Argument;
                     var itemUri = "http://dongqiudi.com/article/" + itemNum;
@@ -658,13 +657,14 @@ namespace DQD.Net {
             }
             RegisterServiceCompleteTask();
             RegisterLiveTitleTask();
-            RegisterToastBackgroundTask();
+            if ((bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsToastAutoSent) ?? true)
+                RegisterToastBackgroundTask();
         }
 
         private void RegisterLiveTitleTask() {
             var taskBuilder = new BackgroundTaskBuilder {
                 Name = liveTitleTask,
-                TaskEntryPoint = typeof(BackgroundTasks.NotificationBackgroundUpdateTask).FullName
+                TaskEntryPoint = typeof(BackgroundTasks.TitleBackgroundUpdateTask).FullName
             };
             taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
             taskBuilder.SetTrigger(new TimeTrigger(15, false));

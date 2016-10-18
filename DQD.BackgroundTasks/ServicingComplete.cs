@@ -51,7 +51,7 @@ namespace DQD.BackgroundTasks {
 
             var taskBuilder = new BackgroundTaskBuilder {
                 Name = liveTitleTask,
-                TaskEntryPoint = typeof(NotificationBackgroundUpdateTask).FullName
+                TaskEntryPoint = typeof(TitleBackgroundUpdateTask).FullName
             };
 
             taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
@@ -63,7 +63,7 @@ namespace DQD.BackgroundTasks {
         private void RegisterToastBackgroundTask() {
             var taskBuilder = new BackgroundTaskBuilder {
                 Name = ToastBackgroundTask,
-                TaskEntryPoint = typeof(BackgroundTasks.ToastBackgroundPushTask).FullName
+                TaskEntryPoint = typeof(ToastBackgroundPushTask).FullName
             };
             taskBuilder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
             taskBuilder.SetTrigger(new TimeTrigger(240, false));

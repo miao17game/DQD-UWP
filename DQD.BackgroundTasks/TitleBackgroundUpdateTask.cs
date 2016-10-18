@@ -15,7 +15,7 @@ using Windows.UI.StartScreen;
 using DQD.Core.Helpers;
 
 namespace DQD.BackgroundTasks {
-    public sealed class NotificationBackgroundUpdateTask : IBackgroundTask {
+    public sealed class TitleBackgroundUpdateTask : IBackgroundTask {
 
         public async void Run(IBackgroundTaskInstance taskInstance) {
             var deferral = taskInstance.GetDeferral();
@@ -34,10 +34,6 @@ namespace DQD.BackgroundTasks {
 
         private async Task<string> GetNews() {
             try {
-                if (!((bool?)SettingsHelper.ReadSettingsValue(SettingsConstants.IsQuietTime) ?? true))
-                    return null;
-                if ((DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 7) || DateTime.Now.Hour >= 23 )
-                    return null;
                 var listfor = await DataHandler.SetHomeListResources();
                 var resultList = listfor
                     .Take(5)

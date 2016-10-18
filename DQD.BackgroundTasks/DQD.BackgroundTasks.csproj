@@ -108,7 +108,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NotificationBackgroundUpdateTask.cs" />
+    <Compile Include="TitleBackgroundUpdateTask.cs" />
     <Compile Include="Helpers\ToastHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServicingComplete.cs" />
